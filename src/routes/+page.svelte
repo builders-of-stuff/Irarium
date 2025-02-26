@@ -60,7 +60,7 @@
 
             <div
               in:fly={{ x: 100, duration: 800, delay: 600 }}
-              class="mx-auto h-px w-16 bg-gradient-to-r from-primary to-transparent"
+              class="from-primar mx-auto h-px w-16 bg-gradient-to-r to-transparent"
             ></div>
 
             <p
@@ -76,13 +76,15 @@
             in:fade={{ duration: 800, delay: 1000 }}
             class="mt-6 flex flex-col space-y-3 pt-4"
           >
-            <div class="relative isolate overflow-hidden rounded-md">
-              <Button
-                variant="default"
-                class="relative z-10 w-full border-none bg-gradient-to-r from-primary to-amber-500 transition-all duration-300 hover:from-primary/90 hover:to-amber-500/90"
-              >
-                <a href="/signup">Get Started</a>
-              </Button>
+            <div class="relative">
+              <a href="/signup">
+                <Button
+                  variant="default"
+                  class="relative z-10 w-full border-none bg-gradient-to-r from-primary to-amber-500 transition-all duration-300 hover:from-primary/90 hover:to-amber-500/90"
+                >
+                  Get Started
+                </Button>
+              </a>
             </div>
 
             <Button
