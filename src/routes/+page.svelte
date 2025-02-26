@@ -6,7 +6,6 @@
   import { fly, fade } from 'svelte/transition';
   import BackgroundBeams from '$lib/components/ui/background-beams.svelte';
   import SparklesCore from '$lib/components/ui/sparkles.svelte';
-  import MovingBorder from '$lib/components/ui/moving-border.svelte';
 
   let mounted = false;
 
@@ -32,7 +31,7 @@
     />
   </div>
 
-  <div class="relative z-10 flex min-h-screen items-center justify-center p-4">
+  <div class="relative z-10 flex min-h-screen items-start justify-center p-4 pt-[20vh]">
     <div class="w-full max-w-md">
       {#if mounted}
         <div in:fade={{ duration: 800, delay: 200 }} class="space-y-4">
@@ -60,7 +59,7 @@
             </div>
 
             <div
-              in:fly={{ y: 10, duration: 800, delay: 600 }}
+              in:fly={{ x: 100, duration: 800, delay: 600 }}
               class="mx-auto h-px w-16 bg-gradient-to-r from-primary to-transparent"
             ></div>
 
@@ -77,21 +76,13 @@
             in:fade={{ duration: 800, delay: 1000 }}
             class="mt-6 flex flex-col space-y-3 pt-4"
           >
-            <div class="relative">
-              <MovingBorder
-                duration={3000}
-                rx="6px"
-                ry="6px"
-                className="opacity-30"
-                pathClassName="stroke-primary"
+            <div class="relative isolate overflow-hidden rounded-md">
+              <Button
+                variant="default"
+                class="relative z-10 w-full border-none bg-gradient-to-r from-primary to-amber-500 transition-all duration-300 hover:from-primary/90 hover:to-amber-500/90"
               >
-                <Button
-                  variant="default"
-                  class="relative z-10 w-full border-none bg-gradient-to-r from-primary to-amber-500 transition-all duration-300 hover:from-primary/90 hover:to-amber-500/90"
-                >
-                  <a href="/signup">Get Started</a>
-                </Button>
-              </MovingBorder>
+                <a href="/signup">Get Started</a>
+              </Button>
             </div>
 
             <Button
