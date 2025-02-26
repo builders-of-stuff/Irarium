@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@inlang/paraglide-sveltekit": "^0.15.5",
-    "pocketbase": "^0.25.1"
+    "pocketbase": "^0.25.1",
+    "svelte-motion": "^0.12.2"
   }
 }
