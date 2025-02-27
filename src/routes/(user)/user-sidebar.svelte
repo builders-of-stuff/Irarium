@@ -20,11 +20,11 @@
       icon: MessageSquare,
       href: `/home`
     },
-    { title: 'Settings', icon: Settings, href: '/settings' },
+    { title: 'Collection', icon: Settings, href: '/collection' },
     {
-      title: 'Flashcards',
-      icon: GalleryVerticalEnd,
-      href: `/home`
+      title: 'Settings',
+      icon: Settings,
+      href: `/settings`
     }
     // { title: 'Saved', icon: Save, href: '/saved' }
   ]);
