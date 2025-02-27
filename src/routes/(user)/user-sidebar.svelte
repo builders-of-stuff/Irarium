@@ -1,23 +1,19 @@
 <script lang="ts">
   import {
     GalleryVerticalEnd,
-    MessageSquare,
-    Save,
-    ChevronDown,
     Settings,
     User,
     House,
-    Lightbulb,
     MoreHorizontal,
     LogOut,
     HelpCircle,
     Shield
   } from 'lucide-svelte';
+  import { goto } from '$app/navigation';
 
   import IRARIUM_LOGO from '$lib/assets/irarium.png';
 
   import * as Sidebar from '$lib/components/ui/sidebar';
-  import * as Collapsible from '$lib/components/ui/collapsible';
   import * as Popover from '$lib/components/ui/popover';
   import { Button } from '$lib/components/ui/button';
 
@@ -35,8 +31,11 @@
     // { title: 'Saved', icon: Save, href: '/saved' }
   ]);
 
-  // Add default open state
-  let isOpen = $state(true);
+  // Handle logout function
+  function handleLogout() {
+    appState.signOut();
+    goto(ROUTE.LANDING);
+  }
 </script>
 
 <Sidebar.Root>
@@ -122,6 +121,7 @@
                     </a>
                     <button
                       class="flex items-center gap-2 px-4 py-2 text-left text-destructive hover:bg-accent"
+                      onclick={handleLogout}
                     >
                       <LogOut class="h-4 w-4" />
                       <span>Log Out</span>
