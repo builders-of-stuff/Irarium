@@ -6,7 +6,7 @@
   import IrariumLogo from '$lib/assets/irarium.png';
   import { ROUTE_IDS } from '$lib/shared/shared.constant';
 
-  import { appState } from '../../lib/state/app.state.svelte';
+  import { appState } from '$lib/state/app.state.svelte';
 
   let email = $state('');
   let password = $state('');
