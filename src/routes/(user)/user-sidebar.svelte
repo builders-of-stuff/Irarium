@@ -4,7 +4,8 @@
     MessageSquare,
     Save,
     ChevronDown,
-    Settings
+    Settings,
+    User
   } from 'lucide-svelte';
 
   import IRARIUM_LOGO from '$lib/assets/irarium.png';
@@ -20,12 +21,7 @@
       icon: MessageSquare,
       href: `/home`
     },
-    { title: 'Collection', icon: Settings, href: '/collection' },
-    {
-      title: 'Settings',
-      icon: Settings,
-      href: `/settings`
-    }
+    { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' }
     // { title: 'Saved', icon: Save, href: '/saved' }
   ]);
 
@@ -34,13 +30,13 @@
 </script>
 
 <Sidebar.Root>
-  <Sidebar.Header class="flex items-center justify-center pt-4">
+  <Sidebar.Header class="flex items-center px-4 pt-4">
     <a href="/">
-      <img src={IRARIUM_LOGO} class="h-32 w-32 rounded-full" alt="Irarium Logo" />
+      <img src={IRARIUM_LOGO} class="h-10 w-10" alt="Irarium Logo" />
     </a>
   </Sidebar.Header>
 
-  <Sidebar.Content class="py-2">
+  <Sidebar.Content class="py-4">
     {#each menuItems as item}
       <Sidebar.Group class="p-0">
         <Sidebar.GroupContent>
@@ -48,7 +44,7 @@
             <Sidebar.MenuItem>
               <a
                 href={item.href}
-                class="flex w-full items-center gap-2 px-3 py-1.5 hover:bg-accent hover:text-accent-foreground"
+                class="mx-2 flex w-full items-center gap-3 rounded-md px-4 py-2.5 hover:bg-accent hover:text-accent-foreground"
               >
                 {#if item.icon}
                   <item.icon class="h-4 w-4" />
@@ -61,4 +57,28 @@
       </Sidebar.Group>
     {/each}
   </Sidebar.Content>
+
+  <div class="mt-auto pb-4">
+    <Sidebar.Group class="p-0">
+      <Sidebar.GroupContent>
+        <Sidebar.Menu>
+          <Sidebar.MenuItem>
+            <a
+              href="/settings"
+              class="mx-2 my-1 flex w-full items-center gap-3 rounded-md px-4 py-3 hover:bg-accent hover:text-accent-foreground"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="flex h-7 w-7 items-center justify-center rounded-full bg-muted"
+                >
+                  <User class="h-4 w-4" />
+                </div>
+                <span>Settings</span>
+              </div>
+            </a>
+          </Sidebar.MenuItem>
+        </Sidebar.Menu>
+      </Sidebar.GroupContent>
+    </Sidebar.Group>
+  </div>
 </Sidebar.Root>
