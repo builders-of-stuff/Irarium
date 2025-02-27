@@ -1,5 +1,6 @@
 export enum COLLECTION {
-  USERS = 'users'
+  USERS = 'users',
+  IRARIUMS = 'irariums'
 }
 
 export type User = {
