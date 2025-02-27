@@ -2,7 +2,7 @@ import PocketBase from 'pocketbase';
 import { redirect } from '@sveltejs/kit';
 import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
 
-import { ROUTE_IDS, UNPROTECTED_ROUTE_IDS } from '$lib/shared/shared.constant';
+import { ROUTE, ROUTE_IDS, UNPROTECTED_ROUTE_IDS } from '$lib/shared/shared.constant';
 import { COLLECTION } from '$lib/shared/shared.type';
 
 export async function handle({ event, resolve }) {
@@ -65,6 +65,16 @@ export async function handle({ event, resolve }) {
    */
   const routeId = event.route.id;
 
+  // Redirect to home if logged in and on unprotected route
+  if (
+    routeId &&
+    UNPROTECTED_ROUTE_IDS.some((id) => id === routeId) &&
+    event.locals.pb.authStore.isValid
+  ) {
+    return redirect(302, ROUTE.HOME);
+  }
+
+  // Redirect to login if not logged in
   if (
     routeId &&
     !UNPROTECTED_ROUTE_IDS.some((id) => id === routeId) &&

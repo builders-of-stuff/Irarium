@@ -4,7 +4,6 @@
   import IrariumLogo from '$lib/assets/irarium.png';
   import { onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
-  import BackgroundBeams from '$lib/components/ui/background-beams.svelte';
   import SparklesCore from '$lib/components/ui/sparkles.svelte';
 
   let mounted = false;
@@ -15,9 +14,6 @@
 </script>
 
 <div class="relative min-h-screen overflow-hidden bg-black">
-  <!-- Background effects -->
-  <BackgroundBeams className="opacity-20" />
-
   <!-- Subtle sparkles in the background -->
   <div class="absolute inset-0 h-full w-full">
     <SparklesCore
@@ -36,7 +32,7 @@
       {#if mounted}
         <div in:fade={{ duration: 800, delay: 200 }} class="space-y-4">
           <!-- Logo with moving border -->
-          <div class="relative mx-auto mb-2 h-32 w-32">
+          <div class="relative mx-auto h-32 w-32">
             <div
               class="absolute inset-[6px] flex items-center justify-center rounded-full"
             >
