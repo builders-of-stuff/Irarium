@@ -5,7 +5,8 @@
     Save,
     ChevronDown,
     Settings,
-    User
+    User,
+    House
   } from 'lucide-svelte';
 
   import IRARIUM_LOGO from '$lib/assets/irarium.png';
@@ -14,11 +15,12 @@
   import * as Collapsible from '$lib/components/ui/collapsible';
 
   import { appState } from '$lib/state/app.state.svelte';
+  import { ROUTE } from '$lib/shared/shared.constant';
 
   const menuItems = $derived([
     {
       title: 'Home',
-      icon: MessageSquare,
+      icon: House,
       href: `/home`
     },
     { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' }
@@ -30,8 +32,8 @@
 </script>
 
 <Sidebar.Root>
-  <Sidebar.Header class="flex items-center justify-start px-4 pt-4">
-    <a href="/">
+  <Sidebar.Header class="mx-2 flex  justify-start px-4 pt-4">
+    <a href={ROUTE.HOME}>
       <img src={IRARIUM_LOGO} class="h-10 w-10" alt="Irarium Logo" />
     </a>
   </Sidebar.Header>
