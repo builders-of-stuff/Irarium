@@ -35,7 +35,7 @@
       transparent 80%
     );"
   />
-  <div
+  <!-- <div
     class="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"
-  ></div>
+  ></div> -->
 </div>

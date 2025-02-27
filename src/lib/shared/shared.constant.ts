@@ -1,9 +1,16 @@
 export const ROUTE_IDS = {
   LANDING: '/',
-  LOGIN: '/login',
-  SIGNUP: '/signup',
+  LOGIN: '/(auth)/login',
+  SIGNUP: '/(auth)/signup',
 
   // User routes
+  HOME: '/home'
+};
+
+export const ROUTE = {
+  LANDING: '/',
+  LOGIN: '/login',
+  SIGNUP: '/signup',
   HOME: '/home'
 };
 

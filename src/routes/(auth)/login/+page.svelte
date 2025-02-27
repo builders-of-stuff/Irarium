@@ -4,7 +4,7 @@
   import { Button } from '$lib/components/ui/button';
   import { Input } from '$lib/components/ui/input';
   import IrariumLogo from '$lib/assets/irarium.png';
-  import { ROUTE_IDS } from '$lib/shared/shared.constant';
+  import { ROUTE } from '$lib/shared/shared.constant';
   import { appState } from '$lib/state/app.state.svelte';
 
   let email = $state('');
@@ -17,7 +17,7 @@
 
       if (result.success) {
         error = '';
-        goto(ROUTE_IDS.HOME);
+        goto(ROUTE.HOME);
       } else {
         error = 'Invalid email or password';
         console.error('Login error:', result.error);
@@ -32,7 +32,7 @@
 <div class="container flex min-h-screen items-start justify-center pt-[10vh]">
   <div class="w-full max-w-md space-y-10">
     <div class="flex flex-col items-center gap-4">
-      <a href={ROUTE_IDS.LANDING}>
+      <a href={ROUTE.LANDING}>
         <img
           src={IrariumLogo}
           alt="Irarium Logo"
