@@ -6,13 +6,20 @@
     ChevronDown,
     Settings,
     User,
-    House
+    House,
+    Lightbulb,
+    MoreHorizontal,
+    LogOut,
+    HelpCircle,
+    Shield
   } from 'lucide-svelte';
 
   import IRARIUM_LOGO from '$lib/assets/irarium.png';
 
   import * as Sidebar from '$lib/components/ui/sidebar';
   import * as Collapsible from '$lib/components/ui/collapsible';
+  import * as Popover from '$lib/components/ui/popover';
+  import { Button } from '$lib/components/ui/button';
 
   import { appState } from '$lib/state/app.state.svelte';
   import { ROUTE } from '$lib/shared/shared.constant';
@@ -23,7 +30,8 @@
       icon: House,
       href: `/home`
     },
-    { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' }
+    { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' },
+    { title: 'Profile', icon: User, href: '/profile' }
     // { title: 'Saved', icon: Save, href: '/saved' }
   ]);
 
@@ -60,21 +68,67 @@
     {/each}
 
     <div class="mt-auto">
+      <div class="mx-2 mb-8">
+        <a href="/create">
+          <Button
+            variant="default"
+            class="w-full rounded-full py-6 text-lg font-medium"
+          >
+            Create
+          </Button>
+        </a>
+      </div>
+
       <Sidebar.Group class="p-0">
         <Sidebar.GroupContent>
           <Sidebar.Menu>
-            <Sidebar.MenuItem>
-              <a
-                href="/settings"
-                class="mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base hover:bg-accent hover:text-accent-foreground"
-              >
-                <div
-                  class="flex h-5 w-5 items-center justify-center rounded-full bg-muted"
-                >
-                  <User class="h-4 w-4" />
-                </div>
-                <span>Settings</span>
-              </a>
+            <Sidebar.MenuItem class="w-full">
+              <Popover.Root>
+                <Popover.Trigger class="w-full">
+                  <button
+                    class="mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <div
+                      class="flex h-5 w-5 items-center justify-center rounded-full bg-muted"
+                    >
+                      <Settings class="h-5 w-5" />
+                    </div>
+                    <span>Settings</span>
+                    <MoreHorizontal class="ml-auto h-5 w-5" />
+                  </button>
+                </Popover.Trigger>
+                <Popover.Content class="w-56 p-0">
+                  <div class="flex flex-col">
+                    <a
+                      href="/settings/account"
+                      class="flex items-center gap-2 px-4 py-2 hover:bg-accent"
+                    >
+                      <User class="h-4 w-4" />
+                      <span>Account Settings</span>
+                    </a>
+                    <a
+                      href="/settings/privacy"
+                      class="flex items-center gap-2 px-4 py-2 hover:bg-accent"
+                    >
+                      <Shield class="h-4 w-4" />
+                      <span>Privacy & Safety</span>
+                    </a>
+                    <a
+                      href="/help"
+                      class="flex items-center gap-2 px-4 py-2 hover:bg-accent"
+                    >
+                      <HelpCircle class="h-4 w-4" />
+                      <span>Help Center</span>
+                    </a>
+                    <button
+                      class="flex items-center gap-2 px-4 py-2 text-left text-destructive hover:bg-accent"
+                    >
+                      <LogOut class="h-4 w-4" />
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                </Popover.Content>
+              </Popover.Root>
             </Sidebar.MenuItem>
           </Sidebar.Menu>
         </Sidebar.GroupContent>
