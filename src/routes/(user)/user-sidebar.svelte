@@ -30,7 +30,7 @@
 </script>
 
 <Sidebar.Root>
-  <Sidebar.Header class="flex items-center px-4 pt-4">
+  <Sidebar.Header class="flex items-center justify-start px-4 pt-4">
     <a href="/">
       <img src={IRARIUM_LOGO} class="h-10 w-10" alt="Irarium Logo" />
     </a>
@@ -44,10 +44,10 @@
             <Sidebar.MenuItem>
               <a
                 href={item.href}
-                class="mx-2 flex w-full items-center gap-3 rounded-md px-4 py-2.5 hover:bg-accent hover:text-accent-foreground"
+                class="mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base hover:bg-accent hover:text-accent-foreground"
               >
                 {#if item.icon}
-                  <item.icon class="h-4 w-4" />
+                  <item.icon class="h-5 w-5" />
                 {/if}
                 <span>{item.title}</span>
               </a>
@@ -56,29 +56,27 @@
         </Sidebar.GroupContent>
       </Sidebar.Group>
     {/each}
-  </Sidebar.Content>
 
-  <div class="mt-auto pb-4">
-    <Sidebar.Group class="p-0">
-      <Sidebar.GroupContent>
-        <Sidebar.Menu>
-          <Sidebar.MenuItem>
-            <a
-              href="/settings"
-              class="mx-2 my-1 flex w-full items-center gap-3 rounded-md px-4 py-3 hover:bg-accent hover:text-accent-foreground"
-            >
-              <div class="flex items-center gap-3">
+    <div class="mt-auto">
+      <Sidebar.Group class="p-0">
+        <Sidebar.GroupContent>
+          <Sidebar.Menu>
+            <Sidebar.MenuItem>
+              <a
+                href="/settings"
+                class="mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base hover:bg-accent hover:text-accent-foreground"
+              >
                 <div
-                  class="flex h-7 w-7 items-center justify-center rounded-full bg-muted"
+                  class="flex h-5 w-5 items-center justify-center rounded-full bg-muted"
                 >
                   <User class="h-4 w-4" />
                 </div>
                 <span>Settings</span>
-              </div>
-            </a>
-          </Sidebar.MenuItem>
-        </Sidebar.Menu>
-      </Sidebar.GroupContent>
-    </Sidebar.Group>
-  </div>
+              </a>
+            </Sidebar.MenuItem>
+          </Sidebar.Menu>
+        </Sidebar.GroupContent>
+      </Sidebar.Group>
+    </div>
+  </Sidebar.Content>
 </Sidebar.Root>
