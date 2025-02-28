@@ -2,7 +2,10 @@
   import { appState } from '$lib/state/app.state.svelte';
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
+
+  import UserNavbar from '../user-navbar.svelte';
   import Tweet from './tweet.svelte';
+  import { Trash2 } from 'lucide-svelte';
 
   type TweetItem = {
     id: string;
@@ -85,6 +88,15 @@
     }
   }
 </script>
+
+{#snippet actions()}
+  <div class="flex gap-2">
+    <Button variant="outline">Publish</Button>
+    <Button variant="secondary">Save</Button>
+  </div>
+{/snippet}
+
+<UserNavbar title="Create" {actions} />
 
 <div class="container flex min-h-screen flex-col items-start justify-start py-8">
   <div class="mx-auto w-full max-w-2xl space-y-6">
