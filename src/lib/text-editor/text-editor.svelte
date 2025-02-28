@@ -1,24 +1,14 @@
 <script lang="ts">
-  import { onMount, onDestroy, getContext } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { Editor } from '@tiptap/core';
   import StarterKit from '@tiptap/starter-kit';
-  import Image from '@tiptap/extension-image';
-
-  // export let editor;
-  // export let isEditable = true;
-  // export let post = {} as any;
 
   let { editor = $bindable(), content = $bindable() } = $props();
 
   onMount(() => {
     editor = new Editor({
       element: document.querySelector('.tiptap-editor') as any,
-      extensions: [
-        StarterKit
-        // Link.configure({
-        //   openOnClick: false
-        // })
-      ],
+      extensions: [StarterKit],
       content,
       autofocus: true,
       onUpdate: ({ editor }) => {
@@ -32,13 +22,6 @@
       editor?.destroy?.();
     }
   });
-
-  // Add the clearEditor function
-  export function clearEditor() {
-    if (editor) {
-      editor.commands.clearContent();
-    }
-  }
 </script>
 
 <div class="tiptap-editor">

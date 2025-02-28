@@ -16,12 +16,12 @@ export type User = {
 export type Idea = {
   // not necessarily unique, just for reference purposes
   id: string;
-  // position relative to irarium (e.g. 1a, 1b, 2b, 3d, 1aa, 1ab...)
-  position: string;
-  created: string;
-  updated: string;
+  // position relative to irarium root
   content: string;
   children: Idea[];
+  depth: number;
+  created: string;
+  updated: string;
 };
 
 // Irarium is essentially a collection of loosely-linked ideas

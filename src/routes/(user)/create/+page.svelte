@@ -1,21 +1,16 @@
 <script lang="ts">
+  import { Editor } from '@tiptap/core';
+
   import { appState } from '$lib/state/app.state.svelte';
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
 
   import UserNavbar from '../user-navbar.svelte';
   import Idea from './idea.svelte';
-  import { Trash2 } from 'lucide-svelte';
 
-  type IdeaItem = {
-    id: string;
-    content: string;
-    timestamp: Date;
-  };
-
-  let editor;
+  let editor = $state<Editor>();
   let content = $state('');
-  let ideaChain = $state<IdeaItem[]>([]);
+  let ideaChain = $state<Idea[]>([]);
   let isSaving = $state(false);
 
   $effect(() => {
@@ -24,6 +19,10 @@
   });
 
   function addToIrarium() {
+    if (!editor) {
+      return;
+    }
+
     // Add the current content to the tweet chain
     ideaChain = [
       ...ideaChain,
@@ -36,50 +35,17 @@
 
     // Reset the content
     content = '';
-
-    // If editor has clearEditor method, use it
-    if (editor && typeof editor.clearEditor === 'function') {
-      editor.clearEditor();
-    } else if (
-      editor &&
-      editor.commands &&
-      typeof editor.commands.clearContent === 'function'
-    ) {
-      // Try to use the TipTap commands API directly
-      editor.commands.clearContent();
-    }
+    editor.commands.clearContent();
+    editor.commands.focus();
   }
 
   function removeIdea(id: string) {
     ideaChain = ideaChain.filter((idea) => idea.id !== id);
   }
-
-  async function saveIrarium() {
-    if (ideaChain.length === 0) {
-      return;
-    }
-
-    isSaving = true;
-
-    try {
-      // For now, let's just simulate a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Clear the chain after saving
-      ideaChain = [];
-      alert('Idea chain saved successfully!');
-    } catch (error) {
-      console.error('Failed to save idea chain:', error);
-      alert('Failed to save idea chain. Please try again.');
-    } finally {
-      isSaving = false;
-    }
-  }
 </script>
 
 {#snippet actions()}
   <div class="flex gap-2">
-    <Button variant="outline">Publish</Button>
     <Button variant="secondary">Save</Button>
   </div>
 {/snippet}
