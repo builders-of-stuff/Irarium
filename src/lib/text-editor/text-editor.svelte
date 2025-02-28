@@ -8,41 +8,7 @@
   // export let isEditable = true;
   // export let post = {} as any;
 
-  let { editor = $bindable(), content } = $props();
-
-  $effect(() => {
-    console.log(content);
-  });
-
-  /**
-   * Initialization
-   */
-  // onMount(() => {
-  //   editor = new Editor({
-  //     element: document.querySelector('.tiptap-editor') as any,
-  //     extensions: [
-  //       StarterKit.configure({
-  //         heading: {
-  //           levels: [1, 2, 3]
-  //         }
-  //       }),
-  //       Image.configure({
-  //         inline: false,
-  //         allowBase64: true,
-  //         HTMLAttributes: {
-  //           class: 'max-w-full h-auto'
-  //         }
-  //       })
-  //     ],
-  //     editable: isEditable,
-  //     content: content || '',
-  //     editorProps: {
-  //       attributes: {
-  //         class: 'prose h-full w-full outline-0 container px-4 pb-4 max-w-full'
-  //       }
-  //     }
-  //   });
-  // });
+  let { editor = $bindable(), content = $bindable() } = $props();
 
   onMount(() => {
     editor = new Editor({
@@ -66,10 +32,17 @@
       editor?.destroy?.();
     }
   });
+
+  // Add the clearEditor function
+  export function clearEditor() {
+    if (editor) {
+      editor.commands.clearContent();
+    }
+  }
 </script>
 
 <div class="tiptap-editor">
-  <div class="prose prose-sm min-h-[300px] max-w-none focus-within:outline-none"></div>
+  <div class="prose prose-sm max-w-none focus-within:outline-none"></div>
 </div>
 
 <style>
