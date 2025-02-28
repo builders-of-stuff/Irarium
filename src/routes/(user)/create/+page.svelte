@@ -4,10 +4,10 @@
   import TextEditor from '$lib/text-editor/text-editor.svelte';
 
   import UserNavbar from '../user-navbar.svelte';
-  import Tweet from './tweet.svelte';
+  import Idea from './idea.svelte';
   import { Trash2 } from 'lucide-svelte';
 
-  type TweetItem = {
+  type IdeaItem = {
     id: string;
     content: string;
     timestamp: Date;
@@ -15,11 +15,11 @@
 
   let editor;
   let content = $state('');
-  let tweetChain = $state<TweetItem[]>([]);
+  let ideaChain = $state<IdeaItem[]>([]);
   let isSaving = $state(false);
 
   $effect(() => {
-    console.log('tweetChain', tweetChain);
+    console.log('ideaChain', ideaChain);
     console.log('content', content);
   });
 
@@ -29,8 +29,8 @@
     }
 
     // Add the current content to the tweet chain
-    tweetChain = [
-      ...tweetChain,
+    ideaChain = [
+      ...ideaChain,
       {
         id: crypto.randomUUID(),
         content,
@@ -54,35 +54,27 @@
     }
   }
 
-  function removeTweet(id: string) {
-    tweetChain = tweetChain.filter((tweet) => tweet.id !== id);
+  function removeIdea(id: string) {
+    ideaChain = ideaChain.filter((idea) => idea.id !== id);
   }
 
   async function saveChain() {
-    if (tweetChain.length === 0) {
+    if (ideaChain.length === 0) {
       return;
     }
 
     isSaving = true;
 
     try {
-      // Here you would implement the actual saving logic
-      // For example:
-      // await fetch('/api/tweets', {
-      //   method: 'POST',
-      //   body: JSON.stringify({ tweets: tweetChain }),
-      //   headers: { 'Content-Type': 'application/json' }
-      // });
-
       // For now, let's just simulate a delay
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Clear the chain after saving
-      tweetChain = [];
-      alert('Tweet chain saved successfully!');
+      ideaChain = [];
+      alert('Idea chain saved successfully!');
     } catch (error) {
-      console.error('Failed to save tweet chain:', error);
-      alert('Failed to save tweet chain. Please try again.');
+      console.error('Failed to save idea chain:', error);
+      alert('Failed to save idea chain. Please try again.');
     } finally {
       isSaving = false;
     }
@@ -100,36 +92,26 @@
 
 <div class="container flex min-h-screen flex-col items-start justify-start py-8">
   <div class="mx-auto w-full max-w-2xl space-y-6">
-    <!-- Tweet Editor -->
+    <!-- Text editor -->
     <div class="rounded-lg border p-4">
       <TextEditor bind:editor bind:content />
 
       <div class="mt-4 flex justify-end">
-        <Button onclick={addToChain} variant="outline" class="mr-2">
-          Add to Chain
-        </Button>
+        <Button onclick={addToChain} variant="outline" class="mr-2">Add</Button>
       </div>
     </div>
 
-    <!-- Tweet Chain Preview -->
-    {#if tweetChain.length > 0}
+    <!-- Idea Chain Preview -->
+    {#if ideaChain.length > 0}
       <div class="mt-8">
-        <h2 class="mb-4 text-xl font-semibold">Your Chain</h2>
-
         <div class="tweet-chain">
-          {#each tweetChain as tweet (tweet.id)}
-            <Tweet
-              content={tweet.content}
-              timestamp={tweet.timestamp}
-              onDelete={() => removeTweet(tweet.id)}
+          {#each ideaChain as idea (idea.id)}
+            <Idea
+              content={idea.content}
+              timestamp={idea.timestamp}
+              onDelete={() => removeIdea(idea.id)}
             />
           {/each}
-        </div>
-
-        <div class="mt-4 flex justify-end">
-          <Button onclick={saveChain} disabled={isSaving} variant="default">
-            {isSaving ? 'Saving...' : 'Save Chain'}
-          </Button>
         </div>
       </div>
     {/if}
