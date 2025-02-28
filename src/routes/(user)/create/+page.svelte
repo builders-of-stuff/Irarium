@@ -23,11 +23,7 @@
     console.log('content', content);
   });
 
-  function addToChain() {
-    if (content === '' || content === '<p></p>') {
-      return;
-    }
-
+  function addToIrarium() {
     // Add the current content to the tweet chain
     ideaChain = [
       ...ideaChain,
@@ -58,7 +54,7 @@
     ideaChain = ideaChain.filter((idea) => idea.id !== id);
   }
 
-  async function saveChain() {
+  async function saveIrarium() {
     if (ideaChain.length === 0) {
       return;
     }
@@ -97,7 +93,7 @@
       <TextEditor bind:editor bind:content />
 
       <div class="mt-4 flex justify-end">
-        <Button onclick={addToChain} variant="outline" class="mr-2">Add</Button>
+        <Button onclick={addToIrarium} variant="outline" class="mr-2">Add</Button>
       </div>
     </div>
 
