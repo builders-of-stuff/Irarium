@@ -92,6 +92,7 @@ export class IrariumState {
   private findIdeaById(id: string, ideas: Idea[] = this.children): Idea | undefined {
     // First check if the idea exists at the current level
     const directMatch = ideas.find((idea) => idea.id === id);
+
     if (directMatch) return directMatch;
 
     // If not found at current level, search through all children recursively
@@ -106,27 +107,27 @@ export class IrariumState {
   /**
    * Recursively updates an idea by its ID in the nested structure
    * @param id The ID of the idea to update
-   * @param updateFn A function that takes the existing idea and returns the updated idea
+   * @param updatedIdea The idea object to replace the existing idea with
    * @param ideas Optional array of ideas to search in (used for recursion)
    * @returns A new array with the updated idea, or the original array if not found
    */
   private updateIdeaById(
     id: string,
-    updateFn: (idea: Idea) => Idea,
+    updatedIdea: Idea,
     ideas: Idea[] = this.children
   ): Idea[] {
     // Map through the current level of ideas
     return ideas.map((idea) => {
-      // If this is the idea we're looking for, apply the update function
+      // If this is the idea we're looking for, replace it with the updated idea
       if (idea.id === id) {
-        return updateFn(idea);
+        return updatedIdea;
       }
 
       // If this idea has children, recursively search and update them
       if (idea.children.length > 0) {
         return {
           ...idea,
-          children: this.updateIdeaById(id, updateFn, idea.children)
+          children: this.updateIdeaById(id, updatedIdea, idea.children)
         };
       }
 

@@ -15,9 +15,9 @@
     {@html content}
   </div>
   <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
-    <span
-      >{timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span
-    >
+    <span>
+      {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    </span>
     <button
       class="text-red-500 hover:text-red-700"
       onclick={() => onDelete && onDelete()}
