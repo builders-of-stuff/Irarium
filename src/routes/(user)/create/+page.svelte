@@ -5,6 +5,7 @@
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
   import { IrariumState } from '$lib/state/irarium.state.svelte';
+  import * as Select from '$lib/components/ui/select/index.js';
 
   import UserNavbar from '../user-navbar.svelte';
   import Idea from './idea.svelte';
@@ -14,7 +15,6 @@
   const irarium = new IrariumState();
 
   $effect(() => {
-    console.log('irarium.content', irarium.content);
     console.log('irarium.children', $state.snapshot(irarium.children));
   });
 
@@ -24,7 +24,7 @@
     if (!irarium.hasContent) {
       irarium.setContent(irarium.inputContent);
     } else {
-      irarium.addToIrarium(irarium.inputContent, irarium.currentParentIdea);
+      irarium.addToIrarium(irarium.inputContent, irarium.activeParentIdea);
     }
 
     irarium.inputContent = '';
@@ -47,8 +47,22 @@
     <div class="rounded-lg border p-4">
       <TextEditor bind:editor bind:content={irarium.inputContent} />
 
-      <div class="mt-4 flex justify-end">
-        <Button onclick={handleAddToIrarium} variant="outline" class="mr-2">Add</Button>
+      <div class="mt-4 flex items-center justify-end gap-2">
+        <div class="w-64">
+          <Select.Root type="single" bind:value={irarium.activeParentIdeaId}>
+            <Select.Trigger>
+              {irarium.optionsParentIdeaIds.find(
+                (o) => o.value === irarium.activeParentIdeaId
+              )?.label || 'Add to'}
+            </Select.Trigger>
+            <Select.Content>
+              {#each irarium.optionsParentIdeaIds as option}
+                <Select.Item value={option.value}>{option.label}</Select.Item>
+              {/each}
+            </Select.Content>
+          </Select.Root>
+        </div>
+        <Button onclick={handleAddToIrarium} variant="outline">Add</Button>
       </div>
     </div>
 

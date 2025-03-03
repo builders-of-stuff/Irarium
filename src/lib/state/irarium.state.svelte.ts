@@ -19,10 +19,12 @@ export class IrariumState {
   children = $state<Idea[]>([]);
 
   inputContent = $state('');
-  currentParentIdeaId = $state('');
-  currentParentIdea = $derived(
-    this.currentParentIdeaId ? this.findIdeaById(this.currentParentIdeaId) : undefined
+  activeParentIdeaId = $state('');
+  activeParentIdea = $derived(
+    this.activeParentIdeaId ? this.findIdeaById(this.activeParentIdeaId) : undefined
   );
+
+  optionsParentIdeaIds = $derived(this.buildOptionsParentIdeaIds());
 
   constructor() {}
 
@@ -53,7 +55,7 @@ export class IrariumState {
       }
     }
 
-    this.currentParentIdeaId = idea.id;
+    this.activeParentIdeaId = idea.id;
 
     return idea;
   }
@@ -107,5 +109,22 @@ export class IrariumState {
       created: now,
       updated: now
     };
+  }
+
+  private buildOptionsParentIdeaIds() {
+    // Helper function to recursively collect all ideas
+    const collectAllIdeas = (ideas: Idea[]): { label: string; value: string }[] => {
+      return ideas.flatMap((idea) => [
+        { label: this.truncateContent(idea.content, 30), value: idea.id },
+        ...collectAllIdeas(idea.children)
+      ]);
+    };
+
+    return [{ label: 'Root', value: '' }, ...collectAllIdeas(this.children)];
+  }
+
+  private truncateContent(content: string, maxLength: number): string {
+    if (content.length <= maxLength) return content;
+    return content.substring(0, maxLength) + '...';
   }
 }
