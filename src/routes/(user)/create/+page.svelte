@@ -4,44 +4,33 @@
   import { appState } from '$lib/state/app.state.svelte';
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
+  import { IrariumState } from '$lib/state/irarium.state.svelte';
 
   import UserNavbar from '../user-navbar.svelte';
   import Idea from './idea.svelte';
 
   let editor = $state<Editor>();
-  let content = $state('');
-  let ideaChain = $state<Idea[]>([]);
-  let isSaving = $state(false);
+
+  const irarium = new IrariumState();
 
   $effect(() => {
-    console.log('ideaChain', ideaChain);
-    console.log('content', content);
+    console.log('irarium.content', irarium.content);
+    console.log('irarium.children', $state.snapshot(irarium.children));
   });
 
-  function addToIrarium() {
-    if (!editor) {
-      return;
+  const handleAddToIrarium = () => {
+    if (!editor) return;
+
+    if (!irarium.hasContent) {
+      irarium.setContent(irarium.inputContent);
+    } else {
+      irarium.addToIrarium(irarium.inputContent, irarium.currentParentIdea);
     }
 
-    // Add the current content to the tweet chain
-    ideaChain = [
-      ...ideaChain,
-      {
-        id: crypto.randomUUID(),
-        content,
-        timestamp: new Date()
-      }
-    ];
-
-    // Reset the content
-    content = '';
+    irarium.inputContent = '';
     editor.commands.clearContent();
     editor.commands.focus();
-  }
-
-  function removeIdea(id: string) {
-    ideaChain = ideaChain.filter((idea) => idea.id !== id);
-  }
+  };
 </script>
 
 {#snippet actions()}
@@ -56,15 +45,15 @@
   <div class="mx-auto w-full max-w-2xl space-y-6">
     <!-- Text editor -->
     <div class="rounded-lg border p-4">
-      <TextEditor bind:editor bind:content />
+      <TextEditor bind:editor bind:content={irarium.inputContent} />
 
       <div class="mt-4 flex justify-end">
-        <Button onclick={addToIrarium} variant="outline" class="mr-2">Add</Button>
+        <Button onclick={handleAddToIrarium} variant="outline" class="mr-2">Add</Button>
       </div>
     </div>
 
     <!-- Idea Chain Preview -->
-    {#if ideaChain.length > 0}
+    <!-- {#if ideaChain.length > 0}
       <div class="mt-8">
         <div class="tweet-chain">
           {#each ideaChain as idea (idea.id)}
@@ -76,6 +65,6 @@
           {/each}
         </div>
       </div>
-    {/if}
+    {/if} -->
   </div>
 </div>

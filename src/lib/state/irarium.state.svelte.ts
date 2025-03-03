@@ -15,7 +15,14 @@ export class IrariumState {
   description = $state('');
   tags = $state('');
   content = $state('');
+  hasContent = $derived(this.content.length > 0);
   children = $state<Idea[]>([]);
+
+  inputContent = $state('');
+  currentParentIdeaId = $state('');
+  currentParentIdea = $derived(
+    this.currentParentIdeaId ? this.findIdeaById(this.currentParentIdeaId) : undefined
+  );
 
   constructor() {}
 
@@ -27,69 +34,31 @@ export class IrariumState {
     const idea = this.mapContentToIdea(content, parentIdea?.depth);
 
     if (!parentIdea?.id) {
+      // If no parent, add directly to root level
       this.children = [...this.children, idea];
     } else {
-      const depth = parentIdea.depth;
+      // If there's a parent, find and update that parent in the tree
       const parentId = parentIdea.id;
+      const parent = this.findIdeaById(parentId);
+
+      if (parent) {
+        // Create updated parent with new child added
+        const updatedParent = {
+          ...parent,
+          children: [...parent.children, idea]
+        };
+
+        // Update the entire tree with this modified parent
+        this.children = this.updateIdeaById(parentId, updatedParent);
+      }
     }
+
+    this.currentParentIdeaId = idea.id;
+
+    return idea;
   }
 
-  private mapContentToIdea(content: string, parentDepth?: number) {
-    const now = new Date().toISOString();
-    const depth = parentDepth ? parentDepth + 1 : 1;
-
-    return {
-      id: nanoid(5),
-      content,
-      children: [],
-      depth,
-      created: now,
-      updated: now
-    };
-  }
-
-  /**
-   * e.g. {
-  "id": "idea_root_id",
-  "title": "Main Idea",
-  "content": "Description of main idea",
-  "children": [
-    {
-      "id": "child_idea_1",
-      "title": "Child Idea 1",
-      "content": "Description of child idea 1",
-      "children": [
-        {
-          "id": "grandchild_1",
-          "title": "Grandchild Idea 1",
-          "content": "Description of grandchild idea 1",
-          "children": []
-        },
-        {
-          "id": "grandchild_2",
-          "title": "Grandchild Idea 2",
-          "content": "Description of grandchild idea 2",
-          "children": [
-            {
-              "id": "great_grandchild_1",
-              "title": "Great Grandchild Idea 1",
-              "content": "Description of great grandchild idea 1",
-              "children": []
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "child_idea_2",
-      "title": "Child Idea 2",
-      "content": "Description of child idea 2",
-      "children": []
-    }
-  ]
-}
-   */
-  private findIdeaById(id: string, ideas: Idea[] = this.children): Idea | undefined {
+  findIdeaById(id: string, ideas: Idea[] = this.children): Idea | undefined {
     // First check if the idea exists at the current level
     const directMatch = ideas.find((idea) => idea.id === id);
 
@@ -104,18 +73,7 @@ export class IrariumState {
       : undefined;
   }
 
-  /**
-   * Recursively updates an idea by its ID in the nested structure
-   * @param id The ID of the idea to update
-   * @param updatedIdea The idea object to replace the existing idea with
-   * @param ideas Optional array of ideas to search in (used for recursion)
-   * @returns A new array with the updated idea, or the original array if not found
-   */
-  private updateIdeaById(
-    id: string,
-    updatedIdea: Idea,
-    ideas: Idea[] = this.children
-  ): Idea[] {
+  updateIdeaById(id: string, updatedIdea: Idea, ideas: Idea[] = this.children): Idea[] {
     // Map through the current level of ideas
     return ideas.map((idea) => {
       // If this is the idea we're looking for, replace it with the updated idea
@@ -134,5 +92,20 @@ export class IrariumState {
       // Otherwise return the idea unchanged
       return idea;
     });
+  }
+
+  private mapContentToIdea(content: string, parentDepth?: number) {
+    const now = new Date().toISOString();
+    const id = nanoid(5);
+    const depth = parentDepth ? parentDepth + 1 : 1;
+
+    return {
+      id,
+      content,
+      children: [],
+      depth,
+      created: now,
+      updated: now
+    };
   }
 }
