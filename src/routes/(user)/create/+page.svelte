@@ -48,13 +48,14 @@
       <TextEditor bind:editor bind:content={irarium.inputContent} />
 
       <div class="mt-4 flex items-center justify-end gap-2">
-        <div class="w-64">
+        <div class="relative flex w-full max-w-[200px]">
+          <Button onclick={handleAddToIrarium} variant="outline" class="flex-1 pr-10">
+            Add
+          </Button>
           <Select.Root type="single" bind:value={irarium.activeParentIdeaId}>
-            <Select.Trigger>
-              {irarium.optionsParentIdeaIds.find(
-                (o) => o.value === irarium.activeParentIdeaId
-              )?.label || 'Add to'}
-            </Select.Trigger>
+            <Select.Trigger
+              class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
+            ></Select.Trigger>
             <Select.Content>
               {#each irarium.optionsParentIdeaIds as option}
                 <Select.Item value={option.value}>{option.label}</Select.Item>
@@ -62,7 +63,6 @@
             </Select.Content>
           </Select.Root>
         </div>
-        <Button onclick={handleAddToIrarium} variant="outline">Add</Button>
       </div>
     </div>
 
