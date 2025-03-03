@@ -16,6 +16,7 @@ export type User = {
 export type Idea = {
   // not necessarily unique, just for reference purposes
   id: string;
+  parentId?: string;
   // position relative to irarium root
   content: string;
   children: Idea[];
