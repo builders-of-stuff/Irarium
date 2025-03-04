@@ -234,16 +234,6 @@ export class IrariumState {
     let startingIdeas = this.children;
     let startingPath = [];
 
-    if (this.hasContent) {
-      startingIdeas = [
-        {
-          id: this.id,
-          content: this.content,
-          children: this.children
-        } as Idea
-      ];
-    }
-
     const parentChain = findParentChain(
       startingIdeas,
       this.activeParentIdeaId,
@@ -309,16 +299,6 @@ export class IrariumState {
     // Start with root if it exists
     let startingIdeas = this.children;
 
-    if (this.hasContent) {
-      startingIdeas = [
-        {
-          id: this.id,
-          content: this.content,
-          children: this.children
-        } as Idea
-      ];
-    }
-
     const parent = findParent(startingIdeas, this.activeParentIdeaId);
 
     if (!parent) {
@@ -357,14 +337,6 @@ export class IrariumState {
       if (this.activeParentIdeaId === this.id) {
         return this.children;
       }
-
-      startingIdeas = [
-        {
-          id: this.id,
-          content: this.content,
-          children: this.children
-        } as Idea
-      ];
     }
 
     const children = findChildrenOfIdea(startingIdeas, this.activeParentIdeaId);

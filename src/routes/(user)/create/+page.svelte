@@ -54,9 +54,7 @@
       {/if}
 
       <!-- Show parent chain without duplicating the root -->
-      {#each irarium
-        .getParentChain()
-        .filter((idea) => idea.id !== irarium.id) as parentIdea}
+      {#each irarium.getParentChain() as parentIdea}
         <Idea
           content={parentIdea.content}
           id={parentIdea.id}
