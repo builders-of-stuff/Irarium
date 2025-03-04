@@ -12,7 +12,7 @@
       content,
       autofocus: true,
       onUpdate: ({ editor }) => {
-        content = editor.getHTML();
+        content = editor.getText();
       }
     });
   });

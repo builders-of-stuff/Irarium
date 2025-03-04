@@ -1,28 +1,30 @@
 <script lang="ts">
-  let {
-    content,
-    timestamp = new Date(),
-    onDelete
-  } = $props<{
-    content: string;
-    timestamp?: Date;
-    onDelete?: () => void;
-  }>();
+  export let content: string;
+  export let id: string = '';
+  export let activeParentId: string | null = null;
+  export let position: 'parent' | 'child' | 'sibling' = 'child';
 </script>
 
-<div class="tweet-item mb-3 rounded-lg border p-4">
-  <div class="prose prose-sm max-w-none">
-    {@html content}
+<div class="relative w-full">
+  <!-- Current idea -->
+  <div
+    class="w-full rounded-lg border bg-card p-4 transition-all
+              {activeParentId === id ? 'border-primary' : ''}"
+  >
+    <div class="prose prose-sm dark:prose-invert whitespace-pre-wrap">
+      {content}
+    </div>
   </div>
-  <div class="mt-2 flex items-center justify-between text-sm text-gray-500">
-    <span>
-      {timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-    </span>
-    <button
-      class="text-red-500 hover:text-red-700"
-      onclick={() => onDelete && onDelete()}
-    >
-      Delete
-    </button>
-  </div>
+
+  <!-- Connector line (based on position) -->
+  {#if position === 'parent'}
+    <div
+      class="absolute bottom-0 left-1/2 h-8 w-0.5 -translate-x-1/2 bg-muted-foreground/30"
+    ></div>
+  {:else if position === 'child'}
+    <div
+      class="absolute left-1/2 top-0 h-8 w-0.5 -translate-x-1/2 bg-muted-foreground/30"
+    ></div>
+  {/if}
+  <!-- No connector for siblings as they're handled in the parent component -->
 </div>

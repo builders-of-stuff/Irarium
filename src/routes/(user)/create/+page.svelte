@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
 
-  import { appState } from '$lib/state/app.state.svelte';
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
   import { IrariumState } from '$lib/state/irarium.state.svelte';
@@ -41,44 +40,143 @@
 
 <UserNavbar title="Create" {actions} />
 
-<div class="container flex min-h-screen flex-col items-start justify-start py-8">
-  <div class="mx-auto w-full max-w-2xl space-y-6">
-    <!-- Text editor -->
-    <div class="rounded-lg border p-4">
-      <TextEditor bind:editor bind:content={irarium.inputContent} />
+<div class="container flex min-h-screen flex-col items-center justify-center py-8">
+  <div class="mx-auto flex w-full max-w-4xl flex-col items-center">
+    <!-- Parent chain (above) - only show unique items in the chain -->
+    <div class="mb-8 flex w-full flex-col items-center space-y-8">
+      {#if irarium.hasContent}
+        <Idea
+          content={irarium.content}
+          id={irarium.id}
+          activeParentId={irarium.activeParentIdeaId}
+          position="parent"
+        />
+      {/if}
 
-      <div class="mt-4 flex items-center justify-end gap-2">
-        <div class="relative flex w-full max-w-[200px]">
-          <Button onclick={handleAddToIrarium} variant="outline" class="flex-1 pr-10">
-            Add
-          </Button>
-          <Select.Root type="single" bind:value={irarium.activeParentIdeaId}>
-            <Select.Trigger
-              class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
-            ></Select.Trigger>
-            <Select.Content>
-              {#each irarium.optionsParentIdeaIds as option}
-                <Select.Item value={option.value}>{option.label}</Select.Item>
-              {/each}
-            </Select.Content>
-          </Select.Root>
-        </div>
-      </div>
-    </div>
+      <!-- Show parent chain without duplicating the root -->
+      {#each irarium
+        .getParentChain()
+        .filter((idea) => idea.id !== irarium.id) as parentIdea}
+        <Idea
+          content={parentIdea.content}
+          id={parentIdea.id}
+          activeParentId={irarium.activeParentIdeaId}
+          position="parent"
+        />
+      {/each}
 
-    <!-- Idea Chain Preview -->
-    <!-- {#if ideaChain.length > 0}
-      <div class="mt-8">
-        <div class="tweet-chain">
-          {#each ideaChain as idea (idea.id)}
+      <!-- Show the active idea if it exists and isn't already in the parent chain -->
+      {#if irarium.activeParentIdeaId && !irarium
+          .getParentChain()
+          .some((idea) => idea.id === irarium.activeParentIdeaId) && irarium.activeParentIdeaId !== irarium.id}
+        {#each irarium.getAllIdeas() as idea}
+          {#if idea.id === irarium.activeParentIdeaId}
             <Idea
               content={idea.content}
-              timestamp={idea.timestamp}
-              onDelete={() => removeIdea(idea.id)}
+              id={idea.id}
+              activeParentId={irarium.activeParentIdeaId}
+              position="parent"
             />
+          {/if}
+        {/each}
+      {/if}
+
+      <!-- Connector line from last parent to editor -->
+      <div class="h-8 w-0.5 bg-muted-foreground/30"></div>
+    </div>
+
+    <!-- Text editor (center/active node) -->
+    <div class="relative w-full max-w-2xl">
+      <!-- Left sibling indicator -->
+      {#if irarium.hasSiblingLeft()}
+        <div
+          class="absolute left-0 top-1/2 flex -translate-x-12 -translate-y-1/2 items-center"
+        >
+          <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
+          <div
+            class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
+          >
+            <span>←</span>
+          </div>
+        </div>
+      {/if}
+
+      <!-- Editor -->
+      <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
+        <TextEditor bind:editor bind:content={irarium.inputContent} />
+
+        <div class="mt-4 flex items-center justify-end gap-2">
+          <div class="relative ml-auto flex w-full max-w-[200px]">
+            <Button onclick={handleAddToIrarium} variant="outline" class="flex-1 pr-10">
+              Add
+            </Button>
+            <Select.Root type="single" bind:value={irarium.activeParentIdeaId}>
+              <Select.Trigger
+                class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
+              ></Select.Trigger>
+              <Select.Content>
+                {#each irarium.optionsParentIdeaIds as option}
+                  <Select.Item value={option.value}>{option.label}</Select.Item>
+                {/each}
+              </Select.Content>
+            </Select.Root>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right sibling indicator -->
+      {#if irarium.hasSiblingRight()}
+        <div
+          class="absolute right-0 top-1/2 flex -translate-y-1/2 translate-x-12 items-center"
+        >
+          <div
+            class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
+          >
+            <span>→</span>
+          </div>
+          <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
+        </div>
+      {/if}
+    </div>
+
+    <!-- Display children differently based on active parent -->
+    {#if irarium.activeParentIdeaId === irarium.id || !irarium.activeParentIdeaId}
+      <!-- For root parent, display children horizontally as siblings -->
+      <div class="mt-8 flex w-full justify-center">
+        <div class="grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-3">
+          {#each irarium.children as idea, index}
+            <div class="relative">
+              <!-- Connector from top -->
+              <div
+                class="absolute left-1/2 top-0 h-8 w-0.5 -translate-x-1/2 -translate-y-8 bg-muted-foreground/30"
+              ></div>
+
+              <Idea
+                content={idea.content}
+                id={idea.id}
+                activeParentId={irarium.activeParentIdeaId}
+                position="sibling"
+              />
+            </div>
           {/each}
         </div>
       </div>
-    {/if} -->
+    {:else}
+      <!-- For non-root parents, display children vertically -->
+      {#if irarium.getActiveChildren().length > 0}
+        <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
+
+        <div class="mt-0 w-full max-w-2xl space-y-8">
+          {#each irarium.getActiveChildren() as idea}
+            <Idea
+              content={idea.content}
+              id={idea.id}
+              activeParentId={irarium.activeParentIdeaId}
+              position="child"
+            />
+          {/each}
+        </div>
+      {/if}
+    {/if}
   </div>
 </div>
