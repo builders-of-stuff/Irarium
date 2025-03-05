@@ -32,7 +32,7 @@ export class IrariumState {
   }
 
   addToIrarium(content: string, parentIdea?: Idea) {
-    const idea = this.mapContentToIdea(content, parentIdea);
+    const idea = this.buildIdea(content, parentIdea);
 
     if (!parentIdea?.id) {
       // If no parent, add directly to root level
@@ -95,7 +95,7 @@ export class IrariumState {
     });
   }
 
-  private mapContentToIdea(content: string, parent?: Idea) {
+  private buildIdea(content: string, parent?: Idea) {
     const now = new Date().toISOString();
     const id = nanoid(5);
     const parentId = parent?.id;
@@ -245,6 +245,26 @@ export class IrariumState {
     return uniqueChain;
   }
 
+  getChildChain(ideaId = this.lastIdeaId) {
+    let id = ideaId;
+    let chain = [] as Idea[];
+
+    const buildChildChain = (idea?: Idea, chain: Idea[] = []): Idea[] => {
+      const firstChild = idea ? idea.children[0] : this.children[0];
+
+      if (!firstChild) return chain;
+
+      const updatedChain = [...chain, firstChild];
+
+      return buildChildChain(firstChild, updatedChain);
+    };
+
+    let lastIdea = this.findIdeaById(id);
+    const childChain = buildChildChain(lastIdea, chain);
+
+    return childChain;
+  }
+
   // Check if there's a sibling to the left
   hasSiblingLeft() {
     if (!this.lastIdeaId) return false;
@@ -297,74 +317,5 @@ export class IrariumState {
     }
 
     return parent.children || [];
-  }
-
-  // Get children of the active parent
-  getLastIdeaChildren() {
-    if (!this.lastIdeaId) {
-      return this.children;
-    }
-
-    // find children of a specific idea
-    const findChildrenOfIdea = (ideas, targetId) => {
-      for (const idea of ideas) {
-        if (idea.id === targetId) {
-          return idea.children || [];
-        }
-
-        if (idea.children && idea.children.length > 0) {
-          const children = findChildrenOfIdea(idea.children, targetId);
-          if (children) return children;
-        }
-      }
-
-      return null;
-    };
-
-    // Start with root if it exists
-    let startingIdeas = this.children;
-
-    if (this.hasContent) {
-      if (this.lastIdeaId === this.id) {
-        return this.children;
-      }
-    }
-
-    const children = findChildrenOfIdea(startingIdeas, this.lastIdeaId);
-
-    return children || [];
-  }
-
-  getChildChain() {
-    if (!this.lastIdeaId) {
-      return [];
-    }
-
-    // Helper function to get the first child at each level
-    const buildChildChain = (idea: Idea, chain: Idea[] = []): Idea[] => {
-      // If the idea has no children, return the current chain
-      if (!idea.children || idea.children.length === 0) {
-        return chain;
-      }
-
-      // Get the first child
-      const firstChild = idea.children[0];
-
-      // Add it to the chain
-      const updatedChain = [...chain, firstChild];
-
-      // Continue building the chain with this child's first child
-      return buildChildChain(firstChild, updatedChain);
-    };
-
-    // Get the last idea
-    const lastIdea = this.findIdeaById(this.lastIdeaId);
-
-    if (!lastIdea) {
-      return [];
-    }
-
-    // Build and return the chain starting from the last idea
-    return buildChildChain(lastIdea, []);
   }
 }

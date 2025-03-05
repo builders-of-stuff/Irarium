@@ -162,11 +162,11 @@
       </div>
     {:else}
       <!-- For non-root parents, display children vertically -->
-      {#if irarium.getLastIdeaChildren().length > 0}
+      {#if irarium.getChildChain().length > 0}
         <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
 
         <div class="mt-0 w-full max-w-2xl space-y-8">
-          {#each irarium.getLastIdeaChildren() as idea}
+          {#each irarium.getChildChain() as idea}
             <Idea
               content={idea.content}
               id={idea.id}
