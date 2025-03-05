@@ -1,7 +1,7 @@
 <script lang="ts">
   export let content: string;
   export let id: string = '';
-  export let activeParentId: string | null = null;
+  export let lastIdeaId: string | null = null;
   export let position: 'parent' | 'child' | 'sibling' = 'child';
 </script>
 
@@ -9,7 +9,7 @@
   <!-- Current idea -->
   <div
     class="w-full rounded-lg border bg-card p-4 transition-all
-              {activeParentId === id ? 'border-primary' : ''}"
+              {lastIdeaId === id ? 'border-primary' : ''}"
   >
     <div class="prose prose-sm dark:prose-invert whitespace-pre-wrap">
       {content}

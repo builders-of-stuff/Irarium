@@ -14,7 +14,7 @@
   const irarium = new IrariumState();
 
   $effect(() => {
-    console.log('irarium.children', $state.snapshot(irarium.children));
+    // console.log('irarium.children', $state.snapshot(irarium.children));
   });
 
   const handleAddToIrarium = () => {
@@ -23,7 +23,7 @@
     if (!irarium.hasContent) {
       irarium.setContent(irarium.inputContent);
     } else {
-      irarium.addToIrarium(irarium.inputContent, irarium.activeParentIdea);
+      irarium.addToIrarium(irarium.inputContent, irarium.lastIdea);
     }
 
     irarium.inputContent = '';
@@ -49,7 +49,7 @@
         <Idea
           content={irarium.content}
           id={irarium.id}
-          activeParentId={irarium.activeParentIdeaId}
+          lastIdeaId={irarium.lastIdeaId}
           position="parent"
         />
       {/if}
@@ -59,21 +59,21 @@
         <Idea
           content={parentIdea.content}
           id={parentIdea.id}
-          activeParentId={irarium.activeParentIdeaId}
+          lastIdeaId={irarium.lastIdeaId}
           position="parent"
         />
       {/each}
 
-      <!-- Show the active idea if it exists and isn't already in the parent chain -->
-      {#if irarium.activeParentIdeaId && !irarium
+      <!-- Show the last idea -->
+      {#if irarium.lastIdeaId && !irarium
           .getParentChain()
-          .some((idea) => idea.id === irarium.activeParentIdeaId) && irarium.activeParentIdeaId !== irarium.id}
+          .some((idea) => idea.id === irarium.lastIdeaId) && irarium.lastIdeaId !== irarium.id}
         {#each irarium.getAllIdeas() as idea}
-          {#if idea.id === irarium.activeParentIdeaId}
+          {#if idea.id === irarium.lastIdeaId}
             <Idea
               content={idea.content}
               id={idea.id}
-              activeParentId={irarium.activeParentIdeaId}
+              lastIdeaId={irarium.lastIdeaId}
               position="parent"
             />
           {/if}
@@ -109,7 +109,7 @@
             <Button onclick={handleAddToIrarium} variant="outline" class="flex-1 pr-10">
               Add
             </Button>
-            <Select.Root type="single" bind:value={irarium.activeParentIdeaId}>
+            <Select.Root type="single" bind:value={irarium.lastIdeaId}>
               <Select.Trigger
                 class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
               ></Select.Trigger>
@@ -139,7 +139,7 @@
     </div>
 
     <!-- Display children differently based on active parent -->
-    {#if irarium.activeParentIdeaId === irarium.id || !irarium.activeParentIdeaId}
+    {#if irarium.lastIdeaId === irarium.id || !irarium.lastIdeaId}
       <!-- For root parent, display children horizontally as siblings -->
       <div class="mt-8 flex w-full justify-center">
         <div class="grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-3">
@@ -153,7 +153,7 @@
               <Idea
                 content={idea.content}
                 id={idea.id}
-                activeParentId={irarium.activeParentIdeaId}
+                lastIdeaId={irarium.lastIdeaId}
                 position="sibling"
               />
             </div>
@@ -162,15 +162,15 @@
       </div>
     {:else}
       <!-- For non-root parents, display children vertically -->
-      {#if irarium.getActiveChildren().length > 0}
+      {#if irarium.getLastIdeaChildren().length > 0}
         <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
 
         <div class="mt-0 w-full max-w-2xl space-y-8">
-          {#each irarium.getActiveChildren() as idea}
+          {#each irarium.getLastIdeaChildren() as idea}
             <Idea
               content={idea.content}
               id={idea.id}
-              activeParentId={irarium.activeParentIdeaId}
+              lastIdeaId={irarium.lastIdeaId}
               position="child"
             />
           {/each}
