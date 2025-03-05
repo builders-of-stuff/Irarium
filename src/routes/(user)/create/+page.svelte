@@ -64,6 +64,18 @@
         />
       {/each}
 
+      <!-- Left sibling indicator -->
+      {#if irarium.hasSiblingLeft()}
+        <div class=" left-0 top-1/2 flex -translate-x-12 -translate-y-1/2 items-center">
+          <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
+          <div
+            class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
+          >
+            <span>←</span>
+          </div>
+        </div>
+      {/if}
+
       <!-- Last idea -->
       {#if irarium.lastIdeaId && !irarium
           .getParentChain()
@@ -80,26 +92,24 @@
         {/each}
       {/if}
 
+      <!-- Right sibling indicator -->
+      {#if irarium.hasSiblingRight()}
+        <div class=" right-0 top-1/2 flex -translate-y-1/2 translate-x-12 items-center">
+          <div
+            class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
+          >
+            <span>→</span>
+          </div>
+          <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
+        </div>
+      {/if}
+
       <!-- Connector line from last parent to editor -->
       <div class="h-8 w-0.5 bg-muted-foreground/30"></div>
     </div>
 
     <!-- Text editor (center/active node) -->
     <div class="relative w-full max-w-2xl">
-      <!-- Left sibling indicator -->
-      {#if irarium.hasSiblingLeft()}
-        <div
-          class="absolute left-0 top-1/2 flex -translate-x-12 -translate-y-1/2 items-center"
-        >
-          <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
-          <div
-            class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
-          >
-            <span>←</span>
-          </div>
-        </div>
-      {/if}
-
       <!-- Editor -->
       <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
         <TextEditor bind:editor bind:content={irarium.inputContent} />
@@ -122,20 +132,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Right sibling indicator -->
-      {#if irarium.hasSiblingRight()}
-        <div
-          class="absolute right-0 top-1/2 flex -translate-y-1/2 translate-x-12 items-center"
-        >
-          <div
-            class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
-          >
-            <span>→</span>
-          </div>
-          <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
-        </div>
-      {/if}
     </div>
 
     <!-- Child chain -->
