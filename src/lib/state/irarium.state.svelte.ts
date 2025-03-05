@@ -202,22 +202,23 @@ export class IrariumState {
   }
 
   // Get chain of parent ideas (excludes last idea & root)
-  getParentChain() {
-    if (!this.lastIdeaId) {
+  getParentChain(ideaId = this.lastIdeaId) {
+    if (!ideaId) {
       return [];
     }
 
-    // Drill down children from top until targetId is found, recording the path
-    const findParentChain = (ideas, targetId, currentPath = [] as Idea[]) => {
+    const buildParentChain = (
+      ideas: Idea[],
+      targetId: string,
+      currentPath: Idea[] = []
+    ) => {
       for (const idea of ideas) {
-        // Check if this idea is the target
         if (idea.id === targetId) {
           return [...currentPath, idea];
         }
 
-        // Check children if they exist
         if (idea.children && idea.children.length > 0) {
-          const parentChain = findParentChain(idea.children, targetId, [
+          const parentChain = buildParentChain(idea.children, targetId, [
             ...currentPath,
             idea
           ]);
@@ -229,17 +230,14 @@ export class IrariumState {
       return null;
     };
 
-    // Start with root if it exists
     let startingIdeas = this.children;
     let startingPath = [];
 
-    const parentChain = findParentChain(startingIdeas, this.lastIdeaId, startingPath);
+    const parentChain = buildParentChain(startingIdeas, ideaId, startingPath);
 
-    // Return all but the last item (which is the active parent itself)
-    // and ensure no duplicates
     if (!parentChain || parentChain?.length === 0) return [];
 
-    // creates a new array that includes all elements from the original parentChain except the last one
+    // Exclude last idea because it's not a "parent"
     const uniqueChain = parentChain.slice(0, -1);
 
     return uniqueChain;
