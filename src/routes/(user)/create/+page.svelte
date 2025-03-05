@@ -138,44 +138,19 @@
       {/if}
     </div>
 
-    <!-- Display children differently based on active parent -->
-    {#if irarium.lastIdeaId === irarium.id || !irarium.lastIdeaId}
-      <!-- For root parent, display children horizontally as siblings -->
-      <div class="mt-8 flex w-full justify-center">
-        <div class="grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-3">
-          {#each irarium.children as idea, index}
-            <div class="relative">
-              <!-- Connector from top -->
-              <div
-                class="absolute left-1/2 top-0 h-8 w-0.5 -translate-x-1/2 -translate-y-8 bg-muted-foreground/30"
-              ></div>
+    {#if irarium.getChildChain().length > 0}
+      <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
 
-              <Idea
-                content={idea.content}
-                id={idea.id}
-                lastIdeaId={irarium.lastIdeaId}
-                position="sibling"
-              />
-            </div>
-          {/each}
-        </div>
+      <div class="mt-0 w-full max-w-2xl space-y-8">
+        {#each irarium.getChildChain() as idea}
+          <Idea
+            content={idea.content}
+            id={idea.id}
+            lastIdeaId={irarium.lastIdeaId}
+            position="child"
+          />
+        {/each}
       </div>
-    {:else}
-      <!-- For non-root parents, display children vertically -->
-      {#if irarium.getChildChain().length > 0}
-        <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
-
-        <div class="mt-0 w-full max-w-2xl space-y-8">
-          {#each irarium.getChildChain() as idea}
-            <Idea
-              content={idea.content}
-              id={idea.id}
-              lastIdeaId={irarium.lastIdeaId}
-              position="child"
-            />
-          {/each}
-        </div>
-      {/if}
     {/if}
   </div>
 </div>
