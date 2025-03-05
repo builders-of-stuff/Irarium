@@ -44,6 +44,7 @@
   <div class="mx-auto flex w-full max-w-4xl flex-col items-center">
     <!-- Parent chain (above) - only show unique items in the chain -->
     <div class="mb-8 flex w-full flex-col items-center space-y-8">
+      <!-- Root idea -->
       {#if irarium.hasContent}
         <Idea
           content={irarium.content}
@@ -53,7 +54,7 @@
         />
       {/if}
 
-      <!-- Show parent chain without duplicating the root -->
+      <!-- Parent chain -->
       {#each irarium.getParentChain() as parentIdea}
         <Idea
           content={parentIdea.content}
