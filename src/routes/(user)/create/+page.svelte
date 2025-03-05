@@ -64,7 +64,7 @@
         />
       {/each}
 
-      <!-- Show the last idea -->
+      <!-- Last idea -->
       {#if irarium.lastIdeaId && !irarium
           .getParentChain()
           .some((idea) => idea.id === irarium.lastIdeaId) && irarium.lastIdeaId !== irarium.id}
@@ -138,6 +138,7 @@
       {/if}
     </div>
 
+    <!-- Child chain -->
     {#if irarium.getChildChain().length > 0}
       <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
 
