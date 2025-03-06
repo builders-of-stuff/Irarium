@@ -46,12 +46,7 @@
     <div class="mb-8 flex w-full flex-col items-center space-y-8">
       <!-- Root idea -->
       {#if irarium.hasContent}
-        <Idea
-          content={irarium.content}
-          id={irarium.id}
-          activeIdeaId={irarium.activeIdeaId}
-          position="parent"
-        />
+        <Idea content={irarium.content} id={irarium.id} position="parent" {irarium} />
       {/if}
 
       <!-- Parent chain -->
@@ -59,22 +54,10 @@
         <Idea
           content={parentIdea.content}
           id={parentIdea.id}
-          activeIdeaId={irarium.activeIdeaId}
           position="parent"
+          {irarium}
         />
       {/each}
-
-      <!-- Left sibling indicator -->
-      {#if irarium.hasSiblingLeft()}
-        <div class=" left-0 top-1/2 flex -translate-x-12 -translate-y-1/2 items-center">
-          <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
-          <div
-            class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
-          >
-            <span>←</span>
-          </div>
-        </div>
-      {/if}
 
       <!-- Last idea -->
       {#if irarium.activeIdeaId && !irarium
@@ -82,26 +65,9 @@
           .some((idea) => idea.id === irarium.activeIdeaId) && irarium.activeIdeaId !== irarium.id}
         {#each irarium.getAllIdeas() as idea}
           {#if idea.id === irarium.activeIdeaId}
-            <Idea
-              content={idea.content}
-              id={idea.id}
-              activeIdeaId={irarium.activeIdeaId}
-              position="parent"
-            />
+            <Idea content={idea.content} id={idea.id} position="parent" {irarium} />
           {/if}
         {/each}
-      {/if}
-
-      <!-- Right sibling indicator -->
-      {#if irarium.hasSiblingRight()}
-        <div class=" right-0 top-1/2 flex -translate-y-1/2 translate-x-12 items-center">
-          <div
-            class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
-          >
-            <span>→</span>
-          </div>
-          <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
-        </div>
       {/if}
 
       <!-- Connector line from last parent to editor -->
@@ -141,12 +107,7 @@
 
       <div class="mt-0 w-full max-w-2xl space-y-8">
         {#each irarium.getChildChain() as idea}
-          <Idea
-            content={idea.content}
-            id={idea.id}
-            activeIdeaId={irarium.activeIdeaId}
-            position="child"
-          />
+          <Idea content={idea.content} id={idea.id} position="child" {irarium} />
         {/each}
       </div>
     {/if}
