@@ -3,7 +3,7 @@
 
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
-  import { IrariumState } from '$lib/state/irarium.state.svelte';
+  import { IrariumStore } from '$lib/stores/irarium.store.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
 
   import UserNavbar from '../user-navbar.svelte';
@@ -11,7 +11,7 @@
 
   let editor = $state<Editor>();
 
-  const irarium = new IrariumState();
+  const irarium = new IrariumStore();
 
   $effect(() => {
     // console.log('irarium.children', $state.snapshot(irarium.children));

@@ -6,7 +6,7 @@
   import IrariumLogo from '$lib/assets/irarium.png';
   import { ROUTE } from '$lib/shared/shared.constant';
 
-  import { appState } from '$lib/state/app.state.svelte';
+  import { appStore } from '$lib/stores/app.store.svelte';
 
   let email = $state('');
   let password = $state('');
@@ -20,7 +20,7 @@
     }
 
     try {
-      const result = await appState.signUp(email, password, confirmPassword);
+      const result = await appStore.signUp(email, password, confirmPassword);
 
       if (result.success) {
         error = '';

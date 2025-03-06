@@ -17,7 +17,7 @@
   import * as Popover from '$lib/components/ui/popover';
   import { Button } from '$lib/components/ui/button';
 
-  import { appState } from '$lib/state/app.state.svelte';
+  import { appStore } from '$lib/stores/app.store.svelte';
   import { ROUTE } from '$lib/shared/shared.constant';
 
   const menuItems = $derived([
@@ -33,7 +33,7 @@
 
   // Handle logout function
   function handleLogout() {
-    appState.signOut();
+    appStore.signOut();
     goto(ROUTE.LANDING);
   }
 </script>

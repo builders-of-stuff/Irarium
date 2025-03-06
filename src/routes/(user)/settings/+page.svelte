@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { appState } from '$lib/state/app.state.svelte';
+  import { appStore } from '$lib/stores/app.store.svelte';
 </script>
 
 <div class="container flex min-h-screen items-start justify-center pt-[10vh]">
