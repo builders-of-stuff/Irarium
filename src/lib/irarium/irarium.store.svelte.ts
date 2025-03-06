@@ -271,29 +271,29 @@ export class IrariumStore {
     return childChain;
   }
 
-  hasSiblingLeft() {
-    if (!this.lastIdeaId) return false;
+  hasSiblingLeft(ideaId = this.lastIdeaId) {
+    if (!ideaId) return false;
 
-    const siblings = this.getSiblings();
+    const siblings = this.getSiblings(ideaId);
     if (siblings.length <= 1) return false;
 
-    const currentIndex = siblings.findIndex((idea) => idea.id === this.lastIdeaId);
+    const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
     return currentIndex > 0;
   }
 
-  hasSiblingRight() {
-    if (!this.lastIdeaId) return false;
+  hasSiblingRight(ideaId = this.lastIdeaId) {
+    if (!ideaId) return false;
 
-    const siblings = this.getSiblings();
+    const siblings = this.getSiblings(ideaId);
     if (siblings.length <= 1) return false;
 
-    const currentIndex = siblings.findIndex((idea) => idea.id === this.lastIdeaId);
+    const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
     return currentIndex < siblings.length - 1;
   }
 
-  // Get all siblings of last idea
-  getSiblings() {
-    if (!this.lastIdeaId) return [];
+  // Get all siblings of an idea
+  getSiblings(ideaId = this.lastIdeaId) {
+    if (!ideaId) return [];
 
     // Helper function to find parent of an idea
     const findParent = (ideas, targetId, parent = null) => {
@@ -303,8 +303,8 @@ export class IrariumStore {
         }
 
         if (idea.children && idea.children.length > 0) {
-          const parent = findParent(idea.children, targetId, idea);
-          if (parent) return parent;
+          const foundParent = findParent(idea.children, targetId, idea);
+          if (foundParent) return foundParent;
         }
       }
 
@@ -314,7 +314,7 @@ export class IrariumStore {
     // Start with root if it exists
     let startingIdeas = this.children;
 
-    const parent = findParent(startingIdeas, this.lastIdeaId);
+    const parent = findParent(startingIdeas, ideaId);
 
     if (!parent) {
       return startingIdeas; // If no parent, must be at root level
