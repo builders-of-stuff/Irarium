@@ -271,7 +271,6 @@ export class IrariumState {
     return childChain;
   }
 
-  // Check if there's a sibling to the left
   hasSiblingLeft() {
     if (!this.lastIdeaId) return false;
 
@@ -282,7 +281,6 @@ export class IrariumState {
     return currentIndex > 0;
   }
 
-  // Check if there's a sibling to the right
   hasSiblingRight() {
     if (!this.lastIdeaId) return false;
 

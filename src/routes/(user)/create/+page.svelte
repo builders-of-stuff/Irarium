@@ -124,6 +124,7 @@
                 class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
               ></Select.Trigger>
               <Select.Content>
+                <div class="px-2 py-1.5 text-xs text-muted-foreground">Add to</div>
                 {#each irarium.allIdeasAsOptions as option}
                   <Select.Item value={option.value}>{option.label}</Select.Item>
                 {/each}
