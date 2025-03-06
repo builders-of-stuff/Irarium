@@ -81,14 +81,11 @@ export class IrariumStore {
   }
 
   updateIdeaById(id: string, updatedIdea: Idea, ideas: Idea[] = this.children): Idea[] {
-    // Map through the current level of ideas
     return ideas.map((idea) => {
-      // If this is the idea we're looking for, replace it with the updated idea
       if (idea.id === id) {
         return updatedIdea;
       }
 
-      // If this idea has children, recursively search and update them
       if (idea.children.length > 0) {
         return {
           ...idea,
@@ -96,16 +93,14 @@ export class IrariumStore {
         };
       }
 
-      // Otherwise return the idea unchanged
       return idea;
     });
   }
 
-  // Get all ideas (flat array)
+  // Get all ideas in flat array (exclude root)
   getAllIdeas() {
     let allIdeas = [] as any[];
 
-    // Helper function to recursively collect ideas
     const collectIdeas = (ideas) => {
       for (const idea of ideas) {
         allIdeas = [...allIdeas, idea];
@@ -115,19 +110,6 @@ export class IrariumStore {
       }
     };
 
-    // Add root content, if exists
-    if (this.hasContent) {
-      allIdeas = [
-        ...allIdeas,
-        {
-          id: this.id,
-          content: this.content,
-          children: this.children
-        } as Idea
-      ];
-    }
-
-    // Add child ideas
     collectIdeas(this.children);
 
     return allIdeas;
@@ -268,7 +250,7 @@ export class IrariumStore {
     const now = new Date().toISOString();
     const id = nanoid(5);
     const parentId = activeIdea?.id;
-    const depth = activeIdea?.id ? activeIdea.depth + 1 : 1;
+    const depth = activeIdea?.id ? activeIdea.depth + 1 : 0;
 
     return {
       id,
@@ -296,10 +278,11 @@ export class IrariumStore {
   }
 
   // e.g. 1-1, 1-2, 2-1, 3-1, 3-2
+  // 1st number is depth, 2nd number is index among siblings
   private findIdeaPosition(idea: Idea): string {
-    const depth = idea.depth || 1;
+    const depth = idea.depth || 0;
 
-    let position = 1;
+    let index = 0;
 
     if (idea.parentId) {
       const parentIdea = this.findIdeaById(idea.parentId);
@@ -309,15 +292,15 @@ export class IrariumStore {
         const siblingIndex = parentIdea.children.findIndex(
           (child) => child.id === idea.id
         );
-        position = siblingIndex >= 0 ? siblingIndex + 1 : 1;
+        index = siblingIndex >= 0 ? siblingIndex : 0;
       }
     } else {
       // This is a root-level idea
       const rootIndex = this.children.findIndex((child) => child.id === idea.id);
-      position = rootIndex >= 0 ? rootIndex + 1 : 1;
+      index = rootIndex >= 0 ? rootIndex : 0;
     }
 
-    return `${depth}-${position}`;
+    return `${depth}-${index}`;
   }
 
   private truncateContent(content: string, maxLength: number): string {
