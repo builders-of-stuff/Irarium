@@ -95,68 +95,6 @@ export class IrariumStore {
     });
   }
 
-  private buildIdea(content: string, parent?: Idea) {
-    const now = new Date().toISOString();
-    const id = nanoid(5);
-    const parentId = parent?.id;
-    const depth = parent?.id ? parent.depth + 1 : 1;
-
-    return {
-      id,
-      parentId: parentId || this.id,
-      content,
-      children: [],
-      depth,
-      created: now,
-      updated: now
-    };
-  }
-
-  private allIdeasToOptions() {
-    const collectAllIdeas = (ideas: Idea[]): { label: string; value: string }[] => {
-      return ideas.flatMap((idea) => {
-        const position = this.findIdeaPosition(idea);
-
-        const label = `${position} ${this.truncateContent(idea?.content, 8)}`;
-
-        return [{ label, value: idea.id }, ...collectAllIdeas(idea.children)];
-      });
-    };
-
-    return [{ label: 'Root', value: '' }, ...collectAllIdeas(this.children)];
-  }
-
-  private findIdeaPosition(idea: Idea): string {
-    const depth = idea.depth || 1;
-
-    // Find the position among siblings under the same parent
-    let position = 1; // Default to 1
-
-    if (idea.parentId) {
-      // Find the parent
-      const parentIdea = this.findIdeaById(idea.parentId);
-
-      if (parentIdea && parentIdea.children) {
-        // Find position among siblings (children of the same parent)
-        const siblingIndex = parentIdea.children.findIndex(
-          (child) => child.id === idea.id
-        );
-        position = siblingIndex >= 0 ? siblingIndex + 1 : 1;
-      }
-    } else {
-      // This is a root-level idea
-      const rootIndex = this.children.findIndex((child) => child.id === idea.id);
-      position = rootIndex >= 0 ? rootIndex + 1 : 1;
-    }
-
-    return `${depth}-${position}`;
-  }
-
-  private truncateContent(content: string, maxLength: number): string {
-    if (content.length <= maxLength) return content;
-    return content.substring(0, maxLength) + '...';
-  }
-
   // Get all ideas (flat array)
   getAllIdeas() {
     let allIdeas = [] as any[];
@@ -291,11 +229,9 @@ export class IrariumStore {
     return currentIndex < siblings.length - 1;
   }
 
-  // Get all siblings of an idea
   getSiblings(ideaId = this.lastIdeaId) {
     if (!ideaId) return [];
 
-    // Helper function to find parent of an idea
     const findParent = (ideas, targetId, parent = null) => {
       for (const idea of ideas) {
         if (idea.id === targetId) {
@@ -303,23 +239,83 @@ export class IrariumStore {
         }
 
         if (idea.children && idea.children.length > 0) {
-          const foundParent = findParent(idea.children, targetId, idea);
-          if (foundParent) return foundParent;
+          const parent = findParent(idea.children, targetId, idea);
+          if (parent) return parent;
         }
       }
 
       return null;
     };
 
-    // Start with root if it exists
     let startingIdeas = this.children;
 
     const parent = findParent(startingIdeas, ideaId);
 
     if (!parent) {
-      return startingIdeas; // If no parent, must be at root level
+      return startingIdeas;
     }
 
     return parent.children || [];
+  }
+
+  private buildIdea(content: string, parent?: Idea) {
+    const now = new Date().toISOString();
+    const id = nanoid(5);
+    const parentId = parent?.id;
+    const depth = parent?.id ? parent.depth + 1 : 1;
+
+    return {
+      id,
+      parentId: parentId || this.id,
+      content,
+      children: [],
+      depth,
+      created: now,
+      updated: now
+    };
+  }
+
+  private allIdeasToOptions() {
+    const collectAllIdeas = (ideas: Idea[]): { label: string; value: string }[] => {
+      return ideas.flatMap((idea) => {
+        const position = this.findIdeaPosition(idea);
+
+        const label = `${position} ${this.truncateContent(idea?.content, 8)}`;
+
+        return [{ label, value: idea.id }, ...collectAllIdeas(idea.children)];
+      });
+    };
+
+    return [{ label: 'Root', value: '' }, ...collectAllIdeas(this.children)];
+  }
+
+  // e.g. 1-1, 1-2, 2-1, 3-1, 3-2
+  private findIdeaPosition(idea: Idea): string {
+    const depth = idea.depth || 1;
+
+    let position = 1;
+
+    if (idea.parentId) {
+      const parentIdea = this.findIdeaById(idea.parentId);
+
+      if (parentIdea && parentIdea.children) {
+        // Find position among siblings (children of the same parent)
+        const siblingIndex = parentIdea.children.findIndex(
+          (child) => child.id === idea.id
+        );
+        position = siblingIndex >= 0 ? siblingIndex + 1 : 1;
+      }
+    } else {
+      // This is a root-level idea
+      const rootIndex = this.children.findIndex((child) => child.id === idea.id);
+      position = rootIndex >= 0 ? rootIndex + 1 : 1;
+    }
+
+    return `${depth}-${position}`;
+  }
+
+  private truncateContent(content: string, maxLength: number): string {
+    if (content.length <= maxLength) return content;
+    return content.substring(0, maxLength) + '...';
   }
 }
