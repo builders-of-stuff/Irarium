@@ -12,6 +12,24 @@
     position: 'parent' | 'child' | 'sibling';
     irarium: IrariumStore;
   } = $props();
+
+  const handleSiblingLeftClick = () => {
+    const leftSibling = irarium.getSiblingLeft(id);
+    if (leftSibling) {
+      irarium.setActiveIdeaId(leftSibling.id);
+    }
+  };
+
+  const handleSiblingRightClick = () => {
+    const rightSibling = irarium.getSiblingRight(id);
+    if (rightSibling) {
+      irarium.setActiveIdeaId(rightSibling.id);
+    }
+  };
+
+  const handleIdeaClick = () => {
+    irarium.setActiveIdeaId(id);
+  };
 </script>
 
 <div class="relative w-full">
@@ -19,6 +37,7 @@
   {#if irarium.hasSiblingLeft(id)}
     <div
       class="absolute left-0 top-1/2 flex -translate-x-full -translate-y-1/2 items-center"
+      onclick={handleSiblingLeftClick}
     >
       <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
       <div
@@ -33,6 +52,7 @@
   <div
     class="w-full rounded-lg border bg-card p-4 transition-all
               {irarium.activeIdeaId === id ? 'border-primary' : ''}"
+    onclick={handleIdeaClick}
   >
     <div class="prose prose-sm dark:prose-invert whitespace-pre-wrap">
       {content}
@@ -43,6 +63,7 @@
   {#if irarium.hasSiblingRight(id)}
     <div
       class="absolute right-0 top-1/2 flex -translate-y-1/2 translate-x-full items-center"
+      onclick={handleSiblingRightClick}
     >
       <div
         class="flex h-6 w-6 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"

@@ -227,8 +227,8 @@ export class IrariumStore {
         }
 
         if (idea.children && idea.children.length > 0) {
-          const parent = findParent(idea.children, targetId, idea);
-          if (parent) return parent;
+          const foundParent = findParent(idea.children, targetId, idea);
+          if (foundParent) return foundParent;
         }
       }
 
@@ -244,6 +244,33 @@ export class IrariumStore {
     }
 
     return parent.children || [];
+  }
+
+  // Add these new methods for sibling navigation
+  getSiblingLeft(ideaId = this.activeIdeaId) {
+    if (!ideaId) return null;
+
+    const siblings = this.getSiblings(ideaId);
+    const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
+
+    if (currentIndex > 0) {
+      return siblings[currentIndex - 1];
+    }
+
+    return null;
+  }
+
+  getSiblingRight(ideaId = this.activeIdeaId) {
+    if (!ideaId) return null;
+
+    const siblings = this.getSiblings(ideaId);
+    const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
+
+    if (currentIndex < siblings.length - 1) {
+      return siblings[currentIndex + 1];
+    }
+
+    return null;
   }
 
   private buildNewIdea(content: string, activeIdea?: Idea) {
