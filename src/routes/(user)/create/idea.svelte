@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { IrariumStore } from '$lib/irarium/irarium.store.svelte';
+  import { Button } from '$lib/components/ui/button';
 
   let {
     content,
@@ -37,39 +38,47 @@
   {#if irarium.hasSiblingLeft(id)}
     <div
       class="absolute left-0 top-1/2 flex -translate-x-full -translate-y-1/2 items-center"
-      onclick={handleSiblingLeftClick}
     >
       <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
-      <div
-        class="flex h-6 w-6 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
+      <Button
+        variant="outline"
+        size="icon"
+        class="h-6 w-6 rounded-full border border-muted-foreground/30 p-0 text-muted-foreground"
+        aria-label="Navigate to left sibling"
+        onclick={handleSiblingLeftClick}
       >
         <span>←</span>
-      </div>
+      </Button>
     </div>
   {/if}
 
   <!-- Current idea -->
-  <div
-    class="w-full rounded-lg border bg-card p-4 transition-all
-              {irarium.activeIdeaId === id ? 'border-primary' : ''}"
+  <Button
+    variant="ghost"
+    class="h-auto w-full justify-start rounded-lg border bg-card p-4 transition-all
+          {irarium.activeIdeaId === id ? 'border-primary' : ''}"
     onclick={handleIdeaClick}
+    aria-current={irarium.activeIdeaId === id ? 'true' : 'false'}
   >
     <div class="prose prose-sm dark:prose-invert whitespace-pre-wrap">
       {content}
     </div>
-  </div>
+  </Button>
 
   <!-- Right sibling indicator -->
   {#if irarium.hasSiblingRight(id)}
     <div
       class="absolute right-0 top-1/2 flex -translate-y-1/2 translate-x-full items-center"
-      onclick={handleSiblingRightClick}
     >
-      <div
-        class="flex h-6 w-6 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
+      <Button
+        variant="outline"
+        size="icon"
+        class="h-6 w-6 rounded-full border border-muted-foreground/30 p-0 text-muted-foreground"
+        aria-label="Navigate to right sibling"
+        onclick={handleSiblingRightClick}
       >
         <span>→</span>
-      </div>
+      </Button>
       <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
     </div>
   {/if}
@@ -78,10 +87,12 @@
   {#if position === 'parent'}
     <div
       class="absolute bottom-0 left-1/2 h-6 w-0.5 -translate-x-1/2 translate-y-full bg-muted-foreground/30"
+      aria-hidden="true"
     ></div>
   {:else if position === 'child'}
     <div
       class="absolute left-1/2 top-0 h-6 w-0.5 -translate-x-1/2 -translate-y-full bg-muted-foreground/30"
+      aria-hidden="true"
     ></div>
   {/if}
   <!-- No connector for siblings as they're handled in the parent component -->
