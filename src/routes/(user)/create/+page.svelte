@@ -17,13 +17,13 @@
     // console.log('irarium.children', $state.snapshot(irarium.children));
   });
 
-  const handleAddToIrarium = () => {
+  const handleAddIdea = () => {
     if (!editor) return;
 
     if (!irarium.hasContent) {
       irarium.setContent(irarium.inputContent);
     } else {
-      irarium.addToIrarium(irarium.inputContent, irarium.lastIdea);
+      irarium.addIdea(irarium.inputContent, irarium.activeIdea);
     }
 
     irarium.inputContent = '';
@@ -49,7 +49,7 @@
         <Idea
           content={irarium.content}
           id={irarium.id}
-          lastIdeaId={irarium.lastIdeaId}
+          lastIdeaId={irarium.activeIdeaId}
           position="parent"
         />
       {/if}
@@ -59,7 +59,7 @@
         <Idea
           content={parentIdea.content}
           id={parentIdea.id}
-          lastIdeaId={irarium.lastIdeaId}
+          lastIdeaId={irarium.activeIdeaId}
           position="parent"
         />
       {/each}
@@ -77,15 +77,15 @@
       {/if}
 
       <!-- Last idea -->
-      {#if irarium.lastIdeaId && !irarium
+      {#if irarium.activeIdeaId && !irarium
           .getParentChain()
-          .some((idea) => idea.id === irarium.lastIdeaId) && irarium.lastIdeaId !== irarium.id}
+          .some((idea) => idea.id === irarium.activeIdeaId) && irarium.activeIdeaId !== irarium.id}
         {#each irarium.getAllIdeas() as idea}
-          {#if idea.id === irarium.lastIdeaId}
+          {#if idea.id === irarium.activeIdeaId}
             <Idea
               content={idea.content}
               id={idea.id}
-              lastIdeaId={irarium.lastIdeaId}
+              lastIdeaId={irarium.activeIdeaId}
               position="parent"
             />
           {/if}
@@ -116,10 +116,10 @@
 
         <div class="mt-4 flex items-center justify-end gap-2">
           <div class="relative ml-auto flex w-full max-w-[200px]">
-            <Button onclick={handleAddToIrarium} variant="outline" class="flex-1 pr-10">
+            <Button onclick={handleAddIdea} variant="outline" class="flex-1 pr-10">
               Add
             </Button>
-            <Select.Root type="single" bind:value={irarium.lastIdeaId}>
+            <Select.Root type="single" bind:value={irarium.activeIdeaId}>
               <Select.Trigger
                 class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
               ></Select.Trigger>
@@ -144,7 +144,7 @@
           <Idea
             content={idea.content}
             id={idea.id}
-            lastIdeaId={irarium.lastIdeaId}
+            lastIdeaId={irarium.activeIdeaId}
             position="child"
           />
         {/each}

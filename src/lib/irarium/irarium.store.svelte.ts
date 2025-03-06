@@ -20,8 +20,10 @@ export class IrariumStore {
 
   inputContent = $state('');
   // idea to push new idea to
-  lastIdeaId = $state('');
-  lastIdea = $derived(this.lastIdeaId ? this.findIdeaById(this.lastIdeaId) : undefined);
+  activeIdeaId = $state('');
+  activeIdea = $derived(
+    this.activeIdeaId ? this.findIdeaById(this.activeIdeaId) : undefined
+  );
 
   allIdeasAsOptions = $derived(this.allIdeasToOptions());
 
@@ -31,15 +33,19 @@ export class IrariumStore {
     this.content = content;
   }
 
-  addToIrarium(content: string, parentIdea?: Idea) {
-    const idea = this.buildIdea(content, parentIdea);
+  setActiveIdeaId(ideaId: string) {
+    this.activeIdeaId = ideaId;
+  }
 
-    if (!parentIdea?.id) {
+  addIdea(content: string, activeIdea?: Idea) {
+    const idea = this.buildNewIdea(content, activeIdea);
+
+    if (!activeIdea?.id) {
       // If no parent, add directly to root level
       this.children = [...this.children, idea];
     } else {
       // If there's a parent, find and update that parent in the tree
-      const parentId = parentIdea.id;
+      const parentId = activeIdea.id;
       const parent = this.findIdeaById(parentId);
 
       if (parent) {
@@ -54,7 +60,7 @@ export class IrariumStore {
       }
     }
 
-    this.lastIdeaId = idea.id;
+    this.setActiveIdeaId(idea.id);
 
     return idea;
   }
@@ -139,7 +145,7 @@ export class IrariumStore {
   }
 
   // Get chain of parent ideas (excludes last idea & root)
-  getParentChain(ideaId = this.lastIdeaId) {
+  getParentChain(ideaId = this.activeIdeaId) {
     if (!ideaId) {
       return [];
     }
@@ -180,7 +186,7 @@ export class IrariumStore {
     return uniqueChain;
   }
 
-  getChildChain(ideaId = this.lastIdeaId, index = 0) {
+  getChildChain(ideaId = this.activeIdeaId, index = 0) {
     let id = ideaId;
     let chain = [] as Idea[];
     let preferredIndex = index;
@@ -209,7 +215,7 @@ export class IrariumStore {
     return childChain;
   }
 
-  hasSiblingLeft(ideaId = this.lastIdeaId) {
+  hasSiblingLeft(ideaId = this.activeIdeaId) {
     if (!ideaId) return false;
 
     const siblings = this.getSiblings(ideaId);
@@ -219,7 +225,7 @@ export class IrariumStore {
     return currentIndex > 0;
   }
 
-  hasSiblingRight(ideaId = this.lastIdeaId) {
+  hasSiblingRight(ideaId = this.activeIdeaId) {
     if (!ideaId) return false;
 
     const siblings = this.getSiblings(ideaId);
@@ -229,7 +235,7 @@ export class IrariumStore {
     return currentIndex < siblings.length - 1;
   }
 
-  getSiblings(ideaId = this.lastIdeaId) {
+  getSiblings(ideaId = this.activeIdeaId) {
     if (!ideaId) return [];
 
     const findParent = (ideas, targetId, parent = null) => {
@@ -258,11 +264,11 @@ export class IrariumStore {
     return parent.children || [];
   }
 
-  private buildIdea(content: string, parent?: Idea) {
+  private buildNewIdea(content: string, activeIdea?: Idea) {
     const now = new Date().toISOString();
     const id = nanoid(5);
-    const parentId = parent?.id;
-    const depth = parent?.id ? parent.depth + 1 : 1;
+    const parentId = activeIdea?.id;
+    const depth = activeIdea?.id ? activeIdea.depth + 1 : 1;
 
     return {
       id,
