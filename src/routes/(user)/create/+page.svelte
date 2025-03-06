@@ -71,7 +71,6 @@
       {/if}
 
       <!-- Connector line from last parent to editor -->
-      <div class="h-8 w-0.5 bg-muted-foreground/30"></div>
     </div>
 
     <!-- Text editor (center/active node) -->

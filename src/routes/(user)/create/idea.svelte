@@ -17,10 +17,12 @@
 <div class="relative w-full">
   <!-- Left sibling indicator -->
   {#if irarium.hasSiblingLeft(id)}
-    <div class=" left-0 top-1/2 flex -translate-x-12 -translate-y-1/2 items-center">
-      <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
+    <div
+      class="absolute left-0 top-1/2 flex -translate-x-full -translate-y-1/2 items-center"
+    >
+      <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
       <div
-        class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
+        class="flex h-6 w-6 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
       >
         <span>←</span>
       </div>
@@ -39,24 +41,26 @@
 
   <!-- Right sibling indicator -->
   {#if irarium.hasSiblingRight(id)}
-    <div class=" right-0 top-1/2 flex -translate-y-1/2 translate-x-12 items-center">
+    <div
+      class="absolute right-0 top-1/2 flex -translate-y-1/2 translate-x-full items-center"
+    >
       <div
-        class="flex h-8 w-8 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
+        class="flex h-6 w-6 items-center justify-center rounded-full border border-muted-foreground/30 text-muted-foreground"
       >
         <span>→</span>
       </div>
-      <div class="h-0.5 w-8 bg-muted-foreground/30"></div>
+      <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
     </div>
   {/if}
 
   <!-- Connector line (based on position) -->
   {#if position === 'parent'}
     <div
-      class="absolute bottom-0 left-1/2 h-8 w-0.5 -translate-x-1/2 bg-muted-foreground/30"
+      class="absolute bottom-0 left-1/2 h-6 w-0.5 -translate-x-1/2 translate-y-full bg-muted-foreground/30"
     ></div>
   {:else if position === 'child'}
     <div
-      class="absolute left-1/2 top-0 h-8 w-0.5 -translate-x-1/2 bg-muted-foreground/30"
+      class="absolute left-1/2 top-0 h-6 w-0.5 -translate-x-1/2 -translate-y-full bg-muted-foreground/30"
     ></div>
   {/if}
   <!-- No connector for siblings as they're handled in the parent component -->
