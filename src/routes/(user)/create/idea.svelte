@@ -1,15 +1,22 @@
 <script lang="ts">
-  export let content: string;
-  export let id: string = '';
-  export let lastIdeaId: string | null = null;
-  export let position: 'parent' | 'child' | 'sibling' = 'child';
+  let {
+    content,
+    id,
+    activeIdeaId,
+    position
+  }: {
+    content: string;
+    id: string;
+    activeIdeaId: string | null;
+    position: 'parent' | 'child' | 'sibling';
+  } = $props();
 </script>
 
 <div class="relative w-full">
   <!-- Current idea -->
   <div
     class="w-full rounded-lg border bg-card p-4 transition-all
-              {lastIdeaId === id ? 'border-primary' : ''}"
+              {activeIdeaId === id ? 'border-primary' : ''}"
   >
     <div class="prose prose-sm dark:prose-invert whitespace-pre-wrap">
       {content}

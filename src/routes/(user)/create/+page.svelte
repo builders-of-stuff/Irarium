@@ -49,7 +49,7 @@
         <Idea
           content={irarium.content}
           id={irarium.id}
-          lastIdeaId={irarium.activeIdeaId}
+          activeIdeaId={irarium.activeIdeaId}
           position="parent"
         />
       {/if}
@@ -59,7 +59,7 @@
         <Idea
           content={parentIdea.content}
           id={parentIdea.id}
-          lastIdeaId={irarium.activeIdeaId}
+          activeIdeaId={irarium.activeIdeaId}
           position="parent"
         />
       {/each}
@@ -85,7 +85,7 @@
             <Idea
               content={idea.content}
               id={idea.id}
-              lastIdeaId={irarium.activeIdeaId}
+              activeIdeaId={irarium.activeIdeaId}
               position="parent"
             />
           {/if}
@@ -144,7 +144,7 @@
           <Idea
             content={idea.content}
             id={idea.id}
-            lastIdeaId={irarium.activeIdeaId}
+            activeIdeaId={irarium.activeIdeaId}
             position="child"
           />
         {/each}
