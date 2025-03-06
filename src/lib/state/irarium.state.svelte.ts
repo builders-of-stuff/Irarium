@@ -23,7 +23,7 @@ export class IrariumState {
   lastIdeaId = $state('');
   lastIdea = $derived(this.lastIdeaId ? this.findIdeaById(this.lastIdeaId) : undefined);
 
-  optionsParentIdeaIds = $derived(this.buildOptionsParentIdeaIds());
+  allIdeasAsOptions = $derived(this.allIdeasToOptions());
 
   constructor() {}
 
@@ -112,8 +112,7 @@ export class IrariumState {
     };
   }
 
-  private buildOptionsParentIdeaIds() {
-    // Helper function to recursively collect all ideas
+  private allIdeasToOptions() {
     const collectAllIdeas = (ideas: Idea[]): { label: string; value: string }[] => {
       return ideas.flatMap((idea) => {
         const position = this.findIdeaPosition(idea);
@@ -243,22 +242,31 @@ export class IrariumState {
     return uniqueChain;
   }
 
-  getChildChain(ideaId = this.lastIdeaId) {
+  getChildChain(ideaId = this.lastIdeaId, index = 0) {
     let id = ideaId;
     let chain = [] as Idea[];
+    let preferredIndex = index;
 
-    const buildChildChain = (idea?: Idea, chain: Idea[] = []): Idea[] => {
-      const firstChild = idea ? idea.children[0] : this.children[0];
+    const buildChildChain = (
+      idea?: Idea,
+      chain: Idea[] = [],
+      isFirstIteration = false
+    ): Idea[] => {
+      // Use preferredIndex only for the first iteration, then default to 0
+      const childIndex = isFirstIteration ? preferredIndex : 0;
 
-      if (!firstChild) return chain;
+      const children = idea ? idea.children : this.children;
+      const targetChild = children[childIndex] || children[0];
 
-      const updatedChain = [...chain, firstChild];
+      if (!targetChild) return chain;
 
-      return buildChildChain(firstChild, updatedChain);
+      const updatedChain = [...chain, targetChild];
+
+      return buildChildChain(targetChild, updatedChain);
     };
 
     let lastIdea = this.findIdeaById(id);
-    const childChain = buildChildChain(lastIdea, chain);
+    const childChain = buildChildChain(lastIdea, chain, true);
 
     return childChain;
   }

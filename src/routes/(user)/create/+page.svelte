@@ -124,7 +124,7 @@
                 class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
               ></Select.Trigger>
               <Select.Content>
-                {#each irarium.optionsParentIdeaIds as option}
+                {#each irarium.allIdeasAsOptions as option}
                   <Select.Item value={option.value}>{option.label}</Select.Item>
                 {/each}
               </Select.Content>
