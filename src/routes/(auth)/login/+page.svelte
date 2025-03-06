@@ -5,7 +5,7 @@
   import { Input } from '$lib/components/ui/input';
   import IrariumLogo from '$lib/assets/irarium.png';
   import { ROUTE } from '$lib/shared/shared.constant';
-  import { appStore } from '$lib/stores/app.store.svelte';
+  import { authStore } from '$lib/auth/auth.store.svelte';
 
   let email = $state('');
   let password = $state('');
@@ -13,7 +13,7 @@
 
   async function handleLogin() {
     try {
-      const result = await appStore.login(email, password);
+      const result = await authStore.login(email, password);
 
       if (result.success) {
         error = '';

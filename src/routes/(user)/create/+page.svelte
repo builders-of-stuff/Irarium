@@ -3,7 +3,7 @@
 
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
-  import { IrariumStore } from '$lib/stores/irarium.store.svelte';
+  import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
 
   import UserNavbar from '../user-navbar.svelte';

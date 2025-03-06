@@ -2,7 +2,7 @@ import { pb } from '$lib/db/client';
 import { COLLECTION } from '$lib/shared/shared.type';
 import type { User } from '$lib/shared/shared.type';
 
-class AppStore {
+class AuthStore {
   /**
    * Auth.
    */
@@ -117,4 +117,4 @@ class AppStore {
   }
 }
 
-export const appStore = new AppStore();
+export const authStore = new AuthStore();

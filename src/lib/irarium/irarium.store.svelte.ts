@@ -2,12 +2,12 @@ import { nanoid } from 'nanoid';
 
 import type { Idea } from '$lib/shared/shared.type';
 
-import { appStore } from './app.store.svelte';
+import { authStore } from '../auth/auth.store.svelte';
 
 // For current active irarium
 export class IrariumStore {
   id = $state('');
-  userId = $derived(appStore.userId);
+  userId = $derived(authStore.userId);
   created = $state('');
   updated = $state('');
 
