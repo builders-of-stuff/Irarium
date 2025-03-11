@@ -3,18 +3,33 @@
   import { Editor } from '@tiptap/core';
   import StarterKit from '@tiptap/starter-kit';
 
-  let { editor = $bindable(), content = $bindable() } = $props();
+  let {
+    editor = $bindable(),
+    content = $bindable(),
+    editable = $bindable()
+  } = $props();
+  let editorElement: HTMLElement = $state() as any;
+  let previousContent = $state(content);
 
   onMount(() => {
     editor = new Editor({
-      element: document.querySelector('.tiptap-editor') as any,
+      element: editorElement,
       extensions: [StarterKit],
       content,
+      editable,
       autofocus: true,
       onUpdate: ({ editor }) => {
         content = editor.getText();
       }
     });
+  });
+
+  // Handle external content changes, catches what onUpdate misses
+  $effect(() => {
+    if (editor && content !== previousContent) {
+      editor.commands.setContent(content);
+      previousContent = content;
+    }
   });
 
   onDestroy(() => {
@@ -25,7 +40,10 @@
 </script>
 
 <div class="tiptap-editor">
-  <div class="prose prose-sm max-w-none focus-within:outline-none"></div>
+  <div
+    bind:this={editorElement}
+    class="prose prose-sm max-w-none focus-within:outline-none"
+  ></div>
 </div>
 
 <style>

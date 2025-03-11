@@ -1,9 +1,12 @@
 <script lang="ts">
-  import type { IrariumStore } from '$lib/irarium/irarium.store.svelte';
+  import { Editor } from '@tiptap/core';
+
+  import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import { Button } from '$lib/components/ui/button';
+  import TextEditor from '$lib/text-editor/text-editor.svelte';
 
   let {
-    content,
+    content = $bindable(),
     id,
     position,
     irarium
@@ -13,6 +16,9 @@
     position: 'parent' | 'child' | 'sibling';
     irarium: IrariumStore;
   } = $props();
+
+  let editor = $state<Editor>();
+  let isActive = $derived(irarium.activeIdeaId === id);
 
   const handleSiblingLeftClick = () => {
     const leftSibling = irarium.getSiblingLeft(id);
@@ -30,6 +36,7 @@
 
   const handleIdeaClick = () => {
     irarium.setActiveIdeaId(id);
+    irarium.setIsEditing(true);
   };
 </script>
 
@@ -56,12 +63,12 @@
   <Button
     variant="ghost"
     class="h-auto w-full justify-start rounded-lg border bg-card p-4 transition-all
-          {irarium.activeIdeaId === id ? 'border-primary' : ''}"
+          {isActive ? 'border-primary' : ''}"
     onclick={handleIdeaClick}
-    aria-current={irarium.activeIdeaId === id ? 'true' : 'false'}
+    aria-current={isActive ? 'true' : 'false'}
   >
     <div class="prose prose-sm dark:prose-invert whitespace-pre-wrap">
-      {content}
+      <TextEditor bind:editor bind:content editable={isActive && irarium.isEditing} />
     </div>
   </Button>
 

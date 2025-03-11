@@ -15,6 +15,7 @@
 
   $effect(() => {
     // console.log('irarium.children', $state.snapshot(irarium.children));
+    // console.log('irarium.activeIdea', irarium.activeIdea);
   });
 
   const handleAddIdea = () => {
@@ -52,10 +53,10 @@
       <!-- Parent chain -->
       {#each irarium.getParentChain() as parentIdea}
         <Idea
+          {irarium}
           content={parentIdea.content}
           id={parentIdea.id}
           position="parent"
-          {irarium}
         />
       {/each}
 
@@ -65,19 +66,27 @@
           .some((idea) => idea.id === irarium.activeIdeaId) && irarium.activeIdeaId !== irarium.id}
         {#each irarium.getAllIdeas() as idea}
           {#if idea.id === irarium.activeIdeaId}
-            <Idea content={idea.content} id={idea.id} position="parent" {irarium} />
+            <Idea
+              {irarium}
+              bind:content={idea.content}
+              id={idea.id}
+              position="parent"
+            />
           {/if}
         {/each}
       {/if}
-
-      <!-- Connector line from last parent to editor -->
     </div>
 
     <!-- Text editor (center/active node) -->
+    <!-- {#if irarium.isAdding} -->
     <div class="relative w-full max-w-2xl">
       <!-- Editor -->
       <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
-        <TextEditor bind:editor bind:content={irarium.inputContent} />
+        <TextEditor
+          bind:editor
+          bind:content={irarium.inputContent}
+          editable={irarium.isAdding}
+        />
 
         <div class="mt-4 flex items-center justify-end gap-2">
           <div class="relative ml-auto flex w-full max-w-[200px]">
@@ -99,6 +108,7 @@
         </div>
       </div>
     </div>
+    <!-- {/if} -->
 
     <!-- Child chain -->
     {#if irarium.getChildChain().length > 0}

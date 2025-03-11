@@ -18,6 +18,8 @@ export class IrariumStore {
   hasContent = $derived(this.content.length > 0);
   children = $state<Idea[]>([]);
 
+  isEditing = $state(false);
+  isAdding = $derived(!this.isEditing);
   inputContent = $state('');
   // idea to push new idea to
   activeIdeaId = $state('');
@@ -35,6 +37,10 @@ export class IrariumStore {
 
   setActiveIdeaId(ideaId: string) {
     this.activeIdeaId = ideaId;
+  }
+
+  setIsEditing(isEditing: boolean) {
+    this.isEditing = isEditing;
   }
 
   addIdea(content: string, activeIdea?: Idea) {
