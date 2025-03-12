@@ -14,8 +14,7 @@
   const irarium = new IrariumStore();
 
   $effect(() => {
-    // console.log('irarium.children', $state.snapshot(irarium.children));
-    // console.log('irarium.activeIdea', irarium.activeIdea);
+    // log stuff here
   });
 
   const handleAddIdea = () => {
@@ -29,7 +28,13 @@
 
     irarium.inputContent = '';
     editor.commands.clearContent();
-    editor.commands.focus();
+
+    // Ensure the editor stays focused and editable
+    setTimeout(() => {
+      if (editor) {
+        editor.commands.focus('end');
+      }
+    }, 10);
   };
 </script>
 
@@ -47,14 +52,19 @@
     <div class="mb-8 flex w-full flex-col items-center space-y-8">
       <!-- Root idea -->
       {#if irarium.hasContent}
-        <Idea content={irarium.content} id={irarium.id} position="parent" {irarium} />
+        <Idea
+          {irarium}
+          bind:content={irarium.content}
+          id={irarium.id}
+          position="parent"
+        />
       {/if}
 
       <!-- Parent chain -->
       {#each irarium.getParentChain() as parentIdea}
         <Idea
           {irarium}
-          content={parentIdea.content}
+          bind:content={parentIdea.content}
           id={parentIdea.id}
           position="parent"
         />

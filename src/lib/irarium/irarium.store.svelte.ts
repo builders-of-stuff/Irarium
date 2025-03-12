@@ -19,7 +19,8 @@ export class IrariumStore {
   children = $state<Idea[]>([]);
 
   isEditing = $state(false);
-  isAdding = $derived(!this.isEditing);
+  isAdding = $state(true);
+  // isAdding = $derived(!this.isEditing);
   inputContent = $state('');
   // idea to push new idea to
   activeIdeaId = $state('');
@@ -307,7 +308,7 @@ export class IrariumStore {
       });
     };
 
-    return [{ label: 'Root', value: '' }, ...collectAllIdeas(this.children)];
+    return [{ label: 'Root', value: this.id }, ...collectAllIdeas(this.children)];
   }
 
   // e.g. 1-1, 1-2, 2-1, 3-1, 3-2

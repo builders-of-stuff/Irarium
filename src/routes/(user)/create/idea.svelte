@@ -18,7 +18,10 @@
   } = $props();
 
   let editor = $state<Editor>();
-  let isActive = $derived(irarium.activeIdeaId === id);
+  let isActive = $derived(
+    irarium.activeIdeaId === id || (irarium.activeIdeaId === '' && id === '')
+  );
+  let isEditable = $derived(isActive && irarium.isEditing);
 
   const handleSiblingLeftClick = () => {
     const leftSibling = irarium.getSiblingLeft(id);
@@ -37,6 +40,17 @@
   const handleIdeaClick = () => {
     irarium.setActiveIdeaId(id);
     irarium.setIsEditing(true);
+    // Don't change the isAdding state when clicking an idea
+
+    // Ensure the editor is initialized and focused after a short delay
+    setTimeout(() => {
+      if (editor) {
+        console.log(`Focusing editor for idea ${id}`);
+        editor.commands.focus('end');
+      } else {
+        console.log(`Editor not available for idea ${id}`);
+      }
+    }, 50);
   };
 </script>
 
@@ -68,7 +82,7 @@
     aria-current={isActive ? 'true' : 'false'}
   >
     <div class="prose prose-sm dark:prose-invert whitespace-pre-wrap">
-      <TextEditor bind:editor bind:content editable={isActive && irarium.isEditing} />
+      <TextEditor bind:editor bind:content editable={isEditable} />
     </div>
   </Button>
 

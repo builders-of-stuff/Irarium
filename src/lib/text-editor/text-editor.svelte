@@ -10,18 +10,34 @@
   } = $props();
   let editorElement: HTMLElement = $state() as any;
   let previousContent = $state(content);
+  let isEditorMounted = $state(false);
 
-  onMount(() => {
+  function initializeEditor() {
+    if (editor) {
+      editor.destroy();
+    }
+
     editor = new Editor({
       element: editorElement,
       extensions: [StarterKit],
       content,
       editable,
-      autofocus: true,
+      autofocus: 'end',
       onUpdate: ({ editor }) => {
         content = editor.getText();
       }
     });
+    isEditorMounted = true;
+
+    if (editable) {
+      setTimeout(() => {
+        editor.commands.focus('end');
+      }, 10);
+    }
+  }
+
+  onMount(() => {
+    initializeEditor();
   });
 
   // Handle external content changes, catches what onUpdate misses
@@ -32,9 +48,26 @@
     }
   });
 
+  // Handle editable state changes
+  $effect(() => {
+    if (editor && isEditorMounted) {
+      editor.setEditable(editable);
+
+      // If becoming editable, focus the editor
+      if (editable) {
+        setTimeout(() => {
+          editor.commands.focus('end');
+        }, 10);
+      }
+    } else if (isEditorMounted && !editor && editable) {
+      // If editor is somehow lost but should be editable, reinitialize
+      initializeEditor();
+    }
+  });
+
   onDestroy(() => {
     if (editor) {
-      editor?.destroy?.();
+      editor.destroy();
     }
   });
 </script>
