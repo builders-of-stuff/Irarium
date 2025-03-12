@@ -6,7 +6,8 @@
   let {
     editor = $bindable(),
     content = $bindable(),
-    editable = $bindable()
+    editable = $bindable(),
+    minHeight = $bindable()
   } = $props();
   let editorElement: HTMLElement = $state() as any;
   let previousContent = $state(content);
@@ -77,6 +78,7 @@
   <div
     bind:this={editorElement}
     class="prose prose-sm max-w-none focus-within:outline-none"
+    style="min-height: {minHeight};"
   ></div>
 </div>
 
@@ -84,6 +86,7 @@
   /* Minimal required styles */
   :global(.tiptap-editor .ProseMirror) {
     outline: none;
+    min-height: inherit;
   }
 
   :global(.tiptap-editor .ProseMirror p) {

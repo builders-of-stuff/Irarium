@@ -96,6 +96,7 @@
             bind:editor
             bind:content={irarium.inputContent}
             editable={irarium.isAdding}
+            minHeight="5rem"
           />
 
           <!-- Content/CTAs Divider -->
