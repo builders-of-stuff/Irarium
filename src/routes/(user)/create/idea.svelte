@@ -82,21 +82,23 @@
     onclick={handleIdeaClick}
     aria-current={isActive ? 'true' : 'false'}
   >
-    <div class="prose prose-sm dark:prose-invert w-full whitespace-pre-wrap text-left">
+    <div class="prose prose-sm dark:prose-invert w-full text-left">
       <TextEditor bind:editor bind:content editable={isEditable} />
 
-      <!-- Dividing line for actions -->
-      <div class="flex justify-end border-t border-muted-foreground/20 pt-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          class="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary"
-          aria-label="Add new post"
-          onclick={(event) => handleAddPost(event)}
-        >
-          <Plus class="h-5 w-5" />
-        </Button>
-      </div>
+      {#if isActive}
+        <!-- Dividing line for actions -->
+        <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            class="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary"
+            aria-label="Add new post"
+            onclick={(event) => handleAddPost(event)}
+          >
+            <Plus class="h-5 w-5" />
+          </Button>
+        </div>
+      {/if}
     </div>
   </Button>
 

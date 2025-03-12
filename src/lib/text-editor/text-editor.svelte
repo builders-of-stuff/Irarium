@@ -46,6 +46,7 @@
   // Handle external content changes, catches what onUpdate misses
   $effect(() => {
     if (editor && content !== previousContent) {
+      // tiptap whitespace issues https://github.com/ueberdosis/tiptap/issues/873
       editor.commands.setContent(content, false, { preserveWhitespace: 'full' });
       previousContent = content;
     }
