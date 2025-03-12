@@ -22,7 +22,7 @@
   let isActive = $derived(
     irarium.activeIdeaId === id || (irarium.activeIdeaId === '' && id === '')
   );
-  let isEditable = $derived(isActive && irarium.isEditing);
+  let isEditing = $derived(isActive && irarium.isEditing);
 
   const handleSiblingLeftClick = () => {
     const leftSibling = irarium.getSiblingLeft(id);
@@ -83,9 +83,9 @@
     aria-current={isActive ? 'true' : 'false'}
   >
     <div class="prose prose-sm dark:prose-invert w-full text-left">
-      <TextEditor bind:editor bind:content editable={isEditable} />
+      <TextEditor bind:editor bind:content editable={isEditing} />
 
-      {#if isActive}
+      {#if isActive && isEditing}
         <!-- Dividing line for actions -->
         <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-2">
           <Button

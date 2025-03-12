@@ -98,14 +98,13 @@
             editable={irarium.isAdding}
           />
 
-          <div class="mt-4 flex items-center justify-end gap-2">
-            <div class="relative ml-auto flex w-full max-w-[200px]">
-              <Button onclick={handleAddIdea} variant="outline" class="flex-1 pr-10">
-                Add
-              </Button>
+          <!-- Content/CTAs Divider -->
+          <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-3">
+            <div class="relative flex w-full justify-end">
+              <Button onclick={handleAddIdea}>Add</Button>
               <Select.Root type="single" bind:value={irarium.activeIdeaId}>
                 <Select.Trigger
-                  class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
+                  class="h-full w-10 rounded-l-none border-l border-l-input px-2"
                 ></Select.Trigger>
                 <Select.Content>
                   <div class="px-2 py-1.5 text-xs text-muted-foreground">Add to</div>
