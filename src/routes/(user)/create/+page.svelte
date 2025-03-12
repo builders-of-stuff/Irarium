@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
+  import { tick } from 'svelte';
 
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
@@ -29,12 +30,11 @@
     irarium.inputContent = '';
     editor.commands.clearContent();
 
-    // Ensure the editor stays focused and editable
-    setTimeout(() => {
+    tick().then(() => {
       if (editor) {
         editor.commands.focus('end');
       }
-    }, 10);
+    });
   };
 </script>
 
@@ -70,7 +70,7 @@
         />
       {/each}
 
-      <!-- Last idea -->
+      <!-- Active idea -->
       {#if irarium.activeIdeaId && !irarium
           .getParentChain()
           .some((idea) => idea.id === irarium.activeIdeaId) && irarium.activeIdeaId !== irarium.id}
@@ -87,7 +87,7 @@
       {/if}
     </div>
 
-    <!-- Text editor (center/active node) -->
+    <!-- New idea -->
     <!-- {#if irarium.isAdding} -->
     <div class="relative w-full max-w-2xl">
       <!-- Editor -->

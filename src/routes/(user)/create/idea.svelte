@@ -1,10 +1,10 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
+  import { tick } from 'svelte';
 
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
-
   let {
     content = $bindable(),
     id,
@@ -40,17 +40,12 @@
   const handleIdeaClick = () => {
     irarium.setActiveIdeaId(id);
     irarium.setIsEditing(true);
-    // Don't change the isAdding state when clicking an idea
 
-    // Ensure the editor is initialized and focused after a short delay
-    setTimeout(() => {
+    tick().then(() => {
       if (editor) {
-        console.log(`Focusing editor for idea ${id}`);
         editor.commands.focus('end');
-      } else {
-        console.log(`Editor not available for idea ${id}`);
       }
-    }, 50);
+    });
   };
 </script>
 

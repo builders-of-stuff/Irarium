@@ -17,19 +17,18 @@ export class IrariumStore {
   content = $state('');
   children = $state<Idea[]>([]);
 
-  hasContent = $derived(this.content.length > 0);
-  hasChildren = $derived(this.children.length > 0);
-
-  isEditing = $state(false);
-  // isAdding = $state(true);
-  isAdding = $derived(!this.isEditing);
   inputContent = $state('');
+  isEditing = $state(false);
+  isAdding = $state(true);
   // idea to push new idea to
   activeIdeaId = $state('');
+
+  hasContent = $derived(this.content.length > 0);
+  hasChildren = $derived(this.children.length > 0);
+  // isAdding = $derived(!this.isEditing);
   activeIdea = $derived(
     this.activeIdeaId ? this.findIdeaById(this.activeIdeaId) : undefined
   );
-
   allIdeasAsOptions = $derived(this.allIdeasToOptions());
 
   constructor() {}
