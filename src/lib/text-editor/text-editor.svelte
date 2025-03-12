@@ -20,11 +20,14 @@
     editor = new Editor({
       element: editorElement,
       extensions: [StarterKit],
+      parseOptions: {
+        preserveWhitespace: 'full'
+      },
       content,
       editable,
       autofocus: 'end',
       onUpdate: ({ editor }) => {
-        content = editor.getText();
+        content = editor.getHTML();
       }
     });
     isEditorMounted = true;
@@ -43,7 +46,7 @@
   // Handle external content changes, catches what onUpdate misses
   $effect(() => {
     if (editor && content !== previousContent) {
-      editor.commands.setContent(content);
+      editor.commands.setContent(content, false, { preserveWhitespace: 'full' });
       previousContent = content;
     }
   });
@@ -52,15 +55,12 @@
   $effect(() => {
     if (editor && isEditorMounted) {
       editor.setEditable(editable);
-
-      // If becoming editable, focus the editor
       if (editable) {
-        setTimeout(() => {
+        tick().then(() => {
           editor.commands.focus('end');
-        }, 10);
+        });
       }
     } else if (isEditorMounted && !editor && editable) {
-      // If editor is somehow lost but should be editable, reinitialize
       initializeEditor();
     }
   });
@@ -99,5 +99,10 @@
     list-style-type: disc;
     padding-left: 1.5rem;
     margin-bottom: 0.5rem;
+  }
+
+  :global(.ProseMirror *) {
+    white-space: pre-wrap;
+    word-wrap: break-word;
   }
 </style>
