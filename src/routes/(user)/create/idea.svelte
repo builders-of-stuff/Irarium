@@ -82,11 +82,11 @@
     onclick={handleIdeaClick}
     aria-current={isActive ? 'true' : 'false'}
   >
-    <div class="prose prose-sm dark:prose-invert w-full whitespace-pre-wrap">
+    <div class="prose prose-sm dark:prose-invert w-full whitespace-pre-wrap text-left">
       <TextEditor bind:editor bind:content editable={isEditable} />
 
       <!-- Dividing line for actions -->
-      <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-2">
+      <div class="flex justify-end border-t border-muted-foreground/20 pt-2">
         <Button
           variant="ghost"
           size="icon"
