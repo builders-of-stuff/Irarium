@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, tick } from 'svelte';
   import { Editor } from '@tiptap/core';
   import StarterKit from '@tiptap/starter-kit';
 
@@ -30,9 +30,9 @@
     isEditorMounted = true;
 
     if (editable) {
-      setTimeout(() => {
+      tick().then(() => {
         editor.commands.focus('end');
-      }, 10);
+      });
     }
   }
 
