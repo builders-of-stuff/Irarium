@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
   import { tick } from 'svelte';
+  import Plus from 'lucide-svelte/icons/plus';
 
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import { Button } from '$lib/components/ui/button';
@@ -47,6 +48,11 @@
       }
     });
   };
+
+  const handleAddPost = (event) => {
+    event.stopPropagation();
+    irarium.setIsEditing(false);
+  };
 </script>
 
 <div class="relative w-full">
@@ -76,8 +82,21 @@
     onclick={handleIdeaClick}
     aria-current={isActive ? 'true' : 'false'}
   >
-    <div class="prose prose-sm dark:prose-invert whitespace-pre-wrap">
+    <div class="prose prose-sm dark:prose-invert w-full whitespace-pre-wrap">
       <TextEditor bind:editor bind:content editable={isEditable} />
+
+      <!-- Dividing line for actions -->
+      <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          class="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary"
+          aria-label="Add new post"
+          onclick={(event) => handleAddPost(event)}
+        >
+          <Plus class="h-5 w-5" />
+        </Button>
+      </div>
     </div>
   </Button>
 

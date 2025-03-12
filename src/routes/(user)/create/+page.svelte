@@ -15,7 +15,7 @@
   const irarium = new IrariumStore();
 
   $effect(() => {
-    // log stuff here
+    // console.log('irarium.isAdding', irarium.isAdding);
   });
 
   const handleAddIdea = () => {
@@ -88,37 +88,37 @@
     </div>
 
     <!-- New idea -->
-    <!-- {#if irarium.isAdding} -->
-    <div class="relative w-full max-w-2xl">
-      <!-- Editor -->
-      <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
-        <TextEditor
-          bind:editor
-          bind:content={irarium.inputContent}
-          editable={irarium.isAdding}
-        />
+    {#if irarium.isAdding}
+      <div class="relative w-full max-w-2xl">
+        <!-- Editor -->
+        <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
+          <TextEditor
+            bind:editor
+            bind:content={irarium.inputContent}
+            editable={irarium.isAdding}
+          />
 
-        <div class="mt-4 flex items-center justify-end gap-2">
-          <div class="relative ml-auto flex w-full max-w-[200px]">
-            <Button onclick={handleAddIdea} variant="outline" class="flex-1 pr-10">
-              Add
-            </Button>
-            <Select.Root type="single" bind:value={irarium.activeIdeaId}>
-              <Select.Trigger
-                class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
-              ></Select.Trigger>
-              <Select.Content>
-                <div class="px-2 py-1.5 text-xs text-muted-foreground">Add to</div>
-                {#each irarium.allIdeasAsOptions as option}
-                  <Select.Item value={option.value}>{option.label}</Select.Item>
-                {/each}
-              </Select.Content>
-            </Select.Root>
+          <div class="mt-4 flex items-center justify-end gap-2">
+            <div class="relative ml-auto flex w-full max-w-[200px]">
+              <Button onclick={handleAddIdea} variant="outline" class="flex-1 pr-10">
+                Add
+              </Button>
+              <Select.Root type="single" bind:value={irarium.activeIdeaId}>
+                <Select.Trigger
+                  class="absolute right-0 top-0 h-full w-10 rounded-l-none border-l border-l-input px-2"
+                ></Select.Trigger>
+                <Select.Content>
+                  <div class="px-2 py-1.5 text-xs text-muted-foreground">Add to</div>
+                  {#each irarium.allIdeasAsOptions as option}
+                    <Select.Item value={option.value}>{option.label}</Select.Item>
+                  {/each}
+                </Select.Content>
+              </Select.Root>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- {/if} -->
+    {/if}
 
     <!-- Child chain -->
     {#if irarium.getChildChain().length > 0}

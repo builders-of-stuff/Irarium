@@ -19,13 +19,12 @@ export class IrariumStore {
 
   inputContent = $state('');
   isEditing = $state(false);
-  isAdding = $state(true);
   // idea to push new idea to
   activeIdeaId = $state('');
 
   hasContent = $derived(this.content.length > 0);
   hasChildren = $derived(this.children.length > 0);
-  // isAdding = $derived(!this.isEditing);
+  isAdding = $derived(!this.isEditing);
   activeIdea = $derived(
     this.activeIdeaId ? this.findIdeaById(this.activeIdeaId) : undefined
   );
@@ -52,18 +51,15 @@ export class IrariumStore {
       // If no parent, add directly to root level
       this.children = [...this.children, idea];
     } else {
-      // If there's a parent, find and update that parent in the tree
       const parentId = activeIdea.id;
       const parent = this.findIdeaById(parentId);
 
       if (parent) {
-        // Create updated parent with new child added
         const updatedParent = {
           ...parent,
           children: [...parent.children, idea]
         };
 
-        // Update the entire tree with this modified parent
         this.children = this.updateIdeaById(parentId, updatedParent);
       }
     }
@@ -74,12 +70,10 @@ export class IrariumStore {
   }
 
   findIdeaById(id: string, ideas: Idea[] = this.children): Idea | undefined {
-    // First check if the idea exists at the current level
     const directMatch = ideas.find((idea) => idea.id === id);
 
     if (directMatch) return directMatch;
 
-    // If not found at current level, search through all children recursively
     return ideas.flatMap((idea) => idea.children).length > 0
       ? this.findIdeaById(
           id,
