@@ -19,10 +19,10 @@
   } = $props();
 
   let editor = $state<Editor>();
-  let isActive = $derived(
-    irarium.activeIdeaId === id || (irarium.activeIdeaId === '' && id === '')
-  );
+  let isActive = $derived(irarium.activeIdeaId === id);
   let isEditing = $derived(isActive && irarium.isEditing);
+
+  $effect(() => {});
 
   const handleSiblingLeftClick = () => {
     const leftSibling = irarium.getSiblingLeft(id);

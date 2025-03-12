@@ -1,12 +1,13 @@
 import { nanoid } from 'nanoid';
 
 import type { Idea } from '$lib/shared/shared.type';
+import { DEFAULT_IRARIUM_ID } from '$lib/shared/shared.constant';
 
 import { authStore } from '../auth/auth.store.svelte';
 
 // For current active irarium
 export class IrariumStore {
-  id = $state('');
+  id = $state(DEFAULT_IRARIUM_ID);
   userId = $derived(authStore.userId);
   created = $state('');
   updated = $state('');
@@ -19,15 +20,23 @@ export class IrariumStore {
 
   inputContent = $state('');
   isEditing = $state(false);
-  // idea to push new idea to
   activeIdeaId = $state('');
+  lastActiveIdeaId = $state('');
+
+  chosenIdeaId = $derived(this.activeIdeaId || this.lastActiveIdeaId || this.id || '');
+  activeIdea = $derived(
+    this.activeIdeaId ? this.findIdeaById(this.activeIdeaId) : undefined
+  );
+  lastActiveIdea = $derived(
+    this.lastActiveIdeaId ? this.findIdeaById(this.lastActiveIdeaId) : undefined
+  );
+  chosenIdea = $derived(
+    this.chosenIdeaId ? this.findIdeaById(this.chosenIdeaId) : undefined
+  );
 
   hasContent = $derived(this.content.length > 0);
   hasChildren = $derived(this.children.length > 0);
   isAdding = $derived(!this.isEditing);
-  activeIdea = $derived(
-    this.activeIdeaId ? this.findIdeaById(this.activeIdeaId) : undefined
-  );
   allIdeasAsOptions = $derived(this.allIdeasToOptions());
 
   constructor() {}
@@ -37,6 +46,7 @@ export class IrariumStore {
   }
 
   setActiveIdeaId(ideaId: string) {
+    this.lastActiveIdeaId = this.activeIdeaId;
     this.activeIdeaId = ideaId;
   }
 
@@ -129,7 +139,7 @@ export class IrariumStore {
   }
 
   // Get chain of parent ideas (excludes last idea & root)
-  getParentChain(ideaId = this.activeIdeaId) {
+  getParentChain(ideaId = this.chosenIdeaId) {
     if (!ideaId) {
       return [];
     }
@@ -170,7 +180,7 @@ export class IrariumStore {
     return uniqueChain;
   }
 
-  getChildChain(ideaId = this.activeIdeaId, index = 0) {
+  getChildChain(ideaId = this.chosenIdeaId, index = 0) {
     let id = ideaId;
     let chain = [] as Idea[];
     let preferredIndex = index;
@@ -199,7 +209,7 @@ export class IrariumStore {
     return childChain;
   }
 
-  hasSiblingLeft(ideaId = this.activeIdeaId) {
+  hasSiblingLeft(ideaId = this.chosenIdeaId) {
     if (!ideaId) return false;
 
     const siblings = this.getSiblings(ideaId);
@@ -209,7 +219,7 @@ export class IrariumStore {
     return currentIndex > 0;
   }
 
-  hasSiblingRight(ideaId = this.activeIdeaId) {
+  hasSiblingRight(ideaId = this.chosenIdeaId) {
     if (!ideaId) return false;
 
     const siblings = this.getSiblings(ideaId);
@@ -219,8 +229,8 @@ export class IrariumStore {
     return currentIndex < siblings.length - 1;
   }
 
-  getSiblings(ideaId = this.activeIdeaId) {
-    if (!ideaId) return [];
+  getSiblings(ideaId = this.chosenIdeaId) {
+    if (!ideaId || ideaId === this.id) return [];
 
     const findParent = (ideas, targetId, parent = null) => {
       for (const idea of ideas) {
@@ -249,8 +259,8 @@ export class IrariumStore {
   }
 
   // Add these new methods for sibling navigation
-  getSiblingLeft(ideaId = this.activeIdeaId) {
-    if (!ideaId) return null;
+  getSiblingLeft(ideaId = this.chosenIdeaId) {
+    if (!ideaId || ideaId === this.id) return null;
 
     const siblings = this.getSiblings(ideaId);
     const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
@@ -262,8 +272,8 @@ export class IrariumStore {
     return null;
   }
 
-  getSiblingRight(ideaId = this.activeIdeaId) {
-    if (!ideaId) return null;
+  getSiblingRight(ideaId = this.chosenIdeaId) {
+    if (!ideaId || ideaId === this.id) return null;
 
     const siblings = this.getSiblings(ideaId);
     const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);

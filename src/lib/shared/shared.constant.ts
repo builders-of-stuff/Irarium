@@ -20,3 +20,5 @@ export const UNPROTECTED_ROUTE_IDS = [
   ROUTE_IDS.SIGNUP,
   ROUTE_IDS.LOGIN
 ];
+
+export const DEFAULT_IRARIUM_ID = 'ROOT';
