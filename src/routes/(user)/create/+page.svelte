@@ -51,7 +51,7 @@
     <!-- Parent chain (above) - only show unique items in the chain -->
     <div class="mb-8 flex w-full flex-col items-center space-y-8">
       <!-- Root idea -->
-      {#if irarium.hasContent}
+      {#if irarium.hasContent || irarium.hasChildren}
         <Idea
           {irarium}
           bind:content={irarium.content}

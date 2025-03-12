@@ -15,12 +15,14 @@ export class IrariumStore {
   description = $state('');
   tags = $state('');
   content = $state('');
-  hasContent = $derived(this.content.length > 0);
   children = $state<Idea[]>([]);
 
+  hasContent = $derived(this.content.length > 0);
+  hasChildren = $derived(this.children.length > 0);
+
   isEditing = $state(false);
-  isAdding = $state(true);
-  // isAdding = $derived(!this.isEditing);
+  // isAdding = $state(true);
+  isAdding = $derived(!this.isEditing);
   inputContent = $state('');
   // idea to push new idea to
   activeIdeaId = $state('');
