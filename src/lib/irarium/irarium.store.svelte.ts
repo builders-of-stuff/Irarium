@@ -20,24 +20,27 @@ export class IrariumStore {
 
   inputContent = $state('');
   isEditing = $state(false);
+  isAdding = $state(true);
   activeIdeaId = $state('');
   lastActiveIdeaId = $state('');
 
-  chosenIdeaId = $derived(this.activeIdeaId || this.lastActiveIdeaId || this.id || '');
+  referenceIdeaId = $derived(
+    this.activeIdeaId || this.lastActiveIdeaId || this.id || ''
+  );
   activeIdea = $derived(
     this.activeIdeaId ? this.findIdeaById(this.activeIdeaId) : undefined
   );
   lastActiveIdea = $derived(
     this.lastActiveIdeaId ? this.findIdeaById(this.lastActiveIdeaId) : undefined
   );
-  chosenIdea = $derived(
-    this.chosenIdeaId ? this.findIdeaById(this.chosenIdeaId) : undefined
+  referenceIdea = $derived(
+    this.referenceIdeaId ? this.findIdeaById(this.referenceIdeaId) : undefined
   );
 
   hasContent = $derived(this.content.length > 0);
   hasChildren = $derived(this.children.length > 0);
-  isAdding = $derived(!this.isEditing);
   allIdeasAsOptions = $derived(this.allIdeasToOptions());
+  isEmptyIrarium = $derived(!this.hasContent && !this.hasChildren);
 
   constructor() {}
 
@@ -46,7 +49,9 @@ export class IrariumStore {
   }
 
   setActiveIdeaId(ideaId: string) {
-    this.lastActiveIdeaId = this.activeIdeaId;
+    this.lastActiveIdeaId = this.activeIdeaId
+      ? this.activeIdeaId
+      : this.lastActiveIdeaId;
     this.activeIdeaId = ideaId;
   }
 
@@ -57,8 +62,16 @@ export class IrariumStore {
     this.activeIdeaId = '';
   }
 
+  setLastActiveIdeaId(ideaId: string) {
+    this.lastActiveIdeaId = ideaId;
+  }
+
   setIsEditing(isEditing: boolean) {
     this.isEditing = isEditing;
+  }
+
+  setIsAdding(isAdding: boolean) {
+    this.isAdding = isAdding;
   }
 
   addIdea(content: string, activeIdea?: Idea) {
@@ -146,7 +159,7 @@ export class IrariumStore {
   }
 
   // Get chain of parent ideas (excludes last idea & root)
-  getParentChain(ideaId = this.chosenIdeaId) {
+  getParentChain(ideaId = this.referenceIdeaId) {
     if (!ideaId) {
       return [];
     }
@@ -187,7 +200,7 @@ export class IrariumStore {
     return uniqueChain;
   }
 
-  getChildChain(ideaId = this.chosenIdeaId, index = 0) {
+  getChildChain(ideaId = this.referenceIdeaId, index = 0) {
     let id = ideaId;
     let chain = [] as Idea[];
     let preferredIndex = index;
@@ -216,7 +229,7 @@ export class IrariumStore {
     return childChain;
   }
 
-  hasSiblingLeft(ideaId = this.chosenIdeaId) {
+  hasSiblingLeft(ideaId = this.referenceIdeaId) {
     if (!ideaId) return false;
 
     const siblings = this.getSiblings(ideaId);
@@ -226,7 +239,7 @@ export class IrariumStore {
     return currentIndex > 0;
   }
 
-  hasSiblingRight(ideaId = this.chosenIdeaId) {
+  hasSiblingRight(ideaId = this.referenceIdeaId) {
     if (!ideaId) return false;
 
     const siblings = this.getSiblings(ideaId);
@@ -236,7 +249,7 @@ export class IrariumStore {
     return currentIndex < siblings.length - 1;
   }
 
-  getSiblings(ideaId = this.chosenIdeaId) {
+  getSiblings(ideaId = this.referenceIdeaId) {
     if (!ideaId || ideaId === this.id) return [];
 
     const findParent = (ideas, targetId, parent = null) => {
@@ -266,7 +279,7 @@ export class IrariumStore {
   }
 
   // Add these new methods for sibling navigation
-  getSiblingLeft(ideaId = this.chosenIdeaId) {
+  getSiblingLeft(ideaId = this.referenceIdeaId) {
     if (!ideaId || ideaId === this.id) return null;
 
     const siblings = this.getSiblings(ideaId);
@@ -279,7 +292,7 @@ export class IrariumStore {
     return null;
   }
 
-  getSiblingRight(ideaId = this.chosenIdeaId) {
+  getSiblingRight(ideaId = this.referenceIdeaId) {
     if (!ideaId || ideaId === this.id) return null;
 
     const siblings = this.getSiblings(ideaId);

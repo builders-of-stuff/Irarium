@@ -14,9 +14,7 @@
 
   const irarium = new IrariumStore();
 
-  $effect(() => {
-    // console.log('irarium.isAdding', irarium.isAdding);
-  });
+  $effect(() => {});
 
   const handleAddIdea = () => {
     if (!editor) return;
@@ -56,10 +54,113 @@
     }
   };
 
-  // Handle Escape key press
+  // Hotkey navigation
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape' && irarium.activeIdeaId) {
       irarium.clearActiveIdeaId();
+      irarium.setIsEditing(false);
+      irarium.setIsAdding(false);
+      event.preventDefault();
+      return;
+    }
+
+    // Skip arrow key navigation if we're in an input or editor
+    if (
+      event.target instanceof HTMLInputElement ||
+      event.target instanceof HTMLTextAreaElement ||
+      (event.target as HTMLElement).isContentEditable
+    ) {
+      return;
+    }
+
+    // Only apply key navigation when there is NO active idea
+    if (!irarium.activeIdeaId) {
+      const referenceIdeaId = irarium.lastActiveIdeaId;
+
+      // Handle activation keys (Tab, Enter, Space)
+      if (
+        referenceIdeaId &&
+        (event.key === 'Tab' || event.key === 'Enter' || event.key === ' ')
+      ) {
+        irarium.setActiveIdeaId(referenceIdeaId);
+        irarium.setIsEditing(true);
+        irarium.setIsAdding(false);
+        event.preventDefault();
+        return;
+      }
+
+      // Handle arrow key navigation
+      let newIdeaId: string | null = null;
+
+      switch (event.key) {
+        case 'ArrowUp': {
+          // Navigate to parent
+          if (referenceIdeaId) {
+            const referenceIdea = irarium.findIdeaById(referenceIdeaId);
+            if (referenceIdea?.parentId && referenceIdea.parentId !== irarium.id) {
+              newIdeaId = referenceIdea.parentId;
+            } else if (referenceIdea?.parentId === irarium.id && irarium.hasContent) {
+              newIdeaId = irarium.id;
+            }
+          }
+          break;
+        }
+        case 'ArrowDown': {
+          // Navigate to first child
+          if (referenceIdeaId) {
+            // Special case for root
+            if (referenceIdeaId === irarium.id) {
+              if (irarium.children && irarium.children.length > 0) {
+                newIdeaId = irarium.children[0].id;
+              }
+            } else {
+              // Regular case for other ideas
+              const referenceIdea = irarium.findIdeaById(referenceIdeaId);
+              if (
+                referenceIdea &&
+                referenceIdea.children &&
+                referenceIdea.children.length > 0
+              ) {
+                newIdeaId = referenceIdea.children[0].id;
+              }
+            }
+          } else {
+            // No reference idea, try to select first child of root or root itself
+            if (irarium.hasChildren) {
+              newIdeaId = irarium.children[0].id;
+            } else if (irarium.hasContent) {
+              newIdeaId = irarium.id;
+            }
+          }
+          break;
+        }
+        case 'ArrowLeft': {
+          // Navigate to left sibling
+          if (referenceIdeaId) {
+            const leftSibling = irarium.getSiblingLeft(referenceIdeaId);
+            if (leftSibling) {
+              newIdeaId = leftSibling.id;
+            }
+          }
+          break;
+        }
+        case 'ArrowRight': {
+          // Navigate to right sibling
+          if (referenceIdeaId) {
+            const rightSibling = irarium.getSiblingRight(referenceIdeaId);
+            if (rightSibling) {
+              newIdeaId = rightSibling.id;
+            }
+          }
+          break;
+        }
+      }
+
+      // Update the lastActiveIdeaId if we found a new idea to navigate to
+      if (newIdeaId) {
+        irarium.setLastActiveIdeaId(newIdeaId);
+        event.preventDefault();
+      }
     }
   };
 
@@ -111,11 +212,11 @@
       {/each}
 
       <!-- Active idea -->
-      {#if irarium.chosenIdeaId && !irarium
+      {#if irarium.referenceIdeaId && !irarium
           .getParentChain()
-          .some((idea) => idea.id === irarium.chosenIdeaId) && irarium.chosenIdeaId !== irarium.id}
+          .some((idea) => idea.id === irarium.referenceIdeaId) && irarium.referenceIdeaId !== irarium.id}
         {#each irarium.getAllIdeas() as idea}
-          {#if idea.id === irarium.chosenIdeaId}
+          {#if idea.id === irarium.referenceIdeaId}
             <div class="irarium relative w-full">
               <Idea
                 {irarium}
@@ -130,7 +231,7 @@
     </div>
 
     <!-- New idea -->
-    {#if irarium.isAdding}
+    {#if irarium.isAdding || irarium.isEmptyIrarium}
       <div class="irarium relative w-full max-w-2xl">
         <!-- Editor -->
         <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">

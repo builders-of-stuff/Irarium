@@ -19,7 +19,10 @@
   } = $props();
 
   let editor = $state<Editor>();
-  let isActive = $derived(irarium.activeIdeaId === id);
+  let isActive = $derived(
+    irarium.activeIdeaId === id ||
+      (irarium.lastActiveIdeaId === id && !irarium.activeIdeaId)
+  );
   let isEditing = $derived(isActive && irarium.isEditing);
 
   $effect(() => {});
@@ -42,6 +45,7 @@
     event.stopPropagation();
     irarium.setActiveIdeaId(id);
     irarium.setIsEditing(true);
+    irarium.setIsAdding(false);
 
     tick().then(() => {
       if (editor) {
@@ -52,6 +56,7 @@
 
   const handleAddPost = (event) => {
     event.stopPropagation();
+    irarium.setIsAdding(true);
     irarium.setIsEditing(false);
   };
 </script>
