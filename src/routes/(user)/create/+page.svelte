@@ -6,6 +6,7 @@
   import TextEditor from '$lib/text-editor/text-editor.svelte';
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
+  import { KEYBOARD_KEYS } from '$lib/shared/shared.constant';
 
   import UserNavbar from '../user-navbar.svelte';
   import Idea from './idea.svelte';
@@ -56,7 +57,7 @@
 
   // Hotkey navigation
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Escape' && irarium.activeIdeaId) {
+    if (event.key === KEYBOARD_KEYS.ESCAPE && irarium.activeIdeaId) {
       irarium.clearActiveIdeaId();
       irarium.setIsEditing(false);
       irarium.setIsAdding(false);
@@ -80,7 +81,9 @@
       // Handle activation keys (Tab, Enter, Space)
       if (
         referenceIdeaId &&
-        (event.key === 'Tab' || event.key === 'Enter' || event.key === ' ')
+        (event.key === KEYBOARD_KEYS.TAB ||
+          event.key === KEYBOARD_KEYS.ENTER ||
+          event.key === KEYBOARD_KEYS.SPACE)
       ) {
         irarium.setActiveIdeaId(referenceIdeaId);
         irarium.setIsEditing(true);
@@ -93,7 +96,7 @@
       let newIdeaId: string | null = null;
 
       switch (event.key) {
-        case 'ArrowUp': {
+        case KEYBOARD_KEYS.ARROW_UP: {
           // Navigate to parent
           if (referenceIdeaId) {
             const referenceIdea = irarium.findIdeaById(referenceIdeaId);
@@ -105,7 +108,7 @@
           }
           break;
         }
-        case 'ArrowDown': {
+        case KEYBOARD_KEYS.ARROW_DOWN: {
           // Navigate to first child
           if (referenceIdeaId) {
             // Special case for root
@@ -134,7 +137,7 @@
           }
           break;
         }
-        case 'ArrowLeft': {
+        case KEYBOARD_KEYS.ARROW_LEFT: {
           // Navigate to left sibling
           if (referenceIdeaId) {
             const leftSibling = irarium.getSiblingLeft(referenceIdeaId);
@@ -144,7 +147,7 @@
           }
           break;
         }
-        case 'ArrowRight': {
+        case KEYBOARD_KEYS.ARROW_RIGHT: {
           // Navigate to right sibling
           if (referenceIdeaId) {
             const rightSibling = irarium.getSiblingRight(referenceIdeaId);

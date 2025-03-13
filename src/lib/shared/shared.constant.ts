@@ -22,3 +22,18 @@ export const UNPROTECTED_ROUTE_IDS = [
 ];
 
 export const DEFAULT_IRARIUM_ID = 'ROOT';
+
+// Keyboard event key constants
+export const KEYBOARD_KEYS = {
+  // Navigation keys
+  ARROW_UP: 'ArrowUp',
+  ARROW_DOWN: 'ArrowDown',
+  ARROW_LEFT: 'ArrowLeft',
+  ARROW_RIGHT: 'ArrowRight',
+
+  // Action keys
+  ENTER: 'Enter',
+  TAB: 'Tab',
+  ESCAPE: 'Escape',
+  SPACE: ' '
+};
