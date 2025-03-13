@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
-  import { tick } from 'svelte';
+  import { tick, onMount, onDestroy } from 'svelte';
 
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
@@ -63,16 +63,14 @@
     }
   };
 
-  // Add event listeners when component mounts
-  $effect(() => {
+  onMount(() => {
     document.addEventListener('click', handleClickOutside);
     document.addEventListener('keydown', handleKeyDown);
+  });
 
-    // Clean up event listeners when component unmounts
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+  onDestroy(() => {
+    document.removeEventListener('click', handleClickOutside);
+    document.removeEventListener('keydown', handleKeyDown);
   });
 </script>
 
