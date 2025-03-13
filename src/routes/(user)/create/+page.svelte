@@ -36,6 +36,44 @@
       }
     });
   };
+
+  // Handle click outside Idea components
+  const handleClickOutside = (event: MouseEvent) => {
+    const irariumElements = document.querySelectorAll('.irarium');
+    const target = event.target as HTMLElement;
+
+    // Check if the click is inside any Idea component
+    let isInsideIrarium = false;
+    for (const irariumElement of irariumElements) {
+      if (irariumElement.contains(target)) {
+        isInsideIrarium = true;
+        break;
+      }
+    }
+
+    if (!isInsideIrarium && irarium.activeIdeaId) {
+      irarium.clearActiveIdeaId();
+    }
+  };
+
+  // Handle Escape key press
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape' && irarium.activeIdeaId) {
+      irarium.clearActiveIdeaId();
+    }
+  };
+
+  // Add event listeners when component mounts
+  $effect(() => {
+    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Clean up event listeners when component unmounts
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  });
 </script>
 
 {#snippet actions()}
@@ -52,36 +90,42 @@
     <div class="mb-8 flex w-full flex-col items-center space-y-8">
       <!-- Root idea -->
       {#if irarium.hasContent || irarium.hasChildren}
-        <Idea
-          {irarium}
-          bind:content={irarium.content}
-          id={irarium.id}
-          position="parent"
-        />
+        <div class="irarium relative w-full">
+          <Idea
+            {irarium}
+            bind:content={irarium.content}
+            id={irarium.id}
+            position="parent"
+          />
+        </div>
       {/if}
 
       <!-- Parent chain -->
       {#each irarium.getParentChain() as parentIdea}
-        <Idea
-          {irarium}
-          bind:content={parentIdea.content}
-          id={parentIdea.id}
-          position="parent"
-        />
+        <div class="irarium relative w-full">
+          <Idea
+            {irarium}
+            bind:content={parentIdea.content}
+            id={parentIdea.id}
+            position="parent"
+          />
+        </div>
       {/each}
 
       <!-- Active idea -->
-      {#if irarium.activeIdeaId && !irarium
+      {#if irarium.chosenIdeaId && !irarium
           .getParentChain()
-          .some((idea) => idea.id === irarium.activeIdeaId) && irarium.activeIdeaId !== irarium.id}
+          .some((idea) => idea.id === irarium.chosenIdeaId) && irarium.chosenIdeaId !== irarium.id}
         {#each irarium.getAllIdeas() as idea}
-          {#if idea.id === irarium.activeIdeaId}
-            <Idea
-              {irarium}
-              bind:content={idea.content}
-              id={idea.id}
-              position="parent"
-            />
+          {#if idea.id === irarium.chosenIdeaId}
+            <div class="irarium relative w-full">
+              <Idea
+                {irarium}
+                bind:content={idea.content}
+                id={idea.id}
+                position="parent"
+              />
+            </div>
           {/if}
         {/each}
       {/if}
@@ -89,7 +133,7 @@
 
     <!-- New idea -->
     {#if irarium.isAdding}
-      <div class="relative w-full max-w-2xl">
+      <div class="irarium relative w-full max-w-2xl">
         <!-- Editor -->
         <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
           <TextEditor
@@ -126,7 +170,9 @@
 
       <div class="mt-0 w-full max-w-2xl space-y-8">
         {#each irarium.getChildChain() as idea}
-          <Idea content={idea.content} id={idea.id} position="child" {irarium} />
+          <div class="irarium relative w-full">
+            <Idea content={idea.content} id={idea.id} position="child" {irarium} />
+          </div>
         {/each}
       </div>
     {/if}

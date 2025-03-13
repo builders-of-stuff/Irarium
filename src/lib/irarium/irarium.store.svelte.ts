@@ -50,6 +50,13 @@ export class IrariumStore {
     this.activeIdeaId = ideaId;
   }
 
+  clearActiveIdeaId() {
+    this.lastActiveIdeaId = this.activeIdeaId
+      ? this.activeIdeaId
+      : this.lastActiveIdeaId;
+    this.activeIdeaId = '';
+  }
+
   setIsEditing(isEditing: boolean) {
     this.isEditing = isEditing;
   }

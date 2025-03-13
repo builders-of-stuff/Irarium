@@ -38,7 +38,8 @@
     }
   };
 
-  const handleIdeaClick = () => {
+  const handleIdeaClick = (event: MouseEvent) => {
+    event.stopPropagation();
     irarium.setActiveIdeaId(id);
     irarium.setIsEditing(true);
 
@@ -79,7 +80,7 @@
     variant="ghost"
     class="h-auto w-full justify-start rounded-lg border bg-card p-4 transition-all
           {isActive ? 'border-primary' : ''}"
-    onclick={handleIdeaClick}
+    onclick={(event) => handleIdeaClick(event)}
     aria-current={isActive ? 'true' : 'false'}
   >
     <div class="prose prose-sm dark:prose-invert w-full text-left">
