@@ -6,6 +6,7 @@
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
+
   let {
     content = $bindable(),
     id,
