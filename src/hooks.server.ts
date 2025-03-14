@@ -2,7 +2,7 @@ import PocketBase from 'pocketbase';
 import { redirect } from '@sveltejs/kit';
 import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
 
-import { ROUTE, ROUTE_IDS, UNPROTECTED_ROUTE_IDS } from '$lib/shared/shared.constant';
+import { ROUTE, UNPROTECTED_ROUTE_IDS } from '$lib/shared/shared.constant';
 import { COLLECTION } from '$lib/shared/shared.type';
 
 export async function handle({ event, resolve }) {
