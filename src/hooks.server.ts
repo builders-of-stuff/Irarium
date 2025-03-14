@@ -64,23 +64,16 @@ export async function handle({ event, resolve }) {
    * Auth/Route guards
    */
   const routeId = event.route.id;
+  const isProtectedRoute = !UNPROTECTED_ROUTE_IDS.some((id) => id === routeId);
+  const isLoggedIn = event.locals.pb.authStore.isValid;
 
-  // Redirect to home if logged in and on unprotected route
-  if (
-    routeId &&
-    UNPROTECTED_ROUTE_IDS.some((id) => id === routeId) &&
-    event.locals.pb.authStore.isValid
-  ) {
-    return redirect(302, ROUTE.HOME);
-  }
-
-  // Redirect to login if not logged in
-  if (
-    routeId &&
-    !UNPROTECTED_ROUTE_IDS.some((id) => id === routeId) &&
-    !event.locals.pb.authStore.isValid
-  ) {
-    return redirect(302, ROUTE_IDS.LOGIN);
+  if (routeId) {
+    if (!isProtectedRoute && isLoggedIn) {
+      // Redirect to home if logged in
+      return redirect(302, ROUTE.HOME);
+    } else if (isProtectedRoute && !isLoggedIn) {
+      return redirect(302, ROUTE_IDS.LOGIN);
+    }
   }
 
   /**
