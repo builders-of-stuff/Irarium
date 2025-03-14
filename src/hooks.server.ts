@@ -72,7 +72,7 @@ export async function handle({ event, resolve }) {
       // Redirect to home if logged in
       return redirect(302, ROUTE.HOME);
     } else if (isProtectedRoute && !isLoggedIn) {
-      return redirect(302, ROUTE_IDS.LOGIN);
+      return redirect(302, ROUTE.LOGIN);
     }
   }
 

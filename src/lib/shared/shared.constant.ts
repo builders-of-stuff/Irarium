@@ -4,7 +4,7 @@ export const ROUTE_IDS = {
   SIGNUP: '/(auth)/signup',
 
   // User routes
-  HOME: '/home'
+  HOME: '/(app)/(user)/home'
 };
 
 export const ROUTE = {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from '$lib/components/ui/button';
 
-  import UserNavbar from '../user-navbar.svelte';
+  import UserNavbar from '../../../../lib/shared/user-navbar.svelte';
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
 
   $effect(() => {});
