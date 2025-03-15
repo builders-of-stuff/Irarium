@@ -81,7 +81,7 @@
             <span class="text-xs text-muted-foreground">
               Updated {formatDate(irarium.updated)}
             </span>
-            <Button variant="outline" href={`/irarium/${irarium.id}`}>View</Button>
+            <Button variant="outline" href={`/${irarium.id}`}>View</Button>
           </CardFooter>
         </Card>
       {/each}

@@ -8,7 +8,7 @@ import { authStore } from '../auth/auth.store.svelte';
 // For current active irarium
 export class IrariumStore {
   id = $state(DEFAULT_IRARIUM_ID);
-  userId = $derived(authStore.userId);
+  userId = $state(authStore.userId);
   created = $state('');
   updated = $state('');
 
@@ -43,7 +43,11 @@ export class IrariumStore {
   allIdeasAsOptions = $derived(this.allIdeasToOptions());
   isEmptyIrarium = $derived(!this.hasContent && !this.hasChildren);
 
-  constructor() {}
+  constructor(irarium?: Partial<IrariumStore>) {
+    if (irarium) {
+      Object.assign(this, irarium);
+    }
+  }
 
   setContent(content: string) {
     this.content = content;

@@ -13,10 +13,21 @@ export class IrariumsStore {
   isLoading = $state(true);
   error = $state<string | null>(null);
 
+  // user + public - duplicates
+  allIrariums = $derived([
+    ...new Map(
+      [...this.userIrariums, ...this.publicIrariums].map((irarium) => [
+        irarium.id,
+        irarium
+      ])
+    ).values()
+  ]);
   hasFetchedUserIrariums = $derived(!!this.lastFetchedUserIrariums);
   hasFetchedPublicIrariums = $derived(!!this.lastFetchedPublicIrariums);
 
-  constructor() {}
+  constructor() {
+    this.fetchAllIrariums();
+  }
 
   async fetchUserIrariums() {
     if (this.hasFetchedUserIrariums) return;
@@ -41,7 +52,7 @@ export class IrariumsStore {
     }
   }
 
-  async fetchAllIrariums() {
+  async fetchPublicIrariums() {
     this.isLoading = true;
     this.error = null;
 
@@ -62,13 +73,29 @@ export class IrariumsStore {
     }
   }
 
+  async fetchIrariumBy(id: string) {
+    const irarium = this.findIrariumById(id);
+    if (irarium) return irarium;
+
+    const record = await pb.collection(COLLECTION.IRARIUMS).getOne(id);
+
+    if (record) {
+      this.allIrariums.push(record as unknown as Irarium);
+    }
+
+    return record as unknown as Irarium;
+  }
+
+  async fetchAllIrariums() {
+    await Promise.all([this.fetchUserIrariums(), this.fetchPublicIrariums()]);
+  }
+
   async createIrarium(irarium: Irarium) {
     try {
       const record = await pb
         .collection(COLLECTION.IRARIUMS)
         .create(this.mapIrariumToCreate(irarium));
 
-      console.log('record', record);
       this.userIrariums.push(record as unknown as Irarium);
     } catch (err) {
       console.error('Error creating irarium:', err);
@@ -76,6 +103,10 @@ export class IrariumsStore {
     } finally {
       this.isLoading = false;
     }
+  }
+
+  findIrariumById(id: string) {
+    return this.allIrariums.find((irarium) => irarium.id === id);
   }
 
   private mapIrariumToCreate(irarium: Irarium) {
