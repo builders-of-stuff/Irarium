@@ -4,15 +4,14 @@
 
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
-  import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
   import { KEYBOARD_KEYS } from '$lib/shared/shared.constant';
 
   import Idea from './idea.svelte';
 
-  let editor = $state<Editor>();
+  let { irarium = $bindable() } = $props();
 
-  const irarium = new IrariumStore();
+  let editor = $state<Editor>();
 
   const handleAddIdea = () => {
     if (!editor) return;

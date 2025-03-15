@@ -17,6 +17,7 @@ export class IrariumStore {
   tags = $state('');
   content = $state('');
   children = $state<Idea[]>([]);
+  isPublic = $state(false);
 
   inputContent = $state('');
   isEditing = $state(false);
