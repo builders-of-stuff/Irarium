@@ -1,13 +1,11 @@
 <script lang="ts">
   import { Button } from '$lib/components/ui/button';
-  import { pb } from '$lib/db/client';
-  import { COLLECTION } from '$lib/shared/shared.type';
   import { toast } from 'svelte-sonner';
 
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
-  import { mapIrariumToCreate } from '$lib/irarium/irarium.tools.svelte';
+  import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
 
   let irarium = new IrariumStore();
 
@@ -15,19 +13,12 @@
     if (!irarium) return;
 
     try {
-      const record = await pb
-        .collection(COLLECTION.IRARIUMS)
-        .create(mapIrariumToCreate(irarium));
-
+      await irariumsStore.createIrarium(irarium);
       toast.success('Irarium saved successfully!');
-      return { success: true, data: record };
     } catch (error) {
       console.error('Error saving irarium:', error);
-      return { success: false, error };
     }
   }
-
-  $effect(() => {});
 </script>
 
 {#snippet actions()}

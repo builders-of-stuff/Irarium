@@ -1,7 +1,5 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { pb } from '$lib/db/client';
-  import { COLLECTION } from '$lib/shared/shared.type';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import {
@@ -13,43 +11,12 @@
     CardTitle
   } from '$lib/components/ui/card';
   import { Button } from '$lib/components/ui/button';
-  import type { Irarium } from '$lib/shared/shared.type';
 
-  let irariums = $state<Irarium[]>([]);
-  let isLoading = $state(true);
-  let error = $state<string | null>(null);
+  import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
 
-  async function fetchIrariums() {
-    isLoading = true;
-    error = null;
-
-    try {
-      const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
-        filter: `userId = "${authStore.userId}"`,
-        sort: '-updated'
-      });
-
-      irariums = records.items.map((item) => item as unknown as Irarium);
-      error = null;
-    } catch (err) {
-      console.error('Error fetching irariums:', err);
-      error = 'Failed to load your irariums. Please try again later.';
-    } finally {
-      isLoading = false;
-    }
-  }
-
-  // Fetch irariums when the component mounts
   onMount(() => {
     if (authStore.userId) {
-      fetchIrariums();
-    }
-  });
-
-  // Watch for changes in auth state
-  $effect(() => {
-    if (authStore.userId) {
-      fetchIrariums();
+      irariumsStore.fetchUserIrariums();
     }
   });
 
@@ -65,18 +32,20 @@
 <UserNavbar title="My Collection" />
 
 <div class="container mx-auto px-4 py-8">
-  {#if isLoading}
+  {#if irariumsStore.isLoading}
     <div class="flex justify-center py-12">
       <div class="animate-pulse text-center">
         <p>Loading your irariums...</p>
       </div>
     </div>
-  {:else if error}
+  {:else if irariumsStore.error}
     <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
-      <p>{error}</p>
-      <Button variant="outline" class="mt-2" onclick={fetchIrariums}>Try Again</Button>
+      <p>{irariumsStore.error}</p>
+      <Button variant="outline" class="mt-2" onclick={irariumsStore.fetchUserIrariums}
+        >Try Again</Button
+      >
     </div>
-  {:else if irariums.length === 0}
+  {:else if irariumsStore.userIrariums.length === 0}
     <div class="rounded-lg border border-dashed p-8 text-center">
       <h3 class="mb-2 text-xl font-medium">No irariums found</h3>
       <p class="mb-4 text-muted-foreground">You haven't created any irariums yet.</p>
@@ -84,7 +53,7 @@
     </div>
   {:else}
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {#each irariums as irarium}
+      {#each irariumsStore.userIrariums as irarium}
         <Card class="flex h-full flex-col">
           <CardHeader>
             <CardTitle>{irarium.title || 'Untitled Irarium'}</CardTitle>

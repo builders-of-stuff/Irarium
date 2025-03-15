@@ -9,8 +9,6 @@
   const isMobile = new IsMobile();
 </script>
 
-<!-- {@render children()} -->
-
 <Sidebar.Provider>
   <UserSidebar />
 
