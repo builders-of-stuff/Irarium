@@ -3,12 +3,10 @@ import { nanoid } from 'nanoid';
 import type { Idea, Irarium } from '$lib/shared/shared.type';
 import { DEFAULT_IRARIUM_ID } from '$lib/shared/shared.constant';
 
-import { authStore } from '../auth/auth.store.svelte';
-
 // For in-memory working irarium
 export class IrariumStore {
   id = $state(DEFAULT_IRARIUM_ID);
-  userId = $state(authStore.userId);
+  userId = $state('');
   created = $state('');
   updated = $state('');
 
@@ -38,7 +36,6 @@ export class IrariumStore {
     this.referenceIdeaId ? this.findIdeaById(this.referenceIdeaId) : undefined
   );
 
-  isOwner = $derived(this.userId === authStore.userId);
   hasContent = $derived(this.content.length > 0);
   hasChildren = $derived(this.children.length > 0);
   allIdeasAsOptions = $derived(this.allIdeasToOptions());

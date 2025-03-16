@@ -30,7 +30,7 @@
   <div class="relative z-10 flex min-h-screen items-start justify-center p-4 pt-[20vh]">
     <div class="w-full max-w-md">
       {#if mounted}
-        <div in:fade={{ duration: 800, delay: 200 }} class="space-y-4">
+        <div in:fade={{ duration: 300, delay: 50 }} class="space-y-4">
           <!-- Logo with moving border -->
           <div class="relative mx-auto h-32 w-32">
             <div
@@ -46,7 +46,7 @@
 
           <!-- Name and slogan with animations -->
           <div class="space-y-2 text-center">
-            <div in:fly={{ y: -20, duration: 800, delay: 400 }}>
+            <div in:fly={{ y: -20, duration: 300, delay: 100 }}>
               <h1
                 class="bg-gradient-to-r from-primary via-amber-400 to-rose-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent"
               >
@@ -55,12 +55,12 @@
             </div>
 
             <div
-              in:fly={{ x: 100, duration: 800, delay: 600 }}
+              in:fly={{ x: 100, duration: 300, delay: 200 }}
               class="mx-auto h-px w-16 bg-gradient-to-r from-primary to-transparent"
             ></div>
 
             <p
-              in:fly={{ y: 10, duration: 800, delay: 800 }}
+              in:fly={{ y: 10, duration: 300, delay: 200 }}
               class="text-sm font-light tracking-wider text-zinc-400"
             >
               A SPACE FOR BURNING IDEAS
@@ -69,7 +69,7 @@
 
           <!-- Action Buttons with moving border effect -->
           <div
-            in:fade={{ duration: 800, delay: 1000 }}
+            in:fade={{ duration: 300, delay: 300 }}
             class="mt-6 flex flex-col space-y-3 pt-4"
           >
             <a href="/signup">

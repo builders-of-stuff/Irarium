@@ -19,7 +19,7 @@
 
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { ROUTE } from '$lib/shared/shared.constant';
-
+  import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   const menuItems = $derived([
     {
       title: 'Home',
@@ -34,6 +34,8 @@
   // Handle logout function
   function handleLogout() {
     authStore.signOut();
+    irariumsStore.clearStore();
+
     goto(ROUTE.LANDING);
   }
 </script>

@@ -1,6 +1,5 @@
 import { pb } from '$lib/db/client';
 import { COLLECTION, type Irarium } from '$lib/shared/shared.type';
-import { authStore } from '$lib/auth/auth.store.svelte';
 
 export class IrariumsStore {
   userIrariums = $state<Irarium[]>([]);
@@ -22,11 +21,8 @@ export class IrariumsStore {
   ]);
   hasFetchedUserIrariums = $derived(!!this.lastFetchedUserIrariums);
   hasFetchedPublicIrariums = $derived(!!this.lastFetchedPublicIrariums);
-  userId = $derived(authStore.userId);
 
-  constructor() {
-    this.fetchAllIrariums();
-  }
+  constructor() {}
 
   async deleteIrarium(id: string) {
     this.isLoading = true;
@@ -45,7 +41,7 @@ export class IrariumsStore {
     }
   }
 
-  async fetchUserIrariums() {
+  async fetchUserIrariums(userId: string) {
     if (this.hasFetchedUserIrariums) return;
 
     this.isLoading = true;
@@ -53,7 +49,7 @@ export class IrariumsStore {
 
     try {
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
-        filter: `userId = "${this.userId}"`,
+        filter: `userId = "${userId}"`,
         sort: '-updated'
       });
 
@@ -103,10 +99,6 @@ export class IrariumsStore {
     }
 
     return null;
-  }
-
-  async fetchAllIrariums() {
-    await Promise.all([this.fetchUserIrariums(), this.fetchPublicIrariums()]);
   }
 
   async createIrarium(irarium: Irarium) {
@@ -168,6 +160,15 @@ export class IrariumsStore {
 
   findIrariumById(id: string) {
     return this.allIrariums.find((irarium) => irarium.id === id);
+  }
+
+  clearStore() {
+    this.userIrariums = [];
+    this.publicIrariums = [];
+    this.lastFetchedUserIrariums = '';
+    this.lastFetchedPublicIrariums = '';
+    this.isLoading = false;
+    this.error = null;
   }
 
   private mapIrariumToCreate(irarium: Irarium) {

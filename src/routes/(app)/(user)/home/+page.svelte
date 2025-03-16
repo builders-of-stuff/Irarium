@@ -1,5 +1,13 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
+  import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+
+  onMount(() => {
+    if (authStore.userId) {
+      irariumsStore.fetchPublicIrariums();
+    }
+  });
 </script>
 
 <div class="container flex min-h-screen items-start justify-center pt-[10vh]">

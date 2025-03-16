@@ -6,8 +6,11 @@
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import { authStore } from '$lib/auth/auth.store.svelte';
 
-  let irarium = new IrariumStore();
+  let irarium = new IrariumStore({
+    userId: authStore.userId
+  });
 
   async function createIrarium() {
     if (!irarium) return;

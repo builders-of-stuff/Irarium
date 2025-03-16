@@ -10,12 +10,14 @@
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
+  import { authStore } from '$lib/auth/auth.store.svelte';
 
   let irarium = $state<IrariumStore | null>(null);
   let isLoading = $state(true);
   let error = $state<string | null>(null);
 
   const irariumId = $derived(page.params.irariumId);
+  const isOwner = $derived(irarium?.userId === authStore.userId);
 
   onMount(async () => {
     if (!irariumId) return;
@@ -91,7 +93,7 @@
 
 {#snippet actions()}
   <div class="flex gap-2">
-    {#if irarium?.isOwner}
+    {#if isOwner}
       <Button variant="destructive" onclick={deleteIrarium}>Delete</Button>
       <Button variant="outline" onclick={togglePublicState}>
         {irarium?.isPublic ? 'Unpublish' : 'Publish'}

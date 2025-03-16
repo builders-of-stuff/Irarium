@@ -16,7 +16,7 @@
 
   onMount(() => {
     if (authStore.userId) {
-      irariumsStore.fetchUserIrariums();
+      irariumsStore.fetchUserIrariums(authStore.userId);
     }
   });
 
@@ -41,7 +41,10 @@
   {:else if irariumsStore.error}
     <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
       <p>{irariumsStore.error}</p>
-      <Button variant="outline" class="mt-2" onclick={irariumsStore.fetchUserIrariums}
+      <Button
+        variant="outline"
+        class="mt-2"
+        onclick={() => irariumsStore.fetchUserIrariums(authStore.userId)}
         >Try Again</Button
       >
     </div>
