@@ -77,5 +77,5 @@ export type Irarium = {
   tags: string;
   content: string;
   children: Idea[];
-  isPublished: boolean;
+  isPublic: boolean;
 };

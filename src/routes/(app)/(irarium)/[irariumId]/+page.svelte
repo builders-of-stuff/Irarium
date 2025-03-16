@@ -69,12 +69,33 @@
       toast.error('Failed to delete irarium');
     }
   }
+
+  async function togglePublicState() {
+    if (!irarium) return;
+
+    try {
+      const updatedIrarium = await irariumsStore.togglePublicState(irarium);
+      irarium.isPublic = updatedIrarium.isPublic;
+
+      const message = irarium.isPublic
+        ? 'Published successfully'
+        : 'Unpublished successfully';
+
+      toast.success(message);
+    } catch (error) {
+      console.error('Error toggling public state:', error);
+      toast.error('Failed to update public state');
+    }
+  }
 </script>
 
 {#snippet actions()}
   <div class="flex gap-2">
     {#if irarium?.isOwner}
       <Button variant="destructive" onclick={deleteIrarium}>Delete</Button>
+      <Button variant="outline" onclick={togglePublicState}>
+        {irarium?.isPublic ? 'Unpublish' : 'Publish'}
+      </Button>
     {/if}
     <Button variant="secondary" onclick={saveIrarium}>Save</Button>
   </div>

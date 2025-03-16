@@ -74,7 +74,7 @@ export class IrariumsStore {
 
     try {
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
-        filter: 'isPublished = true',
+        filter: 'isPublic = true',
         sort: '-updated'
       });
 
@@ -138,6 +138,34 @@ export class IrariumsStore {
     }
   }
 
+  async togglePublicState(irarium: Irarium) {
+    try {
+      const updatedIrarium = { ...irarium, isPublic: !irarium.isPublic };
+
+      await pb
+        .collection(COLLECTION.IRARIUMS)
+        .update(irarium.id, { isPublic: !irarium.isPublic });
+
+      // Update in both user and public collections
+      this.userIrariums = this.userIrariums.map((item) =>
+        item.id === irarium.id ? updatedIrarium : item
+      );
+
+      if (updatedIrarium.isPublic) {
+        this.publicIrariums = [...this.publicIrariums, updatedIrarium];
+      } else {
+        this.publicIrariums = this.publicIrariums.filter(
+          (item) => item.id !== irarium.id
+        );
+      }
+
+      return updatedIrarium;
+    } catch (err) {
+      console.error('Error toggling public state:', err);
+      throw err;
+    }
+  }
+
   findIrariumById(id: string) {
     return this.allIrariums.find((irarium) => irarium.id === id);
   }
@@ -172,7 +200,7 @@ export class IrariumsStore {
       tags: recordItem.tags || '',
       content: recordItem.content || '',
       children: recordItem.children || [],
-      isPublished: recordItem.isPublished || false,
+      isPublic: recordItem.isPublic || false,
       created: recordItem.created,
       updated: recordItem.updated
     };

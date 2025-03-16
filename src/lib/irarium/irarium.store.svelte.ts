@@ -17,7 +17,7 @@ export class IrariumStore {
   tags = $state('');
   content = $state('');
   children = $state<Idea[]>([]);
-  isPublished = $state(false);
+  isPublic = $state(false);
 
   inputContent = $state('');
   isEditing = $state(false);
@@ -56,7 +56,7 @@ export class IrariumStore {
       if (irarium.tags) this.tags = irarium.tags;
       if (irarium.content) this.content = irarium.content;
       if (irarium.children) this.children = irarium.children;
-      if (irarium.isPublished !== undefined) this.isPublished = irarium.isPublished;
+      if (irarium.isPublic !== undefined) this.isPublic = irarium.isPublic;
     }
   }
 
