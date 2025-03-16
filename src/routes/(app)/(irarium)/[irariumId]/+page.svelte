@@ -3,6 +3,8 @@
   import { toast } from 'svelte-sonner';
 
   import { page } from '$app/state';
+  import { goto } from '$app/navigation';
+
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
@@ -46,15 +48,43 @@
       toast.error('Failed to save irarium');
     }
   }
+
+  async function deleteIrarium() {
+    if (!irarium) return;
+
+    if (
+      !confirm(
+        'Are you sure you want to delete this irarium? This action cannot be undone.'
+      )
+    ) {
+      return;
+    }
+
+    try {
+      await irariumsStore.deleteIrarium(irariumId);
+
+      toast.success('Irarium deleted successfully!');
+      goto('/home');
+    } catch (error) {
+      console.error('Error deleting irarium:', error);
+      toast.error('Failed to delete irarium');
+    }
+  }
+
+  // Check if the current user is the owner of the irarium
+  const isOwner = $derived(irarium?.userId === irariumsStore.userId);
 </script>
 
 {#snippet actions()}
   <div class="flex gap-2">
     <Button variant="secondary" onclick={saveIrarium}>Save</Button>
+    {#if isOwner}
+      <Button variant="destructive" onclick={deleteIrarium}>Delete</Button>
+    {/if}
   </div>
 {/snippet}
 
-<UserNavbar title={irarium?.title || 'Irarium'} {actions} />
+<UserNavbar title={irarium?.title || irarium?.id} {actions} />
 
 <div class="container flex min-h-screen flex-col items-center justify-center py-8">
   {#if isLoading}

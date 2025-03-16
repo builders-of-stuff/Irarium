@@ -28,6 +28,23 @@ export class IrariumsStore {
     this.fetchAllIrariums();
   }
 
+  async deleteIrarium(id: string) {
+    this.isLoading = true;
+    this.error = null;
+
+    try {
+      await pb.collection(COLLECTION.IRARIUMS).delete(id);
+
+      this.userIrariums = this.userIrariums.filter((irarium) => irarium.id !== id);
+      this.publicIrariums = this.publicIrariums.filter((irarium) => irarium.id !== id);
+    } catch (err) {
+      console.error('Error deleting irarium:', err);
+      this.error = 'Failed to delete irarium. Please try again later.';
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
   async fetchUserIrariums() {
     if (this.hasFetchedUserIrariums) return;
 
