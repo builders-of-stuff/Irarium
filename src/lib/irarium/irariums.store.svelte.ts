@@ -3,8 +3,6 @@ import { COLLECTION, type Irarium } from '$lib/shared/shared.type';
 import { authStore } from '$lib/auth/auth.store.svelte';
 
 export class IrariumsStore {
-  userId = $derived(authStore.userId);
-
   userIrariums = $state<Irarium[]>([]);
   publicIrariums = $state<Irarium[]>([]);
 
@@ -24,6 +22,7 @@ export class IrariumsStore {
   ]);
   hasFetchedUserIrariums = $derived(!!this.lastFetchedUserIrariums);
   hasFetchedPublicIrariums = $derived(!!this.lastFetchedPublicIrariums);
+  userId = $derived(authStore.userId);
 
   constructor() {
     this.fetchAllIrariums();
@@ -41,7 +40,7 @@ export class IrariumsStore {
         sort: '-updated'
       });
 
-      this.userIrariums = records.items.map((item) => item as unknown as Irarium);
+      this.userIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
       this.lastFetchedUserIrariums = new Date().toISOString();
       this.error = null;
     } catch (err) {
@@ -62,7 +61,7 @@ export class IrariumsStore {
         sort: '-updated'
       });
 
-      this.publicIrariums = records.items.map((item) => item as unknown as Irarium);
+      this.publicIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
       this.lastFetchedPublicIrariums = new Date().toISOString();
       this.error = null;
     } catch (err) {
@@ -117,6 +116,21 @@ export class IrariumsStore {
       tags: irarium.tags,
       content: irarium.content,
       children: irarium.children
+    };
+  }
+
+  private mapRecordToIrarium(recordItem: any): Irarium {
+    return {
+      id: recordItem.id,
+      userId: recordItem.userId,
+      title: recordItem.title || '',
+      description: recordItem.description || '',
+      tags: recordItem.tags || '',
+      content: recordItem.content || '',
+      children: recordItem.children || [],
+      isPublic: recordItem.isPublic || false,
+      created: recordItem.created,
+      updated: recordItem.updated
     };
   }
 }
