@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 
-import type { Idea } from '$lib/shared/shared.type';
+import type { Idea, Irarium } from '$lib/shared/shared.type';
 import { DEFAULT_IRARIUM_ID } from '$lib/shared/shared.constant';
 
 import { authStore } from '../auth/auth.store.svelte';
@@ -38,14 +38,25 @@ export class IrariumStore {
     this.referenceIdeaId ? this.findIdeaById(this.referenceIdeaId) : undefined
   );
 
+  isOwner = $derived(this.userId === authStore.userId);
   hasContent = $derived(this.content.length > 0);
   hasChildren = $derived(this.children.length > 0);
   allIdeasAsOptions = $derived(this.allIdeasToOptions());
   isEmptyIrarium = $derived(!this.hasContent && !this.hasChildren);
 
-  constructor(irarium?: Partial<IrariumStore>) {
+  constructor(irarium?: Partial<Irarium>) {
     if (irarium) {
-      Object.assign(this, irarium);
+      // Object.assign(this, irarium); does not work... something to do with $state and proxies
+      if (irarium.id) this.id = irarium.id;
+      if (irarium.userId) this.userId = irarium.userId;
+      if (irarium.created) this.created = irarium.created;
+      if (irarium.updated) this.updated = irarium.updated;
+      if (irarium.title) this.title = irarium.title;
+      if (irarium.description) this.description = irarium.description;
+      if (irarium.tags) this.tags = irarium.tags;
+      if (irarium.content) this.content = irarium.content;
+      if (irarium.children) this.children = irarium.children;
+      if (irarium.isPublic !== undefined) this.isPublic = irarium.isPublic;
     }
   }
 

@@ -41,11 +41,10 @@
     if (!irarium) return;
 
     try {
-      // TODO: Implement update functionality
+      await irariumsStore.updateIrarium(irarium);
       toast.success('Irarium saved successfully!');
     } catch (error) {
       console.error('Error saving irarium:', error);
-      toast.error('Failed to save irarium');
     }
   }
 
@@ -64,23 +63,20 @@
       await irariumsStore.deleteIrarium(irariumId);
 
       toast.success('Irarium deleted successfully!');
-      goto('/home');
+      goto('/collection');
     } catch (error) {
       console.error('Error deleting irarium:', error);
       toast.error('Failed to delete irarium');
     }
   }
-
-  // Check if the current user is the owner of the irarium
-  const isOwner = $derived(irarium?.userId === irariumsStore.userId);
 </script>
 
 {#snippet actions()}
   <div class="flex gap-2">
-    <Button variant="secondary" onclick={saveIrarium}>Save</Button>
-    {#if isOwner}
+    {#if irarium?.isOwner}
       <Button variant="destructive" onclick={deleteIrarium}>Delete</Button>
     {/if}
+    <Button variant="secondary" onclick={saveIrarium}>Save</Button>
   </div>
 {/snippet}
 

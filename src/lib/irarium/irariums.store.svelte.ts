@@ -96,10 +96,13 @@ export class IrariumsStore {
     const record = await pb.collection(COLLECTION.IRARIUMS).getOne(id);
 
     if (record) {
-      this.allIrariums.push(record as unknown as Irarium);
+      const fetchedIrarium = this.mapRecordToIrarium(record);
+      this.allIrariums.push(fetchedIrarium);
+
+      return fetchedIrarium;
     }
 
-    return record as unknown as Irarium;
+    return null;
   }
 
   async fetchAllIrariums() {
@@ -121,6 +124,20 @@ export class IrariumsStore {
     }
   }
 
+  async updateIrarium(updatedIrarium: Irarium) {
+    try {
+      const w = await pb
+        .collection(COLLECTION.IRARIUMS)
+        .update(updatedIrarium.id, this.mapIrariumToUpdate(updatedIrarium));
+
+      this.userIrariums = this.userIrariums.map((irarium) =>
+        updatedIrarium.id === irarium.id ? updatedIrarium : irarium
+      );
+    } catch (err) {
+      console.error('Error updating irarium:', err);
+    }
+  }
+
   findIrariumById(id: string) {
     return this.allIrariums.find((irarium) => irarium.id === id);
   }
@@ -128,6 +145,16 @@ export class IrariumsStore {
   private mapIrariumToCreate(irarium: Irarium) {
     return {
       userId: irarium.userId,
+      title: irarium.title,
+      description: irarium.description,
+      tags: irarium.tags,
+      content: irarium.content,
+      children: irarium.children
+    };
+  }
+
+  private mapIrariumToUpdate(irarium: Irarium) {
+    return {
       title: irarium.title,
       description: irarium.description,
       tags: irarium.tags,

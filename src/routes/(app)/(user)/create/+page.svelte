@@ -9,7 +9,7 @@
 
   let irarium = new IrariumStore();
 
-  async function saveIrarium() {
+  async function createIrarium() {
     if (!irarium) return;
 
     try {
@@ -23,7 +23,7 @@
 
 {#snippet actions()}
   <div class="flex gap-2">
-    <Button variant="secondary" onclick={saveIrarium}>Save</Button>
+    <Button variant="secondary" onclick={createIrarium}>Save</Button>
   </div>
 {/snippet}
 
