@@ -72,7 +72,7 @@ export class IrariumsStore {
     }
   }
 
-  async fetchIrariumBy(id: string) {
+  async fetchIrarium(id: string) {
     const irarium = this.findIrariumById(id);
     if (irarium) return irarium;
 

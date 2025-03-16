@@ -1,12 +1,13 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { toast } from 'svelte-sonner';
+
   import { page } from '$app/state';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
-  import { toast } from 'svelte-sonner';
 
   let irarium = $state<IrariumStore | null>(null);
   let isLoading = $state(true);
@@ -19,7 +20,7 @@
 
     try {
       isLoading = true;
-      const fetchedIrarium = await irariumsStore.fetchIrariumBy(irariumId);
+      const fetchedIrarium = await irariumsStore.fetchIrarium(irariumId);
 
       if (fetchedIrarium) {
         irarium = new IrariumStore(fetchedIrarium);
