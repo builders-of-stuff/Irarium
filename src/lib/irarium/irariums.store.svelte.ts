@@ -74,7 +74,7 @@ export class IrariumsStore {
 
     try {
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
-        filter: 'isPublic = true',
+        filter: 'isPublished = true',
         sort: '-updated'
       });
 
@@ -126,7 +126,7 @@ export class IrariumsStore {
 
   async updateIrarium(updatedIrarium: Irarium) {
     try {
-      const w = await pb
+      await pb
         .collection(COLLECTION.IRARIUMS)
         .update(updatedIrarium.id, this.mapIrariumToUpdate(updatedIrarium));
 
@@ -172,7 +172,7 @@ export class IrariumsStore {
       tags: recordItem.tags || '',
       content: recordItem.content || '',
       children: recordItem.children || [],
-      isPublic: recordItem.isPublic || false,
+      isPublished: recordItem.isPublished || false,
       created: recordItem.created,
       updated: recordItem.updated
     };

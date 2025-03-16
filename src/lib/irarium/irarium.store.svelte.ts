@@ -5,7 +5,7 @@ import { DEFAULT_IRARIUM_ID } from '$lib/shared/shared.constant';
 
 import { authStore } from '../auth/auth.store.svelte';
 
-// For current active irarium
+// For in-memory working irarium
 export class IrariumStore {
   id = $state(DEFAULT_IRARIUM_ID);
   userId = $state(authStore.userId);
@@ -17,7 +17,7 @@ export class IrariumStore {
   tags = $state('');
   content = $state('');
   children = $state<Idea[]>([]);
-  isPublic = $state(false);
+  isPublished = $state(false);
 
   inputContent = $state('');
   isEditing = $state(false);
@@ -56,7 +56,7 @@ export class IrariumStore {
       if (irarium.tags) this.tags = irarium.tags;
       if (irarium.content) this.content = irarium.content;
       if (irarium.children) this.children = irarium.children;
-      if (irarium.isPublic !== undefined) this.isPublic = irarium.isPublic;
+      if (irarium.isPublished !== undefined) this.isPublished = irarium.isPublished;
     }
   }
 
