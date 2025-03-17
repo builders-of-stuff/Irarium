@@ -6,6 +6,9 @@ export enum COLLECTION {
 export type User = {
   id: string;
   name: string;
+  bio: string;
+  username: string;
+  displayName: string;
   created: string;
   updated: string;
   verified: boolean;
