@@ -2,17 +2,65 @@
   import { onMount } from 'svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import { Button } from '$lib/components/ui/button';
+  import UserNavbar from '$lib/shared/user-navbar.svelte';
 
   onMount(() => {
     if (authStore.userId) {
       irariumsStore.fetchPublicIrariums();
     }
   });
+
+  function formatDate(dateString: string) {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  }
 </script>
 
-<div class="container flex min-h-screen items-start justify-center pt-[10vh]">
-  <div class="w-full max-w-md space-y-10">
-    <h1 class="text-2xl font-bold">Home</h1>
-    <p>Welcome to your home page.</p>
-  </div>
+<UserNavbar title="Home" />
+
+<div class="container mx-auto px-4 py-8">
+  {#if irariumsStore.isLoading}
+    <div class="flex justify-center py-12">
+      <div class="animate-pulse text-center">
+        <p>Loading public irariums...</p>
+      </div>
+    </div>
+  {:else if irariumsStore.error}
+    <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
+      <p>{irariumsStore.error}</p>
+      <Button
+        variant="outline"
+        class="mt-2"
+        onclick={() => irariumsStore.fetchPublicIrariums()}>Try Again</Button
+      >
+    </div>
+  {:else if irariumsStore.publicIrariums.length === 0}
+    <div class="rounded-lg border border-dashed p-8 text-center">
+      <h3 class="mb-2 text-xl font-medium">No irariums found</h3>
+      <p class="mb-4 text-muted-foreground">
+        There are no irariums available at the moment.
+      </p>
+      <Button href="/create">Create Your Own Irarium</Button>
+    </div>
+  {:else}
+    <div class="space-y-4">
+      {#each irariumsStore.publicIrariums as irarium}
+        <a
+          href={`/${irarium.id}`}
+          class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
+        >
+          <div class="mb-2 line-clamp-3">
+            {@html irarium.content || 'No content'}
+          </div>
+          <div class="text-xs text-muted-foreground">
+            {formatDate(irarium.updated)}
+          </div>
+        </a>
+      {/each}
+    </div>
+  {/if}
 </div>
