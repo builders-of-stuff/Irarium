@@ -5,38 +5,35 @@
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { pb } from '$lib/db/client';
-  import { COLLECTION } from '$lib/shared/shared.type';
+  import { COLLECTION, type User } from '$lib/shared/shared.type';
+  import { toast } from 'svelte-sonner';
 
   // Dialog components
   import * as Dialog from '$lib/components/ui/dialog';
 
-  let bio = $state('');
-  let name = $state('');
-  let isUpdating = $state(false);
-  let updateError = $state('');
   let showDialog = $state(false);
 
   // Form inputs
   let bioInput = $state('');
   let nameInput = $state('');
+  let usernameInput = $state('');
 
   onMount(async () => {
     if (authStore.userId) {
-      name = authStore.user.name || '';
-
-      // Check if the user has a bio field, if not it will default to empty string
-      try {
-        const userRecord = await pb
-          .collection(COLLECTION.USERS)
-          .getOne(authStore.userId);
-        bio = userRecord.bio || '';
-      } catch (error) {
-        console.error('Error fetching user bio:', error);
-      }
+      // Initialize form inputs with current user data
+      bioInput = authStore.user.bio || '';
+      nameInput = authStore.user.name || '';
+      usernameInput = authStore.username || '';
 
       // Fetch the user's irariums
-      irariumsStore.fetchUserIrariums(authStore.userId);
-      irariumsStore.fetchPublicIrariums();
+      try {
+        await irariumsStore.fetchUserIrariums(authStore.userId);
+        await irariumsStore.fetchPublicIrariums();
+      } catch (error) {
+        toast.error('Failed to load irariums. Please refresh the page.');
+      }
+    } else {
+      toast.error('You must be logged in to view your profile.');
     }
   });
 
@@ -56,35 +53,38 @@
   }
 
   function handleEditProfile() {
-    nameInput = name;
-    bioInput = bio;
+    nameInput = authStore.user.name || '';
+    bioInput = authStore.user.bio || '';
+    usernameInput = authStore.username || '';
     showDialog = true;
   }
 
   async function handleSaveProfile() {
-    if (!authStore.userId) return;
-
-    isUpdating = true;
-    updateError = '';
-
     try {
-      await pb.collection(COLLECTION.USERS).update(authStore.userId, {
-        name: nameInput,
-        bio: bioInput
-      });
-
-      // Update local state
-      name = nameInput;
-      bio = bioInput;
-      showDialog = false;
-
-      // Refresh auth store user data
-      authStore.refreshUser();
+      const result = await authStore.updateProfile(nameInput, bioInput, usernameInput);
+      if (result.success) {
+        showDialog = false;
+        toast.success('Profile updated successfully');
+      } else {
+        toast.error(authStore.updateError || 'Failed to update profile');
+      }
     } catch (error) {
-      console.error('Error updating profile:', error);
-      updateError = 'Failed to update profile. Please try again.';
-    } finally {
-      isUpdating = false;
+      toast.error('An unexpected error occurred');
+    }
+  }
+
+  // Function to handle logging out with toast
+  async function handleLogout() {
+    try {
+      const result = await authStore.signOut();
+      if (result.success) {
+        toast.success('Logged out successfully');
+        // Redirect if needed
+      } else {
+        toast.error('Failed to log out');
+      }
+    } catch (error) {
+      toast.error('An unexpected error occurred');
     }
   }
 </script>
@@ -101,9 +101,11 @@
       <div class="flex-1">
         <div class="mb-4 flex items-start justify-between">
           <div>
-            <h1 class="text-2xl font-bold">{name || 'Anonymous User'}</h1>
+            <h1 class="text-2xl font-bold">
+              {authStore.user.name || 'Anonymous User'}
+            </h1>
             <p class="text-sm text-muted-foreground">
-              @{authStore.userId?.substring(0, 8) || 'user'}
+              @{authStore.username || authStore.userId?.substring(0, 8) || 'user'}
             </p>
           </div>
 
@@ -112,8 +114,8 @@
           </Button>
         </div>
 
-        {#if bio}
-          <p class="mb-4 whitespace-pre-wrap text-base">{bio}</p>
+        {#if authStore.user.bio}
+          <p class="mb-4 whitespace-pre-wrap text-base">{authStore.user.bio}</p>
         {:else}
           <p class="mb-4 text-muted-foreground">No bio yet</p>
         {/if}
@@ -206,6 +208,24 @@
       </div>
 
       <div class="space-y-2">
+        <label for="username" class="text-sm font-medium">Username</label>
+        <div class="flex items-center">
+          <span class="mr-1 text-sm text-muted-foreground">@</span>
+          <input
+            id="username"
+            type="text"
+            bind:value={usernameInput}
+            class="w-full rounded-md border border-input px-3 py-2 text-sm"
+            placeholder="username"
+            maxlength="30"
+          />
+        </div>
+        <p class="text-xs text-muted-foreground">
+          Your username appears in your profile URL and irariums
+        </p>
+      </div>
+
+      <div class="space-y-2">
         <label for="bio" class="text-sm font-medium">Bio</label>
         <textarea
           id="bio"
@@ -217,15 +237,15 @@
         ></textarea>
       </div>
 
-      {#if updateError}
-        <p class="text-sm text-destructive">{updateError}</p>
+      {#if authStore.updateError}
+        <p class="text-sm text-destructive">{authStore.updateError}</p>
       {/if}
     </div>
 
     <Dialog.Footer>
       <Button variant="outline" onclick={() => (showDialog = false)}>Cancel</Button>
-      <Button onclick={handleSaveProfile} disabled={isUpdating}>
-        {isUpdating ? 'Saving...' : 'Save changes'}
+      <Button onclick={handleSaveProfile} disabled={authStore.isUpdating}>
+        {authStore.isUpdating ? 'Saving...' : 'Save changes'}
       </Button>
     </Dialog.Footer>
   </Dialog.Content>

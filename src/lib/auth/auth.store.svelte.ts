@@ -15,6 +15,12 @@ class AuthStore {
    */
   userSettings = $derived({});
 
+  /**
+   * Form states
+   */
+  isUpdating = $state(false);
+  updateError = $state('');
+
   constructor() {
     const cookies = document.cookie;
     pb.authStore.loadFromCookie(cookies);
@@ -104,8 +110,52 @@ class AuthStore {
   }
 
   async refreshUser() {
-    const authResponse = await pb.collection(COLLECTION.USERS).authRefresh();
-    this.user = this.mapAuthRecordToUser(authResponse.record);
+    try {
+      const authResponse = await pb.collection(COLLECTION.USERS).authRefresh();
+      this.user = this.mapAuthRecordToUser(authResponse.record);
+      return { success: true };
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
+   * Profile management
+   */
+  async updateProfile(name: string, bio: string, username: string) {
+    if (!this.userId) {
+      this.updateError = 'User not logged in';
+      return { success: false, error: this.updateError };
+    }
+
+    this.isUpdating = true;
+    this.updateError = '';
+
+    try {
+      // Validate username
+      if (!username) {
+        this.updateError = 'Username cannot be empty';
+        return { success: false, error: this.updateError };
+      }
+
+      await pb.collection(COLLECTION.USERS).update(this.userId, {
+        name,
+        bio,
+        username
+      });
+
+      // Refresh user data
+      await this.refreshUser();
+
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      this.updateError = 'Failed to update profile. Please try again.';
+      return { success: false, error };
+    } finally {
+      this.isUpdating = false;
+    }
   }
 
   private mapAuthRecordToUser(record: any): User {
