@@ -2,14 +2,6 @@
   import { onMount } from 'svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
-  import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle
-  } from '$lib/components/ui/card';
   import { Button } from '$lib/components/ui/button';
 
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
@@ -55,38 +47,19 @@
       <Button href="/create">Create Your First Irarium</Button>
     </div>
   {:else}
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="space-y-4">
       {#each irariumsStore.userIrariums as irarium}
-        <Card class="flex h-full flex-col">
-          <CardHeader>
-            <CardTitle>{irarium.title || 'Untitled Irarium'}</CardTitle>
-            <CardDescription>
-              {irarium.description || 'No description'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent class="flex-grow">
-            <div class="line-clamp-3 text-sm text-muted-foreground">
-              {@html irarium.content || 'No content'}
-            </div>
-            {#if irarium.tags}
-              <div class="mt-4 flex flex-wrap gap-2">
-                {#each irarium.tags.split(',') as tag}
-                  {#if tag.trim()}
-                    <span class="rounded-full bg-secondary px-2 py-1 text-xs">
-                      {tag.trim()}
-                    </span>
-                  {/if}
-                {/each}
-              </div>
-            {/if}
-          </CardContent>
-          <CardFooter class="flex justify-between">
-            <span class="text-xs text-muted-foreground">
-              Updated {formatDate(irarium.updated)}
-            </span>
-            <Button variant="outline" href={`/${irarium.id}`}>View</Button>
-          </CardFooter>
-        </Card>
+        <a
+          href={`/${irarium.id}`}
+          class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
+        >
+          <div class="mb-2 line-clamp-3">
+            {@html irarium.content || 'No content'}
+          </div>
+          <div class="text-xs text-muted-foreground">
+            {formatDate(irarium.updated)}
+          </div>
+        </a>
       {/each}
     </div>
   {/if}

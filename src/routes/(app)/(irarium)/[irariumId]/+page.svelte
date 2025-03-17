@@ -130,7 +130,7 @@
       <Button href="/home">Back to Dashboard</Button>
     </div>
   {:else if irarium}
-    <IrariumComposer {irarium} />
+    <IrariumComposer {irarium} enableUpdates={isOwner} />
   {:else}
     <div class="flex flex-col items-center justify-center gap-4">
       <p>No irarium found</p>

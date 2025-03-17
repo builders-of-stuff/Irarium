@@ -9,7 +9,7 @@
 
   import Idea from './idea.svelte';
 
-  let { irarium = $bindable() } = $props();
+  let { irarium = $bindable(), enableUpdates = false } = $props();
 
   let editor = $state<Editor>();
 
@@ -219,7 +219,7 @@
   </div>
 
   <!-- New idea -->
-  {#if irarium.isOwner && (irarium.isAdding || irarium.isEmptyIrarium)}
+  {#if enableUpdates && (irarium.isAdding || irarium.isEmptyIrarium)}
     <div class="irarium relative w-full max-w-2xl">
       <!-- Editor -->
       <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
