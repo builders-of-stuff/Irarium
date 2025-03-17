@@ -18,6 +18,13 @@
 
   const irariumId = $derived(page.params.irariumId);
   const isOwner = $derived(irarium?.userId === authStore.userId);
+  const displayTitle = $derived(irarium?.title || irarium?.id || 'Irarium');
+
+  function updateTitle(newTitle: string) {
+    if (irarium && newTitle !== irarium.title) {
+      irarium.title = newTitle;
+    }
+  }
 
   onMount(async () => {
     if (!irariumId) return;
@@ -103,7 +110,12 @@
   </div>
 {/snippet}
 
-<UserNavbar title={irarium?.title || irarium?.id} {actions} />
+<UserNavbar
+  title={displayTitle}
+  handleTitleChange={updateTitle}
+  isTitleEditable={isOwner && !!irarium}
+  {actions}
+/>
 
 <div class="container flex min-h-screen flex-col items-center justify-center py-8">
   {#if isLoading}
