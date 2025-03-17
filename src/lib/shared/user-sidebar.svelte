@@ -18,8 +18,9 @@
   import { Button } from '$lib/components/ui/button';
 
   import { authStore } from '$lib/auth/auth.store.svelte';
-  import { ROUTE } from '$lib/shared/shared.constant';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import { ROUTE } from '$lib/shared/shared.constant';
+
   const menuItems = $derived([
     {
       title: 'Home',
@@ -27,7 +28,7 @@
       href: `/home`
     },
     { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' },
-    { title: 'Profile', icon: User, href: '/profile' }
+    { title: 'Profile', icon: User, href: `/user/${authStore?.username}` }
     // { title: 'Saved', icon: Save, href: '/saved' }
   ]);
 

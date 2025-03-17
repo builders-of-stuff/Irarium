@@ -9,7 +9,7 @@ class AuthStore {
   user = $state<User>({} as User);
   hasUser = $derived(!!this.user?.id);
   userId = $derived(this.user?.id);
-
+  username = $derived(this.user?.username);
   /**
    * User settings
    */
@@ -59,10 +59,15 @@ class AuthStore {
   async signUp(email: string, password: string, passwordConfirm: string) {
     try {
       // Create user
-      await pb.collection(COLLECTION.USERS).create({
+      const newUser = await pb.collection(COLLECTION.USERS).create({
         email,
         password,
         passwordConfirm
+      });
+
+      // Update the user to set username as the ID
+      await pb.collection(COLLECTION.USERS).update(newUser.id, {
+        username: newUser.id
       });
 
       // Login user
@@ -107,6 +112,9 @@ class AuthStore {
     return {
       id: record.id,
       name: record.name,
+      username: record.username,
+      displayName: record.displayName,
+      bio: record.bio,
       created: record.created,
       updated: record.updated,
       verified: record.verified,
