@@ -58,8 +58,10 @@
             <ul class="space-y-2">
               <li class="flex items-center gap-2">
                 <Check class="h-4 w-4 text-primary" />
-                <span>Unlock all future features that don't require a subscription</span
-                >
+                <span>
+                  Unlock all current and future features that don't require a
+                  subscription (currently none)
+                </span>
               </li>
             </ul>
           </CardContent>
