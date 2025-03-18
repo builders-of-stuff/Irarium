@@ -102,25 +102,11 @@
                 <Popover.Content class="w-56 p-0">
                   <div class="flex flex-col">
                     <a
-                      href="/settings/account"
-                      class="flex items-center gap-2 px-4 py-2 hover:bg-accent"
-                    >
-                      <User class="h-4 w-4" />
-                      <span>Account Settings</span>
-                    </a>
-                    <a
-                      href="/settings/privacy"
+                      href="/billing"
                       class="flex items-center gap-2 px-4 py-2 hover:bg-accent"
                     >
                       <Shield class="h-4 w-4" />
-                      <span>Privacy & Safety</span>
-                    </a>
-                    <a
-                      href="/help"
-                      class="flex items-center gap-2 px-4 py-2 hover:bg-accent"
-                    >
-                      <HelpCircle class="h-4 w-4" />
-                      <span>Help Center</span>
+                      <span>Billing</span>
                     </a>
                     <button
                       class="flex items-center gap-2 px-4 py-2 text-left text-destructive hover:bg-accent"
