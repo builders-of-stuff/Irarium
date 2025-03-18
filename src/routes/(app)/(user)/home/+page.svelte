@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import { countIdeas } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
 
@@ -56,8 +57,9 @@
           <div class="mb-2 line-clamp-3">
             {@html irarium.content || 'No content'}
           </div>
-          <div class="text-xs text-muted-foreground">
-            {formatDate(irarium.updated)}
+          <div class="flex justify-between text-xs text-muted-foreground">
+            <span>{formatDate(irarium.updated)}</span>
+            <span>{countIdeas(irarium)} ideas</span>
           </div>
         </a>
       {/each}

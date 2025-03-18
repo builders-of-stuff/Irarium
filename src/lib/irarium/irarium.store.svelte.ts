@@ -40,6 +40,7 @@ export class IrariumStore {
   hasChildren = $derived(this.children.length > 0);
   allIdeasAsOptions = $derived(this.allIdeasToOptions());
   isEmptyIrarium = $derived(!this.hasContent && !this.hasChildren);
+  ideasCount = $derived.by(() => this.getAllIdeas().length);
 
   constructor(irarium?: Partial<Irarium>) {
     if (irarium) {

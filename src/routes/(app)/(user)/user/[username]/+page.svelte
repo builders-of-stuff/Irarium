@@ -1,12 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { toast } from 'svelte-sonner';
+
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import { countIdeas } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
-  import { pb } from '$lib/db/client';
-  import { COLLECTION, type User } from '$lib/shared/shared.type';
-  import { toast } from 'svelte-sonner';
 
   // Dialog components
   import * as Dialog from '$lib/components/ui/dialog';
@@ -96,7 +96,7 @@
   <div class="mb-8 rounded-xl bg-muted/30 p-6">
     <div class="flex flex-col md:flex-row md:items-start md:gap-6">
       <!-- Avatar placeholder -->
-      <div class="mb-4 h-24 w-24 rounded-full bg-muted md:mb-0"></div>
+      <!-- <div class="mb-4 h-24 w-24 rounded-full bg-muted md:mb-0"></div> -->
 
       <div class="flex-1">
         <div class="mb-4 flex items-start justify-between">
@@ -146,8 +146,6 @@
 
   <!-- Public Irariums section -->
   <div>
-    <h2 class="mb-4 text-xl font-semibold">Public Irariums</h2>
-
     {#if irariumsStore.isLoading}
       <div class="flex justify-center py-8">
         <div class="animate-pulse text-center">
@@ -167,17 +165,14 @@
         {#each userPublicIrariums as irarium}
           <a
             href={`/${irarium.id}`}
-            class="block rounded-lg border p-4 transition-all hover:bg-muted/30"
+            class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
           >
-            <h3 class="mb-1 font-medium">{irarium.title || 'Untitled Irarium'}</h3>
-            <div class="mb-2 line-clamp-2 text-sm text-muted-foreground">
-              {irarium.description || 'No description'}
+            <div class="mb-2 line-clamp-3">
+              {@html irarium.content || 'No content'}
             </div>
             <div class="flex justify-between text-xs text-muted-foreground">
-              <span>Updated {formatDate(irarium.updated)}</span>
-              {#if irarium.tags}
-                <span>{irarium.tags}</span>
-              {/if}
+              <span>{formatDate(irarium.updated)}</span>
+              <span>{countIdeas(irarium)} ideas</span>
             </div>
           </a>
         {/each}
