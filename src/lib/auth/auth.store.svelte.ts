@@ -170,7 +170,9 @@ class AuthStore {
       verified: record.verified,
       emailVisibility: record.emailVisibility,
 
-      subscriptionType: record.subscriptionType || ''
+      subscriptionType: record.subscriptionType || '',
+      isPremium: record.isPremium || false,
+      premiumSince: record.premiumSince || null
     };
   }
 }

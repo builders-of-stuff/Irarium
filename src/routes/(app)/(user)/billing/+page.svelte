@@ -10,6 +10,8 @@
   } from '$lib/components/ui/card';
   import * as Tabs from '$lib/components/ui/tabs';
   import { Check } from 'lucide-svelte';
+  import { PAYMENT_LINK } from '$lib/shared/shared.constant';
+  import { authStore } from '$lib/auth/auth.store.svelte';
 </script>
 
 <div class="container max-w-5xl py-8">
@@ -66,7 +68,27 @@
             </ul>
           </CardContent>
           <CardFooter>
-            <Button class="w-full">Purchase</Button>
+            <Button
+              class="w-full"
+              onclick={() => {
+                // Add user info as query parameters
+                const userInfo = {
+                  userId: `${authStore.user?.id}`
+                };
+
+                console.log('userInfo: ', userInfo);
+
+                // Create URL with parameters
+                const paymentUrl = new URL(PAYMENT_LINK);
+                Object.entries(userInfo).forEach(([key, value]) => {
+                  paymentUrl.searchParams.append(key, value);
+                });
+
+                window.open(paymentUrl.toString(), '_blank');
+              }}
+            >
+              Purchase
+            </Button>
           </CardFooter>
         </Card>
       </div>

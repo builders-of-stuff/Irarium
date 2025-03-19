@@ -1,6 +1,8 @@
 export enum COLLECTION {
   USERS = 'users',
-  IRARIUMS = 'irariums'
+  SUPERUSERS = '_superusers',
+  IRARIUMS = 'irariums',
+  PAYMENTS = 'payments'
 }
 
 export type User = {
@@ -14,6 +16,21 @@ export type User = {
   verified: boolean;
   emailVisibility: boolean;
   subscriptionType: string;
+  isPremium: boolean; // Whether the user has made a one-time payment
+  premiumSince: string | null; // When the user became premium
+};
+
+export type Payment = {
+  id: string;
+  userId: string;
+  amount: number;
+  currency: string;
+  status: 'succeeded' | 'pending' | 'failed';
+  stripePaymentId: string;
+  stripeCustomerId: string | null;
+  created: string;
+  updated: string;
+  metadata: Record<string, any>;
 };
 
 export type Idea = {

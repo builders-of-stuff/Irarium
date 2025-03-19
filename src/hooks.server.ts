@@ -1,11 +1,14 @@
 import PocketBase from 'pocketbase';
 import { redirect } from '@sveltejs/kit';
 import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
+import { WEBOOK_ADMIN_EMAIL, WEBOOK_ADMIN_PASSWORD } from '$env/static/private';
 
-import { ROUTE, UNPROTECTED_ROUTE_IDS } from '$lib/shared/shared.constant';
+import { ROUTE, UNPROTECTED_ROUTE_IDS, ROUTE_IDS } from '$lib/shared/shared.constant';
 import { COLLECTION } from '$lib/shared/shared.type';
 
 export async function handle({ event, resolve }) {
+  const isWebhook = event.route.id === ROUTE_IDS.STRIPE_WEBHOOK;
+
   /**
    * CORS
    */
@@ -46,33 +49,42 @@ export async function handle({ event, resolve }) {
    */
   event.locals.pb = new PocketBase(PUBLIC_POCKETBASE_URL);
 
-  const cookie =
-    event.request.headers.get('cookie') || event.cookies.get('pb_auth') || '';
-  // Will parse pb_auth cookie out of any cookie string
-  event.locals.pb.authStore.loadFromCookie(cookie);
-
-  // Refresh auth store & user record
-  try {
-    if (event.locals.pb.authStore.isValid) {
-      await event.locals.pb.collection(COLLECTION.USERS).authRefresh();
-    }
-  } catch (_) {
-    event.locals.pb.authStore.clear();
-  }
-
   /**
-   * Auth/Route guards
+   * Auth handling
    */
-  const routeId = event.route.id;
-  const isProtectedRoute = !UNPROTECTED_ROUTE_IDS.some((id) => id === routeId);
-  const isLoggedIn = event.locals.pb.authStore.isValid;
+  if (isWebhook) {
+    await event.locals.pb
+      .collection(COLLECTION.SUPERUSERS)
+      .authWithPassword(WEBOOK_ADMIN_EMAIL, WEBOOK_ADMIN_PASSWORD);
+  } else {
+    const cookie =
+      event.request.headers.get('cookie') || event.cookies.get('pb_auth') || '';
+    // Will parse pb_auth cookie out of any cookie string
+    event.locals.pb.authStore.loadFromCookie(cookie);
 
-  if (routeId) {
-    if (!isProtectedRoute && isLoggedIn) {
-      // Redirect to home if logged in
-      return redirect(302, ROUTE.HOME);
-    } else if (isProtectedRoute && !isLoggedIn) {
-      return redirect(302, ROUTE.LOGIN);
+    // Refresh auth store & user record
+    try {
+      if (event.locals.pb.authStore.isValid) {
+        await event.locals.pb.collection(COLLECTION.USERS).authRefresh();
+      }
+    } catch (_) {
+      event.locals.pb.authStore.clear();
+    }
+
+    /**
+     * Auth/Route guards (skip for webhook routes)
+     */
+    const routeId = event.route.id;
+    const isProtectedRoute = !UNPROTECTED_ROUTE_IDS.some((id) => id === routeId);
+    const isLoggedIn = event.locals.pb.authStore.isValid;
+
+    if (routeId) {
+      if (!isProtectedRoute && isLoggedIn) {
+        // Redirect to home if logged in
+        return redirect(302, ROUTE.HOME);
+      } else if (isProtectedRoute && !isLoggedIn) {
+        return redirect(302, ROUTE.LOGIN);
+      }
     }
   }
 
@@ -89,14 +101,16 @@ export async function handle({ event, resolve }) {
   response.headers.set('X-Frame-Options', 'SAMEORIGIN');
   response.headers.set('X-XSS-Protection', '1; mode=block');
 
-  // set pb_auth cookie with latest store state
-  const updatedCookie = event.locals.pb.authStore.exportToCookie({
-    httpOnly: false,
-    secure: true,
-    sameSite: 'lax'
-  });
+  // Set pb_auth cookie with latest store state (skip for webhook routes)
+  if (!isWebhook) {
+    const updatedCookie = event.locals.pb.authStore.exportToCookie({
+      httpOnly: false,
+      secure: true,
+      sameSite: 'lax'
+    });
 
-  response.headers.set('Set-Cookie', updatedCookie);
+    response.headers.set('Set-Cookie', updatedCookie);
+  }
 
   return response;
 }
