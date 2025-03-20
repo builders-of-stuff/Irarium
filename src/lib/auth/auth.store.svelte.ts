@@ -1,7 +1,6 @@
 import { pb } from '$lib/db/client';
 import { COLLECTION } from '$lib/shared/shared.type';
 import type { User, UserSettings } from '$lib/shared/shared.type';
-import { tick } from 'svelte';
 
 class AuthStore {
   /**

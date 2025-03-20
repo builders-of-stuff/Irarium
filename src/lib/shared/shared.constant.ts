@@ -16,7 +16,9 @@ export const ROUTE = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   HOME: '/home',
-  CHECKOUT: '/billing/checkout'
+  CHECKOUT: '/billing/checkout',
+  CREATE: '/create',
+  COLLECTION: '/collection'
 };
 
 // event.route.id -> e.g. for `src/routes/blog/[slug]`, it would be `/blog/[slug]`

@@ -107,7 +107,7 @@ export class IrariumsStore {
         .collection(COLLECTION.IRARIUMS)
         .create(this.mapIrariumToCreate(irarium));
 
-      this.userIrariums.push(record as unknown as Irarium);
+      this.userIrariums.push(this.mapRecordToIrarium(record));
     } catch (err) {
       console.error('Error creating irarium:', err);
       this.error = 'Failed to create irarium. Please try again later.';

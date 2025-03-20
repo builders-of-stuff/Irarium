@@ -43,9 +43,8 @@
     </div>
   {:else if irariumsStore.userIrariums.length === 0}
     <div class="rounded-lg border border-dashed p-8 text-center">
-      <h3 class="mb-2 text-xl font-medium">No irariums found</h3>
-      <p class="mb-4 text-muted-foreground">You haven't created any irariums yet.</p>
-      <Button href="/create">Create Your First Irarium</Button>
+      <h3 class="mb-3 text-xl font-medium">No irariums found</h3>
+      <Button href="/create">Create irarium</Button>
     </div>
   {:else}
     <div class="space-y-4">
