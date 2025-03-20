@@ -1,6 +1,7 @@
 export enum COLLECTION {
-  USERS = 'users',
   SUPERUSERS = '_superusers',
+  USERS = 'users',
+  USER_SETTINGS = 'userSettings',
   IRARIUMS = 'irariums',
   PAYMENTS = 'payments'
 }
@@ -20,17 +21,24 @@ export type User = {
   premiumSince: string | null; // When the user became premium
 };
 
-export type Payment = {
+// write access for superusers only
+export type UserSettings = {
   id: string;
   userId: string;
-  amount: number;
-  currency: string;
-  status: 'succeeded' | 'pending' | 'failed';
-  stripePaymentId: string;
-  stripeCustomerId: string | null;
+  isFullyUpgraded: boolean;
+};
+
+// write access for superusers only
+export type Payment = {
+  id: string;
   created: string;
   updated: string;
-  metadata: Record<string, any>;
+  userId: string;
+  stripeEventId: string;
+  paymentIntent: string;
+  amountTotal: number;
+  currency: string;
+  status: string;
 };
 
 export type Idea = {

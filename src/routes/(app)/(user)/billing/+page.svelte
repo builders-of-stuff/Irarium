@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
+  import { Check, CheckCircle, AlertCircle, XCircle } from 'lucide-svelte';
+
   import { Button } from '$lib/components/ui/button';
   import {
     Card,
@@ -9,13 +12,104 @@
     CardTitle
   } from '$lib/components/ui/card';
   import * as Tabs from '$lib/components/ui/tabs';
-  import { Check } from 'lucide-svelte';
-  import { PAYMENT_LINK } from '$lib/shared/shared.constant';
+  import { ROUTE } from '$lib/shared/shared.constant';
+  import * as Alert from '$lib/components/ui/alert';
   import { authStore } from '$lib/auth/auth.store.svelte';
+
+  let showSuccess = false;
+  let showCanceled = false;
+  let showError = false;
+  let errorMessage = 'Something went wrong. Please try again later.';
+
+  onMount(() => {
+    // Check URL parameters
+    const url = new URL(window.location.href);
+    showSuccess = url.searchParams.get('success') === 'true';
+    showCanceled = url.searchParams.get('canceled') === 'true';
+
+    // Clean URL if needed
+    if (showSuccess || showCanceled) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  });
+
+  // Function to handle checkout
+  const handleCheckout = async (productType: string) => {
+    try {
+      // Reset alert states
+      showSuccess = false;
+      showCanceled = false;
+      showError = false;
+
+      // Call checkout API
+      const response = await fetch(ROUTE.CHECKOUT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          userId: authStore.userId,
+          productType
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        errorMessage = errorData.message || 'Failed to create checkout session';
+        throw new Error(errorMessage);
+      }
+
+      const { url } = await response.json();
+
+      // Redirect to Stripe Checkout
+      window.location.href = url;
+    } catch (error) {
+      console.error('Error starting checkout process:', error);
+      // Show error alert
+      showError = true;
+    }
+  };
 </script>
 
 <div class="container max-w-5xl py-8">
   <h1 class="mb-6 text-3xl font-bold">Billing & Subscription</h1>
+
+  {#if showSuccess}
+    <Alert.Root
+      class="mb-6 border-green-600 bg-green-100 dark:border-green-500 dark:bg-green-900/50"
+    >
+      <CheckCircle class="h-5 w-5 text-green-600 dark:text-green-500" />
+      <Alert.Title>Success!</Alert.Title>
+      <Alert.Description class="text-green-700 dark:text-green-400">
+        Your payment was successful and your account has been upgraded.
+      </Alert.Description>
+    </Alert.Root>
+  {/if}
+
+  {#if showCanceled}
+    <Alert.Root
+      class="mb-6 border-amber-600 bg-amber-100 dark:border-amber-500 dark:bg-amber-900/50"
+    >
+      <AlertCircle class="h-5 w-5 text-amber-600 dark:text-amber-500" />
+      <Alert.Title>Payment Canceled</Alert.Title>
+      <Alert.Description class="text-amber-700 dark:text-amber-400">
+        Your payment process was canceled. No charges were made.
+      </Alert.Description>
+    </Alert.Root>
+  {/if}
+
+  {#if showError}
+    <Alert.Root
+      variant="destructive"
+      class="mb-6 border-red-600 bg-red-100 dark:bg-red-900/50"
+    >
+      <XCircle class="h-5 w-5" />
+      <Alert.Title>Checkout Failed</Alert.Title>
+      <Alert.Description>
+        {errorMessage}
+      </Alert.Description>
+    </Alert.Root>
+  {/if}
 
   <Tabs.Root value="one-time" class="w-full">
     <Tabs.List class="grid w-full grid-cols-2">
@@ -68,25 +162,7 @@
             </ul>
           </CardContent>
           <CardFooter>
-            <Button
-              class="w-full"
-              onclick={() => {
-                // Add user info as query parameters
-                const userInfo = {
-                  userId: `${authStore.user?.id}`
-                };
-
-                console.log('userInfo: ', userInfo);
-
-                // Create URL with parameters
-                const paymentUrl = new URL(PAYMENT_LINK);
-                Object.entries(userInfo).forEach(([key, value]) => {
-                  paymentUrl.searchParams.append(key, value);
-                });
-
-                window.open(paymentUrl.toString(), '_blank');
-              }}
-            >
+            <Button class="w-full" onclick={() => handleCheckout('full_upgrade')}>
               Purchase
             </Button>
           </CardFooter>

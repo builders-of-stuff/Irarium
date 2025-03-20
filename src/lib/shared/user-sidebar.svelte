@@ -7,7 +7,8 @@
     MoreHorizontal,
     LogOut,
     HelpCircle,
-    Shield
+    Shield,
+    CreditCard
   } from 'lucide-svelte';
   import { goto } from '$app/navigation';
 
@@ -105,7 +106,7 @@
                       href="/billing"
                       class="flex items-center gap-2 px-4 py-2 hover:bg-accent"
                     >
-                      <Shield class="h-4 w-4" />
+                      <CreditCard class="h-4 w-4" />
                       <span>Billing</span>
                     </a>
                     <button

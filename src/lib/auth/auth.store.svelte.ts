@@ -1,19 +1,18 @@
 import { pb } from '$lib/db/client';
 import { COLLECTION } from '$lib/shared/shared.type';
-import type { User } from '$lib/shared/shared.type';
+import type { User, UserSettings } from '$lib/shared/shared.type';
+import { tick } from 'svelte';
 
 class AuthStore {
   /**
    * Auth.
    */
   user = $state<User>({} as User);
+  userSettings = $state<UserSettings>({} as UserSettings);
+
   hasUser = $derived(!!this.user?.id);
   userId = $derived(this.user?.id);
   username = $derived(this.user?.username);
-  /**
-   * User settings
-   */
-  userSettings = $derived({});
 
   /**
    * Form states
@@ -27,13 +26,16 @@ class AuthStore {
 
     if (pb.authStore.isValid && pb.authStore.record) {
       this.user = this.mapAuthRecordToUser(pb.authStore.record);
+      this.fetchAndSetUserSettings();
     }
 
     pb.authStore.onChange((token, record) => {
       if (token && record?.id) {
         this.user = this.mapAuthRecordToUser(record);
+        this.fetchAndSetUserSettings();
       } else {
         this.user = {} as User;
+        this.userSettings = {} as UserSettings;
       }
     });
   }
@@ -48,6 +50,7 @@ class AuthStore {
         .authWithPassword(email, password);
 
       this.user = this.mapAuthRecordToUser(authResponse.record);
+      await this.fetchAndSetUserSettings();
 
       // Set cookie
       document.cookie = pb.authStore.exportToCookie({
@@ -71,17 +74,24 @@ class AuthStore {
         passwordConfirm
       });
 
-      // Update the user to set username as the ID
-      await pb.collection(COLLECTION.USERS).update(newUser.id, {
-        username: newUser.id
-      });
-
       // Login user
       const authResponse = await pb
         .collection(COLLECTION.USERS)
         .authWithPassword(email, password);
 
+      // Update user username
+      await pb.collection(COLLECTION.USERS).update(newUser.id, {
+        username: newUser.id
+      });
+
+      // Create user settings
+      const userSettings = await pb.collection(COLLECTION.USER_SETTINGS).create({
+        userId: newUser.id,
+        isFullyUpgraded: false
+      });
+
       this.user = this.mapAuthRecordToUser(authResponse.record);
+      this.userSettings = this.mapRecordToUserSettings(userSettings);
 
       // Set cookie
       document.cookie = pb.authStore.exportToCookie({
@@ -100,6 +110,7 @@ class AuthStore {
     try {
       pb.authStore.clear();
       this.user = {} as User;
+      this.userSettings = {} as UserSettings;
       // Delete specific pb_auth cookie by setting name, path, and expired date
       document.cookie = `pb_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
 
@@ -113,6 +124,8 @@ class AuthStore {
     try {
       const authResponse = await pb.collection(COLLECTION.USERS).authRefresh();
       this.user = this.mapAuthRecordToUser(authResponse.record);
+      await this.fetchAndSetUserSettings();
+
       return { success: true };
     } catch (error) {
       console.error('Error refreshing user:', error);
@@ -158,6 +171,25 @@ class AuthStore {
     }
   }
 
+  /**
+   * Fetch user settings from the database
+   */
+  private async fetchAndSetUserSettings() {
+    if (!this.userId) return;
+
+    try {
+      const result = await pb
+        .collection(COLLECTION.USER_SETTINGS)
+        .getFirstListItem(`userId="${this.userId}"`);
+
+      if (result) {
+        this.userSettings = this.mapRecordToUserSettings(result);
+      }
+    } catch (error) {
+      console.error('Error fetching user settings:', error);
+    }
+  }
+
   private mapAuthRecordToUser(record: any): User {
     return {
       id: record.id,
@@ -173,6 +205,14 @@ class AuthStore {
       subscriptionType: record.subscriptionType || '',
       isPremium: record.isPremium || false,
       premiumSince: record.premiumSince || null
+    };
+  }
+
+  private mapRecordToUserSettings(record: any): UserSettings {
+    return {
+      id: record.id,
+      userId: record.userId,
+      isFullyUpgraded: record.isFullyUpgraded
     };
   }
 }
