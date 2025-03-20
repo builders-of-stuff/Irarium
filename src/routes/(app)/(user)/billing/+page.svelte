@@ -34,7 +34,7 @@
   });
 
   // Function to handle checkout
-  const handleCheckout = async (productType: string) => {
+  const handleCheckout = async () => {
     try {
       // Reset alert states
       showSuccess = false;
@@ -48,8 +48,7 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          userId: authStore.userId,
-          productType
+          userId: authStore.userId
         })
       });
 
@@ -162,9 +161,7 @@
             </ul>
           </CardContent>
           <CardFooter>
-            <Button class="w-full" onclick={() => handleCheckout('full_upgrade')}>
-              Purchase
-            </Button>
+            <Button class="w-full" onclick={handleCheckout}>Purchase</Button>
           </CardFooter>
         </Card>
       </div>
