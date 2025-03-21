@@ -19,7 +19,7 @@ export class IrariumStore {
 
   inputContent = $state('');
   isEditing = $state(false);
-  isAdding = $state(true);
+  isAdding = $state(false);
   activeIdeaId = $state('');
   lastActiveIdeaId = $state('');
 
