@@ -3,7 +3,12 @@ import { redirect } from '@sveltejs/kit';
 import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
 import { WEBOOK_ADMIN_EMAIL, WEBOOK_ADMIN_PASSWORD } from '$env/static/private';
 
-import { ROUTE, UNPROTECTED_ROUTE_IDS, ROUTE_IDS } from '$lib/shared/shared.constant';
+import {
+  ROUTE,
+  ROUTE_IDS,
+  PRIVATE_ROUTE_IDS,
+  PUBLIC_ROUTE_IDS
+} from '$lib/shared/shared.constant';
 import { COLLECTION } from '$lib/shared/shared.type';
 
 export async function handle({ event, resolve }) {
@@ -75,14 +80,15 @@ export async function handle({ event, resolve }) {
      * Auth/Route guards (skip for webhook routes)
      */
     const routeId = event.route.id;
-    const isProtectedRoute = !UNPROTECTED_ROUTE_IDS.some((id) => id === routeId);
     const isLoggedIn = event.locals.pb.authStore.isValid;
 
+    const isPublicRouteId = PUBLIC_ROUTE_IDS.some((id) => id === routeId);
+    const isPrivateRouteId = PRIVATE_ROUTE_IDS.some((id) => id === routeId);
+
     if (routeId) {
-      if (!isProtectedRoute && isLoggedIn) {
-        // Redirect to home if logged in
+      if (isPublicRouteId && isLoggedIn) {
         return redirect(302, ROUTE.HOME);
-      } else if (isProtectedRoute && !isLoggedIn) {
+      } else if (isPrivateRouteId && !isLoggedIn) {
         return redirect(302, ROUTE.LOGIN);
       }
     }

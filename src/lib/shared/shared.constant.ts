@@ -3,11 +3,14 @@ export const X_LINK = 'https://x.com/irarium';
 export const GITHUB_LINK = 'https://github.com/builders-of-stuff/Irarium';
 
 export const ROUTE_IDS = {
+  // Public routes
   LANDING: '/',
   LOGIN: '/(auth)/login',
   SIGNUP: '/(auth)/signup',
+  PUBLIC: '/(app)/(public)/public',
+  IRARIUM: '/(app)/(irarium)/[irariumId]',
 
-  // User routes
+  // Private routes
   HOME: '/(app)/(user)/home',
   CHECKOUT: '/(app)/(user)/billing/checkout',
 
@@ -26,11 +29,15 @@ export const ROUTE = {
 };
 
 // event.route.id -> e.g. for `src/routes/blog/[slug]`, it would be `/blog/[slug]`
-export const UNPROTECTED_ROUTE_IDS = [
+export const PUBLIC_ROUTE_IDS = [
   ROUTE_IDS.LANDING,
   ROUTE_IDS.SIGNUP,
-  ROUTE_IDS.LOGIN
+  ROUTE_IDS.LOGIN,
+  ROUTE_IDS.PUBLIC,
+  ROUTE_IDS.IRARIUM
 ];
+
+export const PRIVATE_ROUTE_IDS = [ROUTE_IDS.HOME, ROUTE_IDS.CHECKOUT];
 
 export const DEFAULT_IRARIUM_ID = 'ROOT';
 
