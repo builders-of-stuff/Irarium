@@ -7,9 +7,7 @@
   import UserNavbar from '$lib/shared/user-navbar.svelte';
 
   onMount(() => {
-    if (authStore.userId) {
-      irariumsStore.fetchPublicIrariums();
-    }
+    irariumsStore.fetchPublicIrariums();
   });
 
   function formatDate(dateString: string) {

@@ -105,8 +105,8 @@
       <Button variant="outline" onclick={togglePublicState}>
         {irarium?.isPublic ? 'Unpublish' : 'Publish'}
       </Button>
+      <Button variant="secondary" onclick={saveIrarium}>Save</Button>
     {/if}
-    <Button variant="secondary" onclick={saveIrarium}>Save</Button>
   </div>
 {/snippet}
 
