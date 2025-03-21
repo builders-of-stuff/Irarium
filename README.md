@@ -2,6 +2,10 @@
 
 A space for burning ideas.
 
+## Map
+
+...
+
 ## Testing Stripe webhook
 
 ngrok doesn't work, not sure why, just use stripe cli
