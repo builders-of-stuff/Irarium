@@ -5,7 +5,13 @@
   import { onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
   import SparklesCore from '$lib/components/ui/sparkles.svelte';
-
+  import {
+    DISCORD_INVITE_LINK,
+    X_LINK,
+    GITHUB_LINK
+  } from '$lib/shared/shared.constant';
+  import DiscordIcon from '$lib/components/icons/discord-icon.svelte';
+  import XIcon from '$lib/components/icons/x.svelte';
   let mounted = false;
 
   onMount(() => {
@@ -63,7 +69,7 @@
               in:fly={{ y: 10, duration: 300, delay: 200 }}
               class="text-sm font-light tracking-wider text-zinc-400"
             >
-              A SPACE FOR BURNING IDEAS
+              A TERRARIUM FOR IDEAS; A SPACE FOR BURNING IDEAS
             </p>
           </div>
 
@@ -93,6 +99,53 @@
         </div>
       {/if}
     </div>
+  </div>
+
+  <!-- Social links in bottom right corner -->
+  <div class="absolute bottom-6 right-6 z-20 flex space-x-4">
+    <a
+      href={X_LINK}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-zinc-400 transition-colors hover:text-white"
+    >
+      <XIcon class="h-5 w-5" />
+      <span class="sr-only">X / Twitter</span>
+    </a>
+    <a
+      href={DISCORD_INVITE_LINK}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-zinc-400 transition-colors hover:text-white"
+    >
+      <DiscordIcon />
+      <span class="sr-only">Discord</span>
+    </a>
+    <a
+      href={GITHUB_LINK}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-zinc-400 transition-colors hover:text-white"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-5 w-5"
+      >
+        <path
+          d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"
+        ></path>
+        <path d="M9 18c-4.51 2-5-2-7-2"></path>
+      </svg>
+      <span class="sr-only">GitHub</span>
+    </a>
   </div>
 </div>
 
