@@ -1,6 +1,6 @@
 # Irarium
 
-A space for burning ideas.
+A terrarium for ideas; a space for burning ideas.
 
 ## Map
 
