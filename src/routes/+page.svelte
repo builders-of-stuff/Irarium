@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Button } from '$lib/components/ui/button';
-  import { Card, CardContent } from '$lib/components/ui/card';
   import IrariumLogo from '$lib/assets/irarium.png';
   import { onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
@@ -12,6 +11,7 @@
   } from '$lib/shared/shared.constant';
   import DiscordIcon from '$lib/components/icons/discord-icon.svelte';
   import XIcon from '$lib/components/icons/x.svelte';
+
   let mounted = false;
 
   onMount(() => {
