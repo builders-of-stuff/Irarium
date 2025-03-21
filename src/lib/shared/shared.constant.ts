@@ -1,6 +1,7 @@
 export const DISCORD_INVITE_LINK = 'https://discord.gg/kDAS7QMWdq';
 export const X_LINK = 'https://x.com/irarium';
 export const GITHUB_LINK = 'https://github.com/builders-of-stuff/Irarium';
+export const IRARIUM_LINK = 'https://irarium.com/public';
 
 export const ROUTE_IDS = {
   // Public routes

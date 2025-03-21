@@ -7,10 +7,12 @@
   import {
     DISCORD_INVITE_LINK,
     X_LINK,
-    GITHUB_LINK
+    GITHUB_LINK,
+    IRARIUM_LINK
   } from '$lib/shared/shared.constant';
   import DiscordIcon from '$lib/components/icons/discord-icon.svelte';
   import XIcon from '$lib/components/icons/x.svelte';
+  import { Circle } from 'lucide-svelte';
 
   let mounted = false;
 
@@ -103,6 +105,15 @@
 
   <!-- Social links in bottom right corner -->
   <div class="absolute bottom-6 right-6 z-20 flex space-x-4">
+    <a
+      href={IRARIUM_LINK}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-zinc-400 transition-colors hover:text-white"
+    >
+      <Circle class="h-5 w-5" />
+      <span class="sr-only">Irarium</span>
+    </a>
     <a
       href={X_LINK}
       target="_blank"
