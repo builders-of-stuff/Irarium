@@ -40,6 +40,13 @@ export const PUBLIC_ROUTE_IDS = [
 
 export const PRIVATE_ROUTE_IDS = [ROUTE_IDS.HOME, ROUTE_IDS.CHECKOUT];
 
+// Public routes that should redirect to home if logged in
+export const PUBLIC_REDIRECT_ROUTE_IDS = [
+  ROUTE_IDS.LANDING,
+  ROUTE_IDS.SIGNUP,
+  ROUTE_IDS.LOGIN
+];
+
 export const DEFAULT_IRARIUM_ID = 'ROOT';
 
 // Keyboard event key constants

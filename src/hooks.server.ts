@@ -7,7 +7,8 @@ import {
   ROUTE,
   ROUTE_IDS,
   PRIVATE_ROUTE_IDS,
-  PUBLIC_ROUTE_IDS
+  PUBLIC_ROUTE_IDS,
+  PUBLIC_REDIRECT_ROUTE_IDS
 } from '$lib/shared/shared.constant';
 import { COLLECTION } from '$lib/shared/shared.type';
 
@@ -82,11 +83,13 @@ export async function handle({ event, resolve }) {
     const routeId = event.route.id;
     const isLoggedIn = event.locals.pb.authStore.isValid;
 
-    const isPublicRouteId = PUBLIC_ROUTE_IDS.some((id) => id === routeId);
+    const isPublicRedirectRouteId = PUBLIC_REDIRECT_ROUTE_IDS.some(
+      (id) => id === routeId
+    );
     const isPrivateRouteId = PRIVATE_ROUTE_IDS.some((id) => id === routeId);
 
     if (routeId) {
-      if (isPublicRouteId && isLoggedIn) {
+      if (isPublicRedirectRouteId && isLoggedIn) {
         return redirect(302, ROUTE.HOME);
       } else if (isPrivateRouteId && !isLoggedIn) {
         return redirect(302, ROUTE.LOGIN);
