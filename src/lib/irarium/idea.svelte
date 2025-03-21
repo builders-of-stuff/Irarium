@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
-  import { tick } from 'svelte';
   import Plus from 'lucide-svelte/icons/plus';
 
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
@@ -47,12 +46,6 @@
     irarium.setActiveIdeaId(id);
     irarium.setIsEditing(true);
     irarium.setIsAdding(false);
-
-    tick().then(() => {
-      if (editor) {
-        editor.commands.focus('end');
-      }
-    });
   };
 
   const handleAddPost = (event) => {
