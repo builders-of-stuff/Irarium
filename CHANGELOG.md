@@ -1,3 +1,7 @@
+# 1.1.6 (2025-03-23)
+
+- Minor UI fixes
+
 # 1.1.1 (2025-03-22)
 
 - Fix text editor auto-focus bug

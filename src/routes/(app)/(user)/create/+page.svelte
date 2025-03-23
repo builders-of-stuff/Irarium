@@ -35,6 +35,6 @@
 
 <UserNavbar title="Create" {actions} />
 
-<div class="container flex min-h-screen flex-col items-center justify-center py-8">
+<div class="container flex min-h-screen flex-col items-center py-8">
   <IrariumComposer {irarium} enableUpdates />
 </div>

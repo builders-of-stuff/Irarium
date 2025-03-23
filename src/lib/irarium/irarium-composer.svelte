@@ -24,6 +24,7 @@
 
     irarium.inputContent = '';
     editor.commands.clearContent();
+    irarium.setIsAdding(true);
 
     tick().then(() => {
       if (editor) {
@@ -226,7 +227,7 @@
         <TextEditor
           bind:editor
           bind:content={irarium.inputContent}
-          editable={irarium.isAdding}
+          editable={enableUpdates && (irarium.isAdding || irarium.isEmptyIrarium)}
         />
 
         <!-- Content/CTAs Divider -->
