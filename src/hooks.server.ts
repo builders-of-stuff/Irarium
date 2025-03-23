@@ -24,11 +24,13 @@ export async function handle({ event, resolve }) {
     "default-src 'self' https: http: data: blob:",
     // Add style-src directive to allow CSS
     "style-src 'self' 'unsafe-inline'",
-    // Add Google Analytics domains
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googletagmanager.com *.google-analytics.com",
-    "connect-src 'self' https: http: *.google-analytics.com *.analytics.google.com *.googletagmanager.com",
+    // Add Google Analytics and Google Tag Manager domains
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googletagmanager.com *.google-analytics.com *.analytics.google.com *.ggpht.com *.doubleclick.net www.googleadservices.com *.googlesyndication.com googleads.g.doubleclick.net",
+    "connect-src 'self' https: http: *.google-analytics.com *.analytics.google.com *.googletagmanager.com *.g.doubleclick.net *.googlesyndication.com stats.g.doubleclick.net ampcid.google.com analytics.google.com www.google-analytics.com www.googletagmanager.com region1.google-analytics.com",
     // Add img-src for GA
-    "img-src 'self' https: http: data: *.google-analytics.com *.googletagmanager.com",
+    "img-src 'self' https: http: data: *.google-analytics.com *.googletagmanager.com *.g.doubleclick.net *.google.com *.google.ae *.google.al *.google.am *.google.as *.google.at *.google.az *.google.ba *.google.be www.googleadservices.com",
+    // Add frame-src for GTM iframe functionality
+    "frame-src 'self' *.googletagmanager.com *.doubleclick.net *.google.com",
     // Add media-src for TTS blob URLs
     "media-src 'self' blob:"
   ].join('; ');

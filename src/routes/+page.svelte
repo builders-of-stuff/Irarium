@@ -71,7 +71,7 @@
               in:fly={{ y: 10, duration: 300, delay: 200 }}
               class="text-sm font-light tracking-wider text-zinc-400"
             >
-              A TERRARIUM FOR IDEAS; A SPACE FOR BURNING IDEAS
+              A SPACE FOR IDEAS
             </p>
           </div>
 
