@@ -256,7 +256,7 @@
     <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
 
     <div class="mt-0 w-full max-w-2xl space-y-8">
-      {#each irarium.getChildChain() as idea}
+      {#each irarium.getChildChain() as idea (idea.id)}
         <div class="irarium relative w-full">
           <Idea content={idea.content} id={idea.id} position="child" {irarium} />
         </div>
