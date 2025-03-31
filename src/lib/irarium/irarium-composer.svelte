@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
-  import { tick, onMount, onDestroy } from 'svelte';
+  import { tick } from 'svelte';
 
   import { Button } from '$lib/components/ui/button';
   import TextEditor from '$lib/text-editor/text-editor.svelte';
   import * as Select from '$lib/components/ui/select/index.js';
-  import { KEYBOARD_KEYS } from '$lib/shared/shared.constant';
+  import { DEFAULT_IRARIUM_ID, KEYBOARD_KEYS } from '$lib/shared/shared.constant';
 
   import Idea from './idea.svelte';
 
@@ -74,6 +74,7 @@
     // Only apply key navigation when there is NO active idea
     if (!irarium.activeIdeaId) {
       const referenceIdeaId = irarium.lastActiveIdeaId;
+      console.log('1: ', referenceIdeaId, irarium.referenceIdeaId);
 
       // Handle activation keys (Enter, Space)
       if (
@@ -95,9 +96,14 @@
           // Navigate to parent
           if (referenceIdeaId) {
             const referenceIdea = irarium.findIdeaById(referenceIdeaId);
-            if (referenceIdea?.parentId && referenceIdea.parentId !== irarium.id) {
-              newIdeaId = referenceIdea.parentId;
-            } else if (referenceIdea?.parentId === irarium.id && irarium.hasContent) {
+
+            if (referenceIdea?.parentId && referenceIdea?.parentId !== irarium.id) {
+              newIdeaId = referenceIdea?.parentId;
+            } else if (
+              (referenceIdea?.parentId === irarium.id ||
+                referenceIdea?.parentID === DEFAULT_IRARIUM_ID) &&
+              irarium.hasContent
+            ) {
               newIdeaId = irarium.id;
             }
           }
@@ -162,14 +168,17 @@
     }
   };
 
-  onMount(() => {
-    document.addEventListener('click', handleClickOutside);
-    document.addEventListener('keydown', handleKeyDown);
-  });
+  // Set up event listeners with $effect to ensure they update when irarium changes
+  $effect(() => {
+    const clickHandler = handleClickOutside;
 
-  onDestroy(() => {
-    document.removeEventListener('click', handleClickOutside);
-    document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('click', clickHandler);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('click', clickHandler);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   });
 </script>
 

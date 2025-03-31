@@ -44,6 +44,7 @@ export class IrariumStore {
 
   constructor(irarium?: Partial<Irarium>) {
     if (irarium) {
+      this.clearStore();
       // Object.assign(this, irarium); does not work... something to do with $state and proxies
       if (irarium.id) this.id = irarium.id;
       if (irarium.userId) this.userId = irarium.userId;
@@ -56,6 +57,24 @@ export class IrariumStore {
       if (irarium.children) this.children = irarium.children;
       if (irarium.isPublic !== undefined) this.isPublic = irarium.isPublic;
     }
+  }
+
+  clearStore() {
+    this.id = DEFAULT_IRARIUM_ID;
+    this.userId = '';
+    this.created = '';
+    this.updated = '';
+    this.title = '';
+    this.description = '';
+    this.tags = '';
+    this.content = '';
+    this.children = [];
+    this.isPublic = false;
+    this.inputContent = '';
+    this.isEditing = false;
+    this.isAdding = false;
+    this.activeIdeaId = '';
+    this.lastActiveIdeaId = '';
   }
 
   setContent(content: string) {
