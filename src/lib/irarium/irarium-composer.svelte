@@ -73,15 +73,12 @@
 
     // Only apply key navigation when there is NO active idea
     if (!irarium.activeIdeaId) {
-      const referenceIdeaId = irarium.lastActiveIdeaId;
-      console.log('1: ', referenceIdeaId, irarium.referenceIdeaId);
-
-      // Handle activation keys (Enter, Space)
+      // Handle activation keys(Enter, Space)
       if (
-        referenceIdeaId &&
+        irarium.lastActiveIdeaId &&
         (event.key === KEYBOARD_KEYS.ENTER || event.key === KEYBOARD_KEYS.SPACE)
       ) {
-        irarium.setActiveIdeaId(referenceIdeaId);
+        irarium.setActiveIdeaId(irarium.lastActiveIdeaId);
         irarium.setIsEditing(true);
         irarium.setIsAdding(false);
         event.preventDefault();
@@ -94,8 +91,8 @@
       switch (event.key) {
         case KEYBOARD_KEYS.ARROW_UP: {
           // Navigate to parent
-          if (referenceIdeaId) {
-            const referenceIdea = irarium.findIdeaById(referenceIdeaId);
+          if (irarium.lastActiveIdeaId) {
+            const referenceIdea = irarium.findIdeaById(irarium.lastActiveIdeaId);
 
             if (referenceIdea?.parentId && referenceIdea?.parentId !== irarium.id) {
               newIdeaId = referenceIdea?.parentId;
@@ -111,15 +108,15 @@
         }
         case KEYBOARD_KEYS.ARROW_DOWN: {
           // Navigate to first child
-          if (referenceIdeaId) {
+          if (irarium.lastActiveIdeaId) {
             // Special case for root
-            if (referenceIdeaId === irarium.id) {
+            if (irarium.lastActiveIdeaId === irarium.id) {
               if (irarium.children && irarium.children.length > 0) {
                 newIdeaId = irarium.children[0].id;
               }
             } else {
               // Regular case for other ideas
-              const referenceIdea = irarium.findIdeaById(referenceIdeaId);
+              const referenceIdea = irarium.findIdeaById(irarium.lastActiveIdeaId);
               if (
                 referenceIdea &&
                 referenceIdea.children &&
@@ -140,8 +137,8 @@
         }
         case KEYBOARD_KEYS.ARROW_LEFT: {
           // Navigate to left sibling
-          if (referenceIdeaId) {
-            const leftSibling = irarium.getSiblingLeft(referenceIdeaId);
+          if (irarium.lastActiveIdeaId) {
+            const leftSibling = irarium.getSiblingLeft(irarium.lastActiveIdeaId);
             if (leftSibling) {
               newIdeaId = leftSibling.id;
             }
@@ -150,8 +147,8 @@
         }
         case KEYBOARD_KEYS.ARROW_RIGHT: {
           // Navigate to right sibling
-          if (referenceIdeaId) {
-            const rightSibling = irarium.getSiblingRight(referenceIdeaId);
+          if (irarium.lastActiveIdeaId) {
+            const rightSibling = irarium.getSiblingRight(irarium.lastActiveIdeaId);
             if (rightSibling) {
               newIdeaId = rightSibling.id;
             }
