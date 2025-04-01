@@ -94,11 +94,15 @@
           if (irarium.lastActiveIdeaId) {
             const referenceIdea = irarium.findIdeaById(irarium.lastActiveIdeaId);
 
-            if (referenceIdea?.parentId && referenceIdea?.parentId !== irarium.id) {
+            if (
+              referenceIdea?.parentId &&
+              referenceIdea?.parentId !== irarium.id &&
+              referenceIdea?.parentId !== DEFAULT_IRARIUM_ID
+            ) {
               newIdeaId = referenceIdea?.parentId;
             } else if (
               (referenceIdea?.parentId === irarium.id ||
-                referenceIdea?.parentID === DEFAULT_IRARIUM_ID) &&
+                referenceIdea?.parentId === DEFAULT_IRARIUM_ID) &&
               irarium.hasContent
             ) {
               newIdeaId = irarium.id;
