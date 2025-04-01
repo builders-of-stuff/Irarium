@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
   import Plus from 'lucide-svelte/icons/plus';
+  import Trash2 from 'lucide-svelte/icons/trash-2';
 
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import { Button } from '$lib/components/ui/button';
@@ -53,6 +54,11 @@
     irarium.setIsAdding(true);
     irarium.setIsEditing(false);
   };
+
+  const handleDelete = (event) => {
+    event.stopPropagation();
+    irarium.deleteIdea(id);
+  };
 </script>
 
 <div class="relative w-full">
@@ -87,7 +93,16 @@
 
       {#if isActive && isEditing}
         <!-- Dividing line for actions -->
-        <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-2">
+        <div class="mt-4 flex justify-between border-t border-muted-foreground/20 pt-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            class="h-8 w-8 rounded-full text-muted-foreground/50 hover:bg-destructive/5 hover:text-destructive/50"
+            aria-label="Delete idea"
+            onclick={(event) => handleDelete(event)}
+          >
+            <Trash2 class="h-4 w-4" />
+          </Button>
           <Button
             variant="ghost"
             size="icon"

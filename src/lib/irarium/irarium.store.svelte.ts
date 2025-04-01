@@ -338,6 +338,31 @@ export class IrariumStore {
     return null;
   }
 
+  deleteIdea(ideaId: string) {
+    // Don't allow deleting the root
+    if (ideaId === this.id) return;
+
+    // Helper function to remove idea from an array of ideas
+    const removeIdeaFromArray = (ideas: Idea[]): Idea[] => {
+      return ideas.filter((idea) => {
+        if (idea.id === ideaId) {
+          return false;
+        }
+        idea.children = removeIdeaFromArray(idea.children);
+        return true;
+      });
+    };
+
+    // Update children array with idea removed
+    this.children = removeIdeaFromArray(this.children);
+
+    // Clean up all state
+    this.activeIdeaId = '';
+    this.lastActiveIdeaId = '';
+    this.isEditing = false;
+    this.isAdding = false;
+  }
+
   private buildNewIdea(content: string, activeIdea?: Idea) {
     const now = new Date().toISOString();
     const id = nanoid(5);
