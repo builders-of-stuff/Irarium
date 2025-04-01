@@ -13,6 +13,7 @@ export const ROUTE_IDS = {
 
   // Private routes
   HOME: '/(app)/(user)/home',
+  COLLECTION: '/(app)/(user)/collection',
   CHECKOUT: '/(app)/(user)/billing/checkout',
 
   // Webhook routes
@@ -38,7 +39,11 @@ export const PUBLIC_ROUTE_IDS = [
   ROUTE_IDS.IRARIUM
 ];
 
-export const PRIVATE_ROUTE_IDS = [ROUTE_IDS.HOME, ROUTE_IDS.CHECKOUT];
+export const PRIVATE_ROUTE_IDS = [
+  ROUTE_IDS.HOME,
+  ROUTE_IDS.CHECKOUT,
+  ROUTE_IDS.COLLECTION
+];
 
 // Public routes that should redirect to home if logged in
 export const PUBLIC_REDIRECT_ROUTE_IDS = [

@@ -1,3 +1,7 @@
+# 1.1.7 (2025-03-31)
+
+- UI fixes with hotkey navigation
+
 # 1.1.6 (2025-03-23)
 
 - Minor UI fixes
