@@ -43,10 +43,11 @@
 </script>
 
 <Sidebar.Root>
-  <Sidebar.Header class="mx-2 flex  justify-start px-4 pt-4">
+  <Sidebar.Header class="relative mx-2 flex justify-between px-4 pt-4">
     <a href={ROUTE.HOME}>
       <img src={IRARIUM_LOGO} class="h-10 w-10" alt="Irarium Logo" />
     </a>
+    <Sidebar.Trigger class="absolute right-4 top-4 ml-2 hidden md:flex" />
   </Sidebar.Header>
 
   <Sidebar.Content class="py-4">
