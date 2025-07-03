@@ -50,7 +50,7 @@ export class IrariumsStore {
     try {
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
         filter: `userId = "${userId}"`,
-        sort: '-updated'
+        sort: '-created'
       });
 
       this.userIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
@@ -71,7 +71,7 @@ export class IrariumsStore {
     try {
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
         filter: 'isPublic = true',
-        sort: '-updated'
+        sort: '-created'
       });
 
       this.publicIrariums = records.items.map((item) => this.mapRecordToIrarium(item));

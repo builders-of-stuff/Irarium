@@ -8,6 +8,11 @@ General stuff to add
   - Pages for certain tags
 - Dates on a per-idea basis
 
+## UI
+
+- Spike on Google Keep UI
+  - root ideas as notes, open to a modal -> navigate from there?
+
 ## Social
 
 - Like/retweet-like features (eyes/fire)
