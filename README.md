@@ -2,6 +2,19 @@
 
 A space for ideas.
 
+## Init
+
+##### sveltekit
+
+`npm run dev`
+
+##### pocketbase
+
+Download the pocketbase executable from docs and drag and drop it into `pocketbase` folder.
+
+`cd pocketbase`
+`./pocketbase serve`
+
 ## Map
 
 ...

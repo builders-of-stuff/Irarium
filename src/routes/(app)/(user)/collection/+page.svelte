@@ -6,6 +6,7 @@
 
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { countIdeas } from '$lib/irarium/irarium.tools.svelte';
+  import SparklesCore from '$lib/components/ui/sparkles.svelte';
 
   onMount(() => {
     if (authStore.userId) {
@@ -24,7 +25,21 @@
 
 <UserNavbar title="My Collection" />
 
-<div class="container mx-auto px-4 py-8">
+<div class="relative">
+  <!-- Sparkles background -->
+  <div class="fixed inset-0 h-full w-full pointer-events-none">
+    <SparklesCore
+      id="collection-sparkles"
+      background="transparent"
+      minSize={0.4}
+      maxSize={1.0}
+      particleDensity={40}
+      className="h-full w-full"
+      particleColor="#FFFFFF"
+    />
+  </div>
+
+  <div class="relative z-10 container mx-auto px-4 py-8">
   {#if irariumsStore.isLoading}
     <div class="flex justify-center py-12">
       <div class="animate-pulse text-center">
@@ -64,4 +79,5 @@
       {/each}
     </div>
   {/if}
+  </div>
 </div>

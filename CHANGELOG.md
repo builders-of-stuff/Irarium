@@ -1,3 +1,11 @@
+# 1.3.0 (2025-07-27)
+
+- Add stars to irarium, home, collection
+- Claude init
+- Update readme with instructions on how to init
+
+...
+
 # 1.1.8 (2025-04-01)
 
 - Add delete idea functionality
