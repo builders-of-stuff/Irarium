@@ -9,7 +9,6 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { ROUTE } from '$lib/shared/shared.constant';
-  import SparklesCore from '$lib/components/ui/sparkles.svelte';
 
   let irarium = new IrariumStore({
     userId: authStore.userId
@@ -36,21 +35,6 @@
 
 <UserNavbar title="Create" {actions} />
 
-<div class="relative">
-  <!-- Sparkles background -->
-  <div class="fixed inset-0 h-full w-full pointer-events-none">
-    <SparklesCore
-      id="create-sparkles"
-      background="transparent"
-      minSize={0.4}
-      maxSize={1.0}
-      particleDensity={40}
-      className="h-full w-full"
-      particleColor="#FFFFFF"
-    />
-  </div>
-
-  <div class="relative z-10 container flex min-h-screen flex-col items-center py-8">
-    <IrariumComposer {irarium} enableUpdates />
-  </div>
+<div class="container flex min-h-screen flex-col items-center py-8">
+  <IrariumComposer {irarium} enableUpdates />
 </div>

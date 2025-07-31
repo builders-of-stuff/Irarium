@@ -55,7 +55,7 @@
           </div>
           <div class="flex justify-between text-xs text-muted-foreground">
             <span>{formatDate(irarium.updated)}</span>
-            <span>{countIdeas(irarium)} ideas</span>
+            <span>{countIdeas(irarium)} thoughts</span>
           </div>
         </a>
       {/each}

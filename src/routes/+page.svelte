@@ -3,7 +3,6 @@
   import IrariumLogo from '$lib/assets/irarium.png';
   import { onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
-  import SparklesCore from '$lib/components/ui/sparkles.svelte';
   import {
     DISCORD_INVITE_LINK,
     X_LINK,
@@ -22,18 +21,6 @@
 </script>
 
 <div class="relative min-h-screen overflow-hidden bg-black">
-  <!-- Subtle sparkles in the background -->
-  <div class="absolute inset-0 h-full w-full">
-    <SparklesCore
-      id="tsparticles"
-      background="transparent"
-      minSize={0.4}
-      maxSize={1.0}
-      particleDensity={40}
-      className="h-full w-full"
-      particleColor="#FFFFFF"
-    />
-  </div>
 
   <div class="relative z-10 flex min-h-screen items-start justify-center p-4 pt-[20vh]">
     <div class="w-full max-w-md">
@@ -71,7 +58,7 @@
               in:fly={{ y: 10, duration: 300, delay: 200 }}
               class="text-sm font-light tracking-wider text-zinc-400"
             >
-              A SPACE FOR IDEAS
+              A SPACE FOR THOUGHTS AND IDEAS
             </p>
           </div>
 

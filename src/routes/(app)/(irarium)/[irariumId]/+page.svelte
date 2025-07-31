@@ -11,7 +11,6 @@
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
   import { authStore } from '$lib/auth/auth.store.svelte';
-  import SparklesCore from '$lib/components/ui/sparkles.svelte';
 
   let irarium = $state<IrariumStore | null>(null);
   let isLoading = $state(true);
@@ -118,21 +117,7 @@
   {actions}
 />
 
-<div class="relative">
-  <!-- Sparkles background -->
-  <div class="fixed inset-0 h-full w-full pointer-events-none">
-    <SparklesCore
-      id="irarium-sparkles"
-      background="transparent"
-      minSize={0.4}
-      maxSize={1.0}
-      particleDensity={40}
-      className="h-full w-full"
-      particleColor="#FFFFFF"
-    />
-  </div>
-
-  <div class="relative z-10 container flex min-h-screen flex-col items-center py-8">
+<div class="container flex min-h-screen flex-col items-center py-8">
   {#if isLoading}
     <div class="flex items-center justify-center">
       <div
@@ -152,5 +137,4 @@
       <Button href="/home">Back to Dashboard</Button>
     </div>
   {/if}
-  </div>
 </div>
