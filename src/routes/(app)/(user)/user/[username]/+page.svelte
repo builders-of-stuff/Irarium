@@ -7,6 +7,7 @@
   import { countIdeas } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
+  import StarryNight from '$lib/components/StarryNight.svelte';
 
   // Dialog components
   import * as Dialog from '$lib/components/ui/dialog';
@@ -89,9 +90,13 @@
   }
 </script>
 
-<UserNavbar title="Profile" />
+<div class="relative min-h-screen overflow-hidden bg-black">
+  <StarryNight />
+  
+  <div class="relative z-10">
+    <UserNavbar title="Profile" />
 
-<div class="container mx-auto max-w-3xl px-4 py-6">
+    <div class="container mx-auto max-w-3xl px-4 py-6">
   <!-- Profile header -->
   <div class="mb-8 rounded-xl bg-muted/30 p-6">
     <div class="flex flex-col md:flex-row md:items-start md:gap-6">
@@ -178,6 +183,8 @@
         {/each}
       </div>
     {/if}
+  </div>
+    </div>
   </div>
 </div>
 

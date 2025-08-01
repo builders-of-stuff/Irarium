@@ -11,6 +11,7 @@
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
   import { authStore } from '$lib/auth/auth.store.svelte';
+  import StarryNight from '$lib/components/StarryNight.svelte';
 
   let irarium = $state<IrariumStore | null>(null);
   let isLoading = $state(true);
@@ -110,31 +111,37 @@
   </div>
 {/snippet}
 
-<UserNavbar
-  title={displayTitle}
-  handleTitleChange={updateTitle}
-  isTitleEditable={isOwner && !!irarium}
-  {actions}
-/>
+<div class="relative min-h-screen overflow-hidden bg-black">
+  <StarryNight />
+  
+  <div class="relative z-10">
+    <UserNavbar
+      title={displayTitle}
+      handleTitleChange={updateTitle}
+      isTitleEditable={isOwner && !!irarium}
+      {actions}
+    />
 
-<div class="container flex min-h-screen flex-col items-center py-8">
-  {#if isLoading}
-    <div class="flex items-center justify-center">
-      <div
-        class="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"
-      ></div>
+    <div class="container flex min-h-screen flex-col items-center py-8">
+      {#if isLoading}
+        <div class="flex items-center justify-center">
+          <div
+            class="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"
+          ></div>
+        </div>
+      {:else if error}
+        <div class="flex flex-col items-center justify-center gap-4">
+          <p class="text-destructive">{error}</p>
+          <Button href="/home">Back to Dashboard</Button>
+        </div>
+      {:else if irarium}
+        <IrariumComposer bind:irarium enableUpdates={isOwner} />
+      {:else}
+        <div class="flex flex-col items-center justify-center gap-4">
+          <p>No irarium found</p>
+          <Button href="/home">Back to Dashboard</Button>
+        </div>
+      {/if}
     </div>
-  {:else if error}
-    <div class="flex flex-col items-center justify-center gap-4">
-      <p class="text-destructive">{error}</p>
-      <Button href="/home">Back to Dashboard</Button>
-    </div>
-  {:else if irarium}
-    <IrariumComposer bind:irarium enableUpdates={isOwner} />
-  {:else}
-    <div class="flex flex-col items-center justify-center gap-4">
-      <p>No irarium found</p>
-      <Button href="/home">Back to Dashboard</Button>
-    </div>
-  {/if}
+  </div>
 </div>

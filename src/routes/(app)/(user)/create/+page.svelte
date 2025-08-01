@@ -9,6 +9,7 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { ROUTE } from '$lib/shared/shared.constant';
+  import StarryNight from '$lib/components/StarryNight.svelte';
 
   let irarium = new IrariumStore({
     userId: authStore.userId
@@ -33,8 +34,14 @@
   </div>
 {/snippet}
 
-<UserNavbar title="Create" {actions} />
+<div class="relative min-h-screen overflow-hidden bg-black">
+  <StarryNight />
+  
+  <div class="relative z-10">
+    <UserNavbar title="Create" {actions} />
 
-<div class="container flex min-h-screen flex-col items-center py-8">
-  <IrariumComposer {irarium} enableUpdates />
+    <div class="container flex min-h-screen flex-col items-center py-8">
+      <IrariumComposer {irarium} enableUpdates />
+    </div>
+  </div>
 </div>

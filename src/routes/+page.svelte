@@ -3,6 +3,8 @@
   import IrariumLogo from '$lib/assets/irarium.png';
   import { onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
+  import StarryNight from '$lib/components/StarryNight.svelte';
+
   import {
     DISCORD_INVITE_LINK,
     X_LINK,
@@ -21,6 +23,8 @@
 </script>
 
 <div class="relative min-h-screen overflow-hidden bg-black">
+  <!-- Starry night in the background -->
+  <StarryNight />
 
   <div class="relative z-10 flex min-h-screen items-start justify-center p-4 pt-[20vh]">
     <div class="w-full max-w-md">
