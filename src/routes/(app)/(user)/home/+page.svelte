@@ -5,7 +5,7 @@
   import { countIdeas } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
-  import StarryNight from '$lib/components/StarryNight.svelte';
+  import StarryNight from '$lib/components/starry-night.svelte';
 
   onMount(() => {
     if (authStore.userId) {

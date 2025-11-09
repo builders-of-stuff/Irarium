@@ -20,7 +20,8 @@
   "devDependencies": {
     "@eslint/compat": "^1.4.1",
     "@eslint/js": "^9.39.1",
-    "@lucide/svelte": "^0.553.0",
+    "@internationalized/date": "^3.10.0",
+    "@lucide/svelte": "^0.544.0",
     "@playwright/test": "^1.56.1",
     "@sveltejs/adapter-node": "^5.4.0",
     "@sveltejs/kit": "2.48.4",

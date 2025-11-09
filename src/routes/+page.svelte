@@ -3,7 +3,7 @@
   import IrariumLogo from '$lib/assets/irarium.png';
   import { onMount } from 'svelte';
   import { fly, fade } from 'svelte/transition';
-  import StarryNight from '$lib/components/StarryNight.svelte';
+  import StarryNight from '$lib/components/starry-night.svelte';
 
   import {
     DISCORD_INVITE_LINK,

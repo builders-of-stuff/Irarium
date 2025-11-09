@@ -9,7 +9,7 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { ROUTE } from '$lib/shared/shared.constant';
-  import StarryNight from '$lib/components/StarryNight.svelte';
+  import StarryNight from '$lib/components/starry-night.svelte';
 
   let irarium = new IrariumStore({
     userId: authStore.userId

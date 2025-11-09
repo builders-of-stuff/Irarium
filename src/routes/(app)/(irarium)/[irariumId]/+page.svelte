@@ -11,7 +11,7 @@
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
   import { authStore } from '$lib/auth/auth.store.svelte';
-  import StarryNight from '$lib/components/StarryNight.svelte';
+  import StarryNight from '$lib/components/starry-night.svelte';
 
   let irarium = $state<IrariumStore | null>(null);
   let isLoading = $state(true);
