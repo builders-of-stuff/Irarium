@@ -47,7 +47,7 @@
     <a href={ROUTE.HOME}>
       <img src={IRARIUM_LOGO} class="h-10 w-10" alt="Irarium Logo" />
     </a>
-    <Sidebar.Trigger class="absolute right-4 top-4 ml-2 hidden md:flex" />
+    <Sidebar.Trigger class="absolute top-4 right-4 ml-2 hidden md:flex" />
   </Sidebar.Header>
 
   <Sidebar.Content class="py-4">
@@ -58,7 +58,7 @@
             <Sidebar.MenuItem>
               <a
                 href={item.href}
-                class="mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base hover:bg-accent hover:text-accent-foreground"
+                class="hover:bg-accent hover:text-accent-foreground mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base"
               >
                 {#if item.icon}
                   <item.icon class="h-5 w-5" />
@@ -90,10 +90,10 @@
               <Popover.Root>
                 <Popover.Trigger class="w-full">
                   <button
-                    class="mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base hover:bg-accent hover:text-accent-foreground"
+                    class="hover:bg-accent hover:text-accent-foreground mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base"
                   >
                     <div
-                      class="flex h-5 w-5 items-center justify-center rounded-full bg-muted"
+                      class="bg-muted flex h-5 w-5 items-center justify-center rounded-full"
                     >
                       <Settings class="h-5 w-5" />
                     </div>
@@ -105,13 +105,13 @@
                   <div class="flex flex-col">
                     <a
                       href="/billing"
-                      class="flex items-center gap-2 px-4 py-2 hover:bg-accent"
+                      class="hover:bg-accent flex items-center gap-2 px-4 py-2"
                     >
                       <CreditCard class="h-4 w-4" />
                       <span>Billing</span>
                     </a>
                     <button
-                      class="flex items-center gap-2 px-4 py-2 text-left text-destructive hover:bg-accent"
+                      class="text-destructive hover:bg-accent flex items-center gap-2 px-4 py-2 text-left"
                       onclick={handleLogout}
                     >
                       <LogOut class="h-4 w-4" />

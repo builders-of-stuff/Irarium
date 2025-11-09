@@ -36,7 +36,7 @@
 
 <div class="relative min-h-screen overflow-hidden bg-black">
   <StarryNight />
-  
+
   <div class="relative z-10">
     <UserNavbar title="Create" {actions} />
 

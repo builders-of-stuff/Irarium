@@ -1,6 +1,5 @@
 <script lang="ts">
   import { cn } from '$lib/utils';
-  import { onMount } from 'svelte';
 
   export let text: string;
   export let revealText: string;
@@ -24,6 +23,8 @@
     'group/card relative overflow-hidden rounded-lg border border-white/10 bg-slate-950 p-8',
     className
   )}
+  role="button"
+  tabindex="0"
   on:mouseenter={handleMouseEnter}
   on:mouseleave={handleMouseLeave}
 >

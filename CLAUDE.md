@@ -20,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Irarium is a SvelteKit application for organizing and managing hierarchical ideas. It uses PocketBase as the backend database and supports premium features through Stripe payments.
 
 ### Key Technologies
+
 - **Frontend**: SvelteKit 5 with TypeScript
 - **Styling**: TailwindCSS with custom UI components
 - **Backend**: PocketBase (self-hosted)
@@ -31,14 +32,17 @@ Irarium is a SvelteKit application for organizing and managing hierarchical idea
 ### Core Data Models
 
 **Irarium**: A collection of hierarchical ideas with title, description, content, and children
+
 - Lives in `src/lib/shared/shared.type.ts`
 - Managed by `IrariumStore` class in `src/lib/irarium/irarium.store.svelte.ts`
 
 **Idea**: Individual nodes in the idea hierarchy with content, children, depth tracking
+
 - Supports unlimited nesting levels
 - Each idea has unique ID, content, creation/update timestamps
 
-**User & Authentication**: 
+**User & Authentication**:
+
 - Managed by `AuthStore` class in `src/lib/auth/auth.store.svelte.ts`
 - Uses PocketBase SDK for authentication
 - Supports premium features and user settings
@@ -57,6 +61,7 @@ Irarium is a SvelteKit application for organizing and managing hierarchical idea
 ### State Management
 
 Uses Svelte 5 runes (`$state`, `$derived`) extensively:
+
 - `AuthStore` - Global authentication state
 - `IrariumStore` - Working irarium state with complex idea navigation
 - Individual component state where needed
@@ -70,7 +75,7 @@ Uses Svelte 5 runes (`$state`, `$derived`) extensively:
 
 ### Stripe Integration
 
-- Webhook endpoint: `/payments` 
+- Webhook endpoint: `/payments`
 - Test cards provided in README.md
 - Use Stripe CLI for local webhook testing: `stripe listen --forward-to http://localhost:5173/payments`
 

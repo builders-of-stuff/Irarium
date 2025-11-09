@@ -70,6 +70,7 @@
     }
 
     try {
+      if (!irariumId) return;
       await irariumsStore.deleteIrarium(irariumId);
 
       toast.success('Irarium deleted successfully!');
@@ -113,7 +114,7 @@
 
 <div class="relative min-h-screen overflow-hidden bg-black">
   <StarryNight />
-  
+
   <div class="relative z-10">
     <UserNavbar
       title={displayTitle}
@@ -126,7 +127,7 @@
       {#if isLoading}
         <div class="flex items-center justify-center">
           <div
-            class="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"
+            class="border-primary h-8 w-8 animate-spin rounded-full border-t-2 border-b-2"
           ></div>
         </div>
       {:else if error}

@@ -65,13 +65,13 @@
   <!-- Left sibling indicator -->
   {#if irarium.hasSiblingLeft(id)}
     <div
-      class="absolute left-0 top-1/2 flex -translate-x-full -translate-y-1/2 items-center"
+      class="absolute top-1/2 left-0 flex -translate-x-full -translate-y-1/2 items-center"
     >
-      <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
+      <div class="bg-muted-foreground/30 h-0.5 w-4"></div>
       <Button
         variant="outline"
         size="icon"
-        class="h-6 w-6 rounded-full border border-muted-foreground/30 p-0 text-muted-foreground"
+        class="border-muted-foreground/30 text-muted-foreground h-6 w-6 rounded-full border p-0"
         aria-label="Navigate to left sibling"
         onclick={handleSiblingLeftClick}
       >
@@ -83,7 +83,7 @@
   <!-- Current idea -->
   <Button
     variant="ghost"
-    class="h-auto w-full justify-start rounded-lg border bg-card p-4 transition-all
+    class="bg-card h-auto w-full justify-start rounded-lg border p-4 transition-all
           {isActive ? 'border-primary' : ''}"
     onclick={(event) => handleIdeaClick(event)}
     aria-current={isActive ? 'true' : 'false'}
@@ -93,11 +93,11 @@
 
       {#if isActive && isEditing}
         <!-- Dividing line for actions -->
-        <div class="mt-4 flex justify-between border-t border-muted-foreground/20 pt-2">
+        <div class="border-muted-foreground/20 mt-4 flex justify-between border-t pt-2">
           <Button
             variant="ghost"
             size="icon"
-            class="h-8 w-8 rounded-full text-muted-foreground/50 hover:bg-destructive/5 hover:text-destructive/50"
+            class="text-muted-foreground/50 hover:bg-destructive/5 hover:text-destructive/50 h-8 w-8 rounded-full"
             aria-label="Delete idea"
             onclick={(event) => handleDelete(event)}
           >
@@ -106,7 +106,7 @@
           <Button
             variant="ghost"
             size="icon"
-            class="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary"
+            class="hover:bg-primary/10 hover:text-primary h-8 w-8 rounded-full"
             aria-label="Add new post"
             onclick={(event) => handleAddPost(event)}
           >
@@ -120,30 +120,30 @@
   <!-- Right sibling indicator -->
   {#if irarium.hasSiblingRight(id)}
     <div
-      class="absolute right-0 top-1/2 flex -translate-y-1/2 translate-x-full items-center"
+      class="absolute top-1/2 right-0 flex translate-x-full -translate-y-1/2 items-center"
     >
       <Button
         variant="outline"
         size="icon"
-        class="h-6 w-6 rounded-full border border-muted-foreground/30 p-0 text-muted-foreground"
+        class="border-muted-foreground/30 text-muted-foreground h-6 w-6 rounded-full border p-0"
         aria-label="Navigate to right sibling"
         onclick={handleSiblingRightClick}
       >
         <span>→</span>
       </Button>
-      <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
+      <div class="bg-muted-foreground/30 h-0.5 w-4"></div>
     </div>
   {/if}
 
   <!-- Connector line (based on position) -->
   {#if position === 'parent'}
     <div
-      class="absolute bottom-0 left-1/2 h-6 w-0.5 -translate-x-1/2 translate-y-full bg-muted-foreground/30"
+      class="bg-muted-foreground/30 absolute bottom-0 left-1/2 h-6 w-0.5 -translate-x-1/2 translate-y-full"
       aria-hidden="true"
     ></div>
   {:else if position === 'child'}
     <div
-      class="absolute left-1/2 top-0 h-6 w-0.5 -translate-x-1/2 -translate-y-full bg-muted-foreground/30"
+      class="bg-muted-foreground/30 absolute top-0 left-1/2 h-6 w-0.5 -translate-x-1/2 -translate-y-full"
       aria-hidden="true"
     ></div>
   {/if}

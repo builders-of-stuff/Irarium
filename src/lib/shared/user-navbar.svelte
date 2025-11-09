@@ -16,7 +16,7 @@
 
   let isEditing = $state(false);
   let editableTitle = $state(title);
-  let titleInput: HTMLInputElement;
+  let titleInput = $state<HTMLInputElement>();
 
   /**
    * Edit title
@@ -67,14 +67,14 @@
           bind:value={editableTitle}
           onkeydown={handleKeyDown}
           onblur={finishEditing}
-          class="w-full max-w-md border-b border-primary bg-transparent px-1 py-0.5 text-xl font-semibold focus:outline-none focus:ring-0"
+          class="border-primary w-full max-w-md border-b bg-transparent px-1 py-0.5 text-xl font-semibold focus:ring-0 focus:outline-none"
           type="text"
         />
       {:else}
         <button onclick={handleTitleClick}>
           <h1
             class="text-xl font-semibold {isTitleEditable
-              ? 'cursor-pointer hover:text-primary'
+              ? 'hover:text-primary cursor-pointer'
               : ''}"
           >
             {title}

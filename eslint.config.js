@@ -19,10 +19,16 @@ export default ts.config(
       globals: {
         ...globals.browser,
         ...globals.node
-      },
-      rules: {
-        '@typescript-eslint/no-explicit-any': 'off'
       }
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'svelte/no-navigation-without-resolve': 'warn',
+      'svelte/require-each-key': 'warn',
+      'svelte/no-at-html-tags': 'warn',
+      '@typescript-eslint/triple-slash-reference': 'off',
+      'no-undef': 'off'
     }
   },
   {
@@ -32,6 +38,12 @@ export default ts.config(
       parserOptions: {
         parser: ts.parser
       }
+    }
+  },
+  {
+    files: ['**/*.svelte.ts'],
+    languageOptions: {
+      parser: ts.parser
     }
   }
 );

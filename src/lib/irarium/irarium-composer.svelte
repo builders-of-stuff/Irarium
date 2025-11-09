@@ -233,7 +233,7 @@
   {#if enableUpdates && (irarium.isAdding || irarium.isEmptyIrarium)}
     <div class="irarium relative w-full max-w-2xl">
       <!-- Editor -->
-      <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
+      <div class="border-primary bg-card w-full rounded-lg border-2 p-4 shadow-md">
         <TextEditor
           bind:editor
           bind:content={irarium.inputContent}
@@ -241,15 +241,15 @@
         />
 
         <!-- Content/CTAs Divider -->
-        <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-3">
+        <div class="border-muted-foreground/20 mt-4 flex justify-end border-t pt-3">
           <div class="relative flex w-full justify-end">
             <Button onclick={handleAddIdea}>Add</Button>
             <Select.Root type="single" bind:value={irarium.activeIdeaId}>
               <Select.Trigger
-                class="h-full w-10 rounded-l-none border-l border-l-input px-2"
+                class="border-l-input h-full w-10 rounded-l-none border-l px-2"
               ></Select.Trigger>
               <Select.Content>
-                <div class="px-2 py-1.5 text-xs text-muted-foreground">Add to</div>
+                <div class="text-muted-foreground px-2 py-1.5 text-xs">Add to</div>
                 {#each irarium.allIdeasAsOptions as option}
                   <Select.Item value={option.value}>{option.label}</Select.Item>
                 {/each}
@@ -263,7 +263,7 @@
 
   <!-- Child chain -->
   {#if irarium.getChildChain().length > 0}
-    <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
+    <div class="bg-muted-foreground/30 mt-0 h-8 w-0.5"></div>
 
     <div class="mt-0 w-full max-w-2xl space-y-8">
       {#each irarium.getChildChain() as idea (idea.id)}

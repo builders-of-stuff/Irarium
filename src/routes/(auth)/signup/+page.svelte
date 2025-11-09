@@ -46,7 +46,7 @@
           class="h-20 w-20 rounded-xl shadow-sm"
         />
       </a>
-      <h1 class="text-3xl font-bold text-primary">Irarium</h1>
+      <h1 class="text-primary text-3xl font-bold">Irarium</h1>
     </div>
 
     <Card.Root>
@@ -86,7 +86,7 @@
             />
           </div>
           {#if error}
-            <div class="text-sm text-destructive">{error}</div>
+            <div class="text-destructive text-sm">{error}</div>
           {/if}
         </Card.Content>
         <Card.Footer>

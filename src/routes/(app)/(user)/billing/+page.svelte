@@ -123,13 +123,13 @@
             <CardTitle>Free</CardTitle>
             <CardDescription>Basic access to Irarium features</CardDescription>
             <div class="text-3xl font-bold">
-              $0<span class="text-sm font-normal text-muted-foreground">/month</span>
+              $0<span class="text-muted-foreground text-sm font-normal">/month</span>
             </div>
           </CardHeader>
           <CardContent class="flex-grow">
             <ul class="space-y-2">
               <li class="flex items-center gap-2">
-                <Check class="h-4 w-4 text-primary" />
+                <Check class="text-primary h-4 w-4" />
                 <span>Base access to features</span>
               </li>
             </ul>
@@ -152,7 +152,7 @@
           <CardContent class="flex-grow">
             <ul class="space-y-2">
               <li class="flex items-center gap-2">
-                <Check class="h-4 w-4 text-primary" />
+                <Check class="text-primary h-4 w-4" />
                 <span>
                   Unlock all current and future features that don't require a
                   subscription (currently none)
