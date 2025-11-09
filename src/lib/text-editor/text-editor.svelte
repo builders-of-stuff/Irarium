@@ -67,7 +67,7 @@
 <div class="tiptap-editor">
   <div
     bind:this={editorElement}
-    class="prose prose-sm max-w-none focus-within:outline-none"
+    class="prose prose-sm max-w-none text-card-foreground focus-within:outline-none"
     style="min-height: {minHeight};"
   ></div>
 </div>
