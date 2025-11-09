@@ -1,12 +1,12 @@
 # Irarium
 
-A space for ideas.
+A space for thoughts and ideas.
 
 ## Init
 
 ##### sveltekit
 
-`npm run dev`
+`pnpm run dev`
 
 ##### pocketbase
 

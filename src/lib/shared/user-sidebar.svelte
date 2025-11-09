@@ -7,8 +7,7 @@
     MoreHorizontal,
     LogOut,
     HelpCircle,
-    Shield,
-    CreditCard
+    Shield
   } from 'lucide-svelte';
   import { goto } from '$app/navigation';
 
@@ -103,13 +102,6 @@
                 </Popover.Trigger>
                 <Popover.Content class="w-56 p-0">
                   <div class="flex flex-col">
-                    <a
-                      href="/billing"
-                      class="hover:bg-accent flex items-center gap-2 px-4 py-2"
-                    >
-                      <CreditCard class="h-4 w-4" />
-                      <span>Billing</span>
-                    </a>
                     <button
                       class="text-destructive hover:bg-accent flex items-center gap-2 px-4 py-2 text-left"
                       onclick={handleLogout}
