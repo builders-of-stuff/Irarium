@@ -2,7 +2,7 @@
 # https://pocketbase.io/docs/going-to-production/
 FROM alpine:latest
 
-ARG PB_VERSION=0.23.5
+ARG PB_VERSION=0.26.3
 
 RUN apk add --no-cache \
     unzip \
