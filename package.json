@@ -62,7 +62,6 @@
     "vitest": "^4.0.8"
   },
   "dependencies": {
-    "@inlang/paraglide-sveltekit": "^0.16.1",
     "@tiptap/core": "^3.10.4",
     "@tiptap/extension-image": "^3.10.4",
     "@tiptap/extension-link": "^3.10.4",
