@@ -2,6 +2,10 @@
 
 A space for thoughts and ideas.
 
+The idea is to have a space for free-flowing thoughts and ideas, without worry of the usual — grammar, algorithms, identity, etc.
+
+Each irarium starts with a root (idea/thought), and from there creating a tree of related thoughts and ideas.
+
 ## Init
 
 ##### sveltekit
