@@ -71,7 +71,7 @@
             <div class="text-destructive text-sm">{error}</div>
           {/if}
         </Card.Content>
-        <Card.Footer>
+        <Card.Footer class="pt-6">
           <Button type="submit" class="w-full">Sign in</Button>
         </Card.Footer>
       </form>
