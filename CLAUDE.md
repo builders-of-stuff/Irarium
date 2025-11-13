@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-Irarium is a SvelteKit application for organizing and managing hierarchical ideas. It uses PocketBase as the backend database and supports premium features through Stripe payments.
+Irarium is a web app for writing free-flowing thoughts and ideas in a tree-like structure.
 
 ### Key Technologies
 
@@ -106,6 +106,7 @@ Uses Svelte 5 runes (`$state`, `$derived`) extensively with **class-based store 
 ### Class-Based Stores with Svelte 5 Runes
 
 Stores use ES6 classes with `$state` and `$derived` runes instead of traditional Svelte stores. This pattern:
+
 - Organizes related state and methods in a single class
 - Makes stores more testable (can instantiate and test methods directly)
 - Uses `$derived.by()` for complex computed values
@@ -114,6 +115,7 @@ Stores use ES6 classes with `$state` and `$derived` runes instead of traditional
 ### Bidirectional Prop Binding
 
 Components use Svelte 5's `bindable()` for two-way data flow:
+
 - Makes parent-child state synchronization explicit
 - Used in key components like `IrariumComposer` to sync with parent state
 - Allows child components to update parent state directly
@@ -121,6 +123,7 @@ Components use Svelte 5's `bindable()` for two-way data flow:
 ### JSON Tree Data Structure
 
 Ideas are stored as nested JSON trees within irarium documents, NOT as relational tables:
+
 - **Rationale**: Single fetch gets entire hierarchy, simpler exports, no complex joins
 - **Trade-offs**: Can't query individual ideas efficiently, entire tree must load client-side
 - **Navigation**: Uses parent IDs, sibling arrays, and depth tracking for traversal
@@ -129,6 +132,7 @@ Ideas are stored as nested JSON trees within irarium documents, NOT as relationa
 ### Keyboard-Driven Navigation System
 
 `IrariumComposer.svelte` orchestrates complex keyboard navigation:
+
 - Arrow keys navigate between parent/child/sibling ideas
 - Enter creates new ideas, Escape cancels editing
 - Handles all keyboard shortcuts centrally
@@ -137,6 +141,7 @@ Ideas are stored as nested JSON trees within irarium documents, NOT as relationa
 ### Server-Side Security Architecture
 
 `src/hooks.server.ts` handles critical middleware:
+
 - **Authentication**: Refreshes PocketBase auth tokens, protects routes
 - **Route Guards**: Blocks unauthenticated access to `(app)/*` routes
 - **CSP Headers**: Comprehensive Content Security Policy for all responses
@@ -152,6 +157,7 @@ Ideas are stored as nested JSON trees within irarium documents, NOT as relationa
 ### Svelte 5 Modern Patterns
 
 Uses latest Svelte 5 syntax throughout:
+
 - `$props()` for component props
 - `$derived` and `$derived.by()` for computed values
 - `$state` for reactive state
@@ -161,6 +167,7 @@ Uses latest Svelte 5 syntax throughout:
 ## Testing
 
 Test infrastructure is configured but coverage is minimal:
+
 - **Unit Tests**: Vitest with `@testing-library/svelte` and JSDOM
 - **E2E Tests**: Playwright for end-to-end testing
 - **Current State**: Only placeholder tests exist (demo.spec.ts, demo.test.ts)

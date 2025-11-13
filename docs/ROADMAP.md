@@ -1,10 +1,11 @@
 # Roadmap
 
-This is a living document of features to build, organized by priority and excitement. Not a timeline, not commitments — just what would make Irarium better.
+A living document of features to build.
 
 ## Current State
 
-**What works well:**
+**What works:**
+
 - Core tree navigation and editing
 - Keyboard-driven flow
 - Beautiful, minimal interface
@@ -13,6 +14,7 @@ This is a living document of features to build, organized by priority and excite
 - Rich text editing (basic)
 
 **What feels missing:**
+
 - Can't export or share easily
 - Settings page is empty
 - Rich content (images, code) not supported
@@ -26,46 +28,36 @@ This is a living document of features to build, organized by priority and excite
 These feel like gaps that limit actual usage. Fix these first.
 
 ### Export & Sharing
+
 **Why:** Ideas locked in a tool are less valuable. You should be able to get them out.
 
-- **Export as Markdown** — clean, readable, works everywhere
-- **Export as JSON** — full data export for backups/migration
-- **Copy link button** — share with a click, not URL copy-paste
-- **Print view** — sometimes paper is the right medium
+Features: Markdown export, JSON export, copy link button, print view
 
-**Effort:** Low-medium
-**Value:** High — makes Irarium feel complete
+**Effort:** Low-medium | **Value:** High
 
 ### Settings Page
+
 **Why:** Currently a placeholder. Basic account management should exist.
 
-- **Change email**
-- **Change password**
-- **Account deletion** — respect the right to leave
-- **Data export** — download all my irariums at once
+Features: Change email/password, account deletion, data export
 
-**Effort:** Low
-**Value:** Medium — just table stakes
+**Effort:** Low | **Value:** Medium
 
 ### Search
+
 **Why:** When you have many irariums or deep trees, finding things gets hard.
 
-- **Search across all irariums** — find that thought from 3 months ago
-- **Search within current irarium** — jump to a specific idea
-- **Highlight matches** — see context around results
+Features: Search across all irariums, search within current irarium, highlight matches
 
-**Effort:** Medium
-**Value:** High — becomes critical as usage grows
+**Effort:** Medium | **Value:** High
 
 ### Auto-save & Drafts
+
 **Why:** Losing work feels terrible. Should never happen.
 
-- **Auto-save every few seconds** — silent, automatic
-- **Draft recovery** — if browser crashes, recover unsaved work
-- **Offline support** — work without internet, sync later
+Features: Auto-save every few seconds, draft recovery, offline support
 
-**Effort:** Medium-high
-**Value:** High — prevents data loss
+**Effort:** Medium-high | **Value:** High
 
 ---
 
@@ -74,48 +66,36 @@ These feel like gaps that limit actual usage. Fix these first.
 These would make Irarium more delightful to use. Not critical, but impactful.
 
 ### Rich Content Support
+
 **Why:** Ideas aren't just text. Sometimes you need more.
 
-- **Image uploads** — screenshots, diagrams, inspiration
-- **Code blocks** — syntax highlighting for technical notes
-- **Embeds** — YouTube, tweets, links with previews
-- **Tables** — structured data when needed
+Features: Image uploads, code blocks, embeds, tables
 
-**Effort:** Medium per feature
-**Value:** Medium-high — expands use cases
+**Effort:** Medium per feature | **Value:** Medium-high
 
 ### Idea Reorganization
+
 **Why:** Ideas change. You should be able to move them around.
 
-- **Drag-and-drop reordering** — within siblings
-- **Move to different parent** — restructure the tree
-- **Undo/redo** — safety net for changes
-- **Collapse/expand branches** — hide complexity when needed
+Features: Drag-and-drop reordering, move to different parent, undo/redo, collapse/expand
 
-**Effort:** High
-**Value:** High — makes Irarium a mature tool
+**Effort:** High | **Value:** High
 
 ### Tags & Organization
+
 **Why:** As irariums grow, organization becomes important.
 
-- **Tags on irariums** — categorize by topic, project, etc.
-- **Tag-based filtering** — see all "writing" or "journal" irariums
-- **Folders/collections** — group related irariums
-- **Favorites/pinning** — quick access to important ones
+Features: Tags on irariums, tag-based filtering, folders/collections, favorites/pinning
 
-**Effort:** Low-medium
-**Value:** Medium — useful for power users
+**Effort:** Low-medium | **Value:** Medium
 
 ### Visual Improvements
+
 **Why:** Small polish makes the experience feel premium.
 
-- **Idea colors/icons** — visual differentiation
-- **Customizable themes** — let people make it their own
-- **Better mobile experience** — currently works but could be better
-- **Animations & transitions** — smooth, not jarring
+Features: Idea colors/icons, customizable themes, better mobile experience, smooth animations
 
-**Effort:** Low-medium per item
-**Value:** Low-medium — nice to have
+**Effort:** Low-medium per item | **Value:** Low-medium
 
 ---
 
@@ -124,76 +104,40 @@ These would make Irarium more delightful to use. Not critical, but impactful.
 These are dream features. Big, exciting, but not urgent.
 
 ### Collaboration
-**Why:** Sometimes thinking is better together.
 
-- **Share with specific users** — give someone access
-- **Comments on ideas** — discussion without editing
-- **Real-time collaborative editing** — like Google Docs
-- **Version history** — see how ideas evolved
+Real-time collaborative editing, comments, version history. **Note:** This could fundamentally change what Irarium is. Tread carefully.
 
-**Effort:** Very high
-**Value:** High — but only if people actually collaborate
-
-**Note:** This could fundamentally change what Irarium is. Tread carefully.
+**Effort:** Very high | **Value:** High (if people collaborate)
 
 ### Public Discovery
-**Why:** Great idea trees could inspire others.
 
-- **Public feed improvements** — curation, featured content
-- **User profiles** — see someone's published work
-- **Following/subscribing** — get updates from interesting thinkers
-- **Forking** — build on someone else's idea tree
+Improved public feed, user profiles, following, forking. **Note:** Could turn Irarium into a social network. That's not the goal.
 
-**Effort:** High
-**Value:** Medium — could build community, or distract from core use
-
-**Note:** Could turn Irarium into a social network. That's not the goal.
+**Effort:** High | **Value:** Medium
 
 ### AI Integration
-**Why:** AI could help think, not replace thinking.
 
-- **Idea suggestions** — "based on this, you might explore..."
-- **Summarization** — condense large trees
-- **Auto-linking** — connect related ideas across irariums
-- **Voice to text** — capture thoughts hands-free
+Idea suggestions, summarization, auto-linking, voice to text. **Note:** Easy to do badly. Only add if it genuinely helps thinking.
 
-**Effort:** High
-**Value:** Unknown — needs experimentation
-
-**Note:** Easy to do badly. Only add if it genuinely helps thinking.
+**Effort:** High | **Value:** Unknown
 
 ### Advanced Navigation
-**Why:** Power users want power features.
 
-- **Graph view** — see connections between ideas
-- **Timeline view** — see ideas chronologically
-- **Mind map export** — visual representation
-- **Breadth-first search** — different navigation modes
+Graph view, timeline view, mind map export, breadth-first search.
 
-**Effort:** High
-**Value:** Medium — nice for exploration
+**Effort:** High | **Value:** Medium
 
 ### Platform Expansion
-**Why:** Meet users where they are.
 
-- **Native mobile apps** — iOS, Android
-- **Desktop apps** — Electron or Tauri
-- **Browser extension** — capture thoughts from anywhere
-- **API** — let others build on Irarium
+Native mobile apps, desktop apps, browser extension, API.
 
-**Effort:** Very high
-**Value:** Medium-high — but maintenance burden
+**Effort:** Very high | **Value:** Medium-high (but maintenance burden)
 
 ### Self-Hosting & Data Control
-**Why:** Some people want full ownership.
 
-- **Easy self-hosting guide** — one-command deploy
-- **Data migration tools** — move between instances
-- **Encryption at rest** — for paranoid users
-- **Federated instances** — ActivityPub integration?
+Easy self-hosting guide, data migration tools, encryption at rest, federated instances.
 
-**Effort:** High
-**Value:** Low-medium — niche audience, but aligned with principles
+**Effort:** High | **Value:** Low-medium (niche audience)
 
 ---
 
@@ -201,51 +145,31 @@ These are dream features. Big, exciting, but not urgent.
 
 Things I've considered and decided against (for now):
 
-### Productivity Features
-- No todo lists
-- No reminders
-- No time tracking
-- No "productivity scores"
+**Productivity Features** — No todo lists, reminders, time tracking, or "productivity scores"
+_Why:_ Too many apps already do this. Irarium is for thinking, not task management.
 
-**Why:** Too many apps already do this. Irarium is for thinking, not task management.
+**Gamification** — No streaks, achievements, points/levels, or engagement metrics
+_Why:_ Creates wrong incentives. Think when you want to think, not because an app guilts you.
 
-### Gamification
-- No streaks
-- No achievements
-- No points/levels
-- No engagement metrics
+**Social Features** — No likes/hearts/reactions, social feeds, trending algorithms, or follower counts
+_Why:_ These optimize for engagement, not for thinking quality.
 
-**Why:** Creates wrong incentives. Think when you want to think, not because an app guilts you.
-
-### Social Features
-- No likes/hearts/reactions
-- No social feeds
-- No trending algorithms
-- No follower counts
-
-**Why:** These optimize for engagement, not for thinking quality.
-
-### Monetization Complexity
-- No freemium manipulation ("upgrade to unlock")
-- No subscription tiers
-- No premium features that feel punitive
-- No ads, ever
-
-**Why:** Monetization can happen later, and honestly. For now, build something useful.
+**Monetization Complexity** — No freemium manipulation, subscription tiers, punitive premium features, or ads
+_Why:_ Monetization can happen later, and honestly. For now, build something useful.
 
 ---
 
 ## How This Roadmap Changes
 
-This isn't a commitment, it's a snapshot. As I use Irarium more, priorities will shift. Some features will feel more urgent, others less so.
+This isn't a commitment, it's a snapshot. As I use Irarium more, priorities will shift.
 
-The north star: **does this make thinking easier?**
+**The north star:** Does this make thinking easier?
 
 Everything else is negotiable.
 
 ---
 
-## Next Up (Current Focus)
+## Current Focus
 
 Right now, focusing on:
 
@@ -254,3 +178,5 @@ Right now, focusing on:
 3. **Auto-save** — never lose work
 
 These unlock daily use and make Irarium feel complete.
+
+For detailed specifications, see [docs/features/](./features/).
