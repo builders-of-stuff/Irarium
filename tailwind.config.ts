@@ -67,7 +67,15 @@ const config: Config = {
         sm: 'calc(var(--radius) - 4px)'
       },
       fontFamily: {
-        sans: [...fontFamily.sans]
+        sans: [...fontFamily.sans],
+        serif: [
+          'Charter',
+          'Iowan Old Style',
+          'Georgia',
+          'Cambria',
+          'Times New Roman',
+          'serif'
+        ]
       },
       keyframes: {
         'accordion-down': {

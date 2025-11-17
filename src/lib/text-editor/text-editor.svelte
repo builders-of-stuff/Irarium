@@ -67,7 +67,7 @@
 <div class="tiptap-editor">
   <div
     bind:this={editorElement}
-    class="prose prose-sm max-w-none text-card-foreground focus-within:outline-none"
+    class="prose prose-lg max-w-none text-card-foreground focus-within:outline-none"
     style="min-height: {minHeight};"
   ></div>
 </div>
@@ -77,22 +77,32 @@
   :global(.tiptap-editor .ProseMirror) {
     outline: none;
     min-height: inherit;
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+
+  /* Remove top margin from first element */
+  :global(.tiptap-editor .ProseMirror > *:first-child) {
+    margin-top: 0;
   }
 
   :global(.tiptap-editor .ProseMirror p) {
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+    line-height: 1.75;
   }
 
   :global(.tiptap-editor .ProseMirror h2) {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: bold;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
   }
 
   :global(.tiptap-editor .ProseMirror ul) {
     list-style-type: disc;
     padding-left: 1.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   :global(.ProseMirror *) {

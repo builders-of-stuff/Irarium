@@ -83,12 +83,12 @@
   <!-- Current idea -->
   <Button
     variant="ghost"
-    class="bg-card h-auto w-full justify-start rounded-lg border p-4 transition-all
-          {isActive ? 'border-primary' : ''}"
+    class="!bg-card/60 hover:!bg-card/60 focus:!bg-card/60 active:!bg-card/60 backdrop-blur-sm h-auto w-full justify-start rounded-lg border border-white/40 px-4 py-2 transition-all
+          {isActive ? 'border-primary/60' : ''}"
     onclick={(event) => handleIdeaClick(event)}
     aria-current={isActive ? 'true' : 'false'}
   >
-    <div class="prose prose-sm dark:prose-invert w-full text-left">
+    <div class="prose prose-lg dark:prose-invert w-full text-left">
       <TextEditor bind:editor bind:content editable={isEditing} />
 
       {#if isActive && isEditing}
