@@ -7,19 +7,19 @@
   import * as Select from '$lib/components/ui/select/index.js';
   import { DEFAULT_IRARIUM_ID, KEYBOARD_KEYS } from '$lib/shared/shared.constant';
 
-  import Idea from './idea.svelte';
+  import Thought from './thought.svelte';
 
   let { irarium = $bindable(), enableUpdates = false } = $props();
 
   let editor = $state<Editor>();
 
-  const handleAddIdea = () => {
+  const handleAddThought = () => {
     if (!editor) return;
 
     if (!irarium.hasContent) {
       irarium.setContent(irarium.inputContent);
     } else {
-      irarium.addIdea(irarium.inputContent, irarium.activeIdea);
+      irarium.addThought(irarium.inputContent, irarium.activeThought);
     }
 
     irarium.inputContent = '';
@@ -33,12 +33,12 @@
     });
   };
 
-  // Handle click outside Idea components
+  // Handle click outside Thought components
   const handleClickOutside = (event: MouseEvent) => {
     const irariumElements = document.querySelectorAll('.irarium');
     const target = event.target as HTMLElement;
 
-    // Check if the click is inside any Idea component
+    // Check if the click is inside any Thought component
     let isInsideIrarium = false;
     for (const irariumElement of irariumElements) {
       if (irariumElement.contains(target)) {
@@ -47,15 +47,15 @@
       }
     }
 
-    if (!isInsideIrarium && irarium.activeIdeaId) {
-      irarium.clearActiveIdeaId();
+    if (!isInsideIrarium && irarium.activeThoughtId) {
+      irarium.clearActiveThoughtId();
     }
   };
 
   // Hotkey navigation
   const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === KEYBOARD_KEYS.ESCAPE && irarium.activeIdeaId) {
-      irarium.clearActiveIdeaId();
+    if (event.key === KEYBOARD_KEYS.ESCAPE && irarium.activeThoughtId) {
+      irarium.clearActiveThoughtId();
       irarium.setIsEditing(false);
       irarium.setIsAdding(false);
       event.preventDefault();
@@ -71,14 +71,14 @@
       return;
     }
 
-    // Only apply key navigation when there is NO active idea
-    if (!irarium.activeIdeaId) {
+    // Only apply key navigation when there is NO active thought
+    if (!irarium.activeThoughtId) {
       // Handle activation keys(Enter, Space)
       if (
-        irarium.lastActiveIdeaId &&
+        irarium.lastActiveThoughtId &&
         (event.key === KEYBOARD_KEYS.ENTER || event.key === KEYBOARD_KEYS.SPACE)
       ) {
-        irarium.setActiveIdeaId(irarium.lastActiveIdeaId);
+        irarium.setActiveThoughtId(irarium.lastActiveThoughtId);
         irarium.setIsEditing(true);
         irarium.setIsAdding(false);
         event.preventDefault();
@@ -86,84 +86,88 @@
       }
 
       // Handle arrow key navigation
-      let newIdeaId: string | null = null;
+      let newThoughtId: string | null = null;
 
       switch (event.key) {
         case KEYBOARD_KEYS.ARROW_UP: {
           // Navigate to parent
-          if (irarium.lastActiveIdeaId) {
-            const referenceIdea = irarium.findIdeaById(irarium.lastActiveIdeaId);
+          if (irarium.lastActiveThoughtId) {
+            const referenceThought = irarium.findThoughtById(
+              irarium.lastActiveThoughtId
+            );
 
             if (
-              referenceIdea?.parentId &&
-              referenceIdea?.parentId !== irarium.id &&
-              referenceIdea?.parentId !== DEFAULT_IRARIUM_ID
+              referenceThought?.parentId &&
+              referenceThought?.parentId !== irarium.id &&
+              referenceThought?.parentId !== DEFAULT_IRARIUM_ID
             ) {
-              newIdeaId = referenceIdea?.parentId;
+              newThoughtId = referenceThought?.parentId;
             } else if (
-              (referenceIdea?.parentId === irarium.id ||
-                referenceIdea?.parentId === DEFAULT_IRARIUM_ID) &&
+              (referenceThought?.parentId === irarium.id ||
+                referenceThought?.parentId === DEFAULT_IRARIUM_ID) &&
               irarium.hasContent
             ) {
-              newIdeaId = irarium.id;
+              newThoughtId = irarium.id;
             }
           }
           break;
         }
         case KEYBOARD_KEYS.ARROW_DOWN: {
           // Navigate to first child
-          if (irarium.lastActiveIdeaId) {
+          if (irarium.lastActiveThoughtId) {
             // Special case for root
-            if (irarium.lastActiveIdeaId === irarium.id) {
+            if (irarium.lastActiveThoughtId === irarium.id) {
               if (irarium.children && irarium.children.length > 0) {
-                newIdeaId = irarium.children[0].id;
+                newThoughtId = irarium.children[0].id;
               }
             } else {
-              // Regular case for other ideas
-              const referenceIdea = irarium.findIdeaById(irarium.lastActiveIdeaId);
+              // Regular case for other thoughts
+              const referenceThought = irarium.findThoughtById(
+                irarium.lastActiveThoughtId
+              );
               if (
-                referenceIdea &&
-                referenceIdea.children &&
-                referenceIdea.children.length > 0
+                referenceThought &&
+                referenceThought.children &&
+                referenceThought.children.length > 0
               ) {
-                newIdeaId = referenceIdea.children[0].id;
+                newThoughtId = referenceThought.children[0].id;
               }
             }
           } else {
-            // No reference idea, try to select first child of root or root itself
+            // No reference thought, try to select first child of root or root itself
             if (irarium.hasChildren) {
-              newIdeaId = irarium.children[0].id;
+              newThoughtId = irarium.children[0].id;
             } else if (irarium.hasContent) {
-              newIdeaId = irarium.id;
+              newThoughtId = irarium.id;
             }
           }
           break;
         }
         case KEYBOARD_KEYS.ARROW_LEFT: {
           // Navigate to left sibling
-          if (irarium.lastActiveIdeaId) {
-            const leftSibling = irarium.getSiblingLeft(irarium.lastActiveIdeaId);
+          if (irarium.lastActiveThoughtId) {
+            const leftSibling = irarium.getSiblingLeft(irarium.lastActiveThoughtId);
             if (leftSibling) {
-              newIdeaId = leftSibling.id;
+              newThoughtId = leftSibling.id;
             }
           }
           break;
         }
         case KEYBOARD_KEYS.ARROW_RIGHT: {
           // Navigate to right sibling
-          if (irarium.lastActiveIdeaId) {
-            const rightSibling = irarium.getSiblingRight(irarium.lastActiveIdeaId);
+          if (irarium.lastActiveThoughtId) {
+            const rightSibling = irarium.getSiblingRight(irarium.lastActiveThoughtId);
             if (rightSibling) {
-              newIdeaId = rightSibling.id;
+              newThoughtId = rightSibling.id;
             }
           }
           break;
         }
       }
 
-      // Update the lastActiveIdeaId if we found a new idea to navigate to
-      if (newIdeaId) {
-        irarium.setLastActiveIdeaId(newIdeaId);
+      // Update the lastActiveThoughtId if we found a new thought to navigate to
+      if (newThoughtId) {
+        irarium.setLastActiveThoughtId(newThoughtId);
         event.preventDefault();
       }
     }
@@ -186,10 +190,10 @@
 <div class="mx-auto flex w-full max-w-4xl flex-col items-center">
   <!-- Parent chain (above) - only show unique items in the chain -->
   <div class="mb-8 flex w-full flex-col items-center space-y-8">
-    <!-- Root idea -->
+    <!-- Root thought -->
     {#if irarium.hasContent || irarium.hasChildren}
       <div class="irarium relative w-full">
-        <Idea
+        <Thought
           {irarium}
           bind:content={irarium.content}
           id={irarium.id}
@@ -199,28 +203,28 @@
     {/if}
 
     <!-- Parent chain -->
-    {#each irarium.getParentChain() as parentIdea}
+    {#each irarium.getParentChain() as parentThought}
       <div class="irarium relative w-full">
-        <Idea
+        <Thought
           {irarium}
-          bind:content={parentIdea.content}
-          id={parentIdea.id}
+          bind:content={parentThought.content}
+          id={parentThought.id}
           position="parent"
         />
       </div>
     {/each}
 
-    <!-- Active idea -->
-    {#if irarium.referenceIdeaId && !irarium
+    <!-- Active thought -->
+    {#if irarium.referenceThoughtId && !irarium
         .getParentChain()
-        .some((idea) => idea.id === irarium.referenceIdeaId) && irarium.referenceIdeaId !== irarium.id}
-      {#each irarium.getAllIdeas() as idea}
-        {#if idea.id === irarium.referenceIdeaId}
+        .some((thought) => thought.id === irarium.referenceThoughtId) && irarium.referenceThoughtId !== irarium.id}
+      {#each irarium.getAllThoughts() as thought}
+        {#if thought.id === irarium.referenceThoughtId}
           <div class="irarium relative w-full">
-            <Idea
+            <Thought
               {irarium}
-              bind:content={idea.content}
-              id={idea.id}
+              bind:content={thought.content}
+              id={thought.id}
               position="parent"
             />
           </div>
@@ -229,11 +233,11 @@
     {/if}
   </div>
 
-  <!-- New idea -->
+  <!-- New thought -->
   {#if enableUpdates && (irarium.isAdding || irarium.isEmptyIrarium)}
     <div class="irarium relative w-full max-w-2xl">
       <!-- Editor -->
-      <div class="border-primary bg-card w-full rounded-lg border-2 p-4 shadow-md">
+      <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
         <TextEditor
           bind:editor
           bind:content={irarium.inputContent}
@@ -241,16 +245,16 @@
         />
 
         <!-- Content/CTAs Divider -->
-        <div class="border-muted-foreground/20 mt-4 flex justify-end border-t pt-3">
+        <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-3">
           <div class="relative flex w-full justify-end">
-            <Button onclick={handleAddIdea}>Add</Button>
-            <Select.Root type="single" bind:value={irarium.activeIdeaId}>
+            <Button onclick={handleAddThought}>Add</Button>
+            <Select.Root type="single" bind:value={irarium.activeThoughtId}>
               <Select.Trigger
-                class="border-l-input h-full w-10 rounded-l-none border-l px-2"
+                class="h-full w-10 rounded-l-none border-l border-l-input px-2"
               ></Select.Trigger>
               <Select.Content>
-                <div class="text-muted-foreground px-2 py-1.5 text-xs">Add to</div>
-                {#each irarium.allIdeasAsOptions as option}
+                <div class="px-2 py-1.5 text-xs text-muted-foreground">Add to</div>
+                {#each irarium.allThoughtsAsOptions as option}
                   <Select.Item value={option.value}>{option.label}</Select.Item>
                 {/each}
               </Select.Content>
@@ -263,12 +267,17 @@
 
   <!-- Child chain -->
   {#if irarium.getChildChain().length > 0}
-    <div class="bg-muted-foreground/30 mt-0 h-8 w-0.5"></div>
+    <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
 
     <div class="mt-0 w-full max-w-2xl space-y-8">
-      {#each irarium.getChildChain() as idea (idea.id)}
+      {#each irarium.getChildChain() as thought (thought.id)}
         <div class="irarium relative w-full">
-          <Idea content={idea.content} id={idea.id} position="child" {irarium} />
+          <Thought
+            content={thought.content}
+            id={thought.id}
+            position="child"
+            {irarium}
+          />
         </div>
       {/each}
     </div>

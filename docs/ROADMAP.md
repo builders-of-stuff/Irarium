@@ -8,34 +8,34 @@ Ideas and features to explore, organized by theme
 
 - Pages for certain tags
 
-- Dates on a per-idea basis
+- Dates on a per-thought basis
 
 - Spike on Google Keep UI
 
-- Root ideas as notes, open to a modal -> navigate from there?
+- Root thoughts as notes, open to a modal -> navigate from there?
 
 ## Social Features
 
 - Like/retweet-like features (eyes/fire)
 
-- Forking idea branches
+- Forking thought branches
 
-- Enabling others to add ideas to your irarium
+- Enabling others to add thoughts to your irarium
   - Current trouble is lack of RBAC with pocketbase, maybe just do client-side validation for now, add flags to permit social editing
 
 - Comments
 
 ## AI Echo Chamber
 
-AI-powered idea amplification and exploration system with customizable identities and anti-echo-chamber mechanisms.
+AI-powered thought amplification and exploration system with customizable identities and anti-echo-chamber mechanisms.
 
 **[→ Full feature doc](./features/ai-echo-chamber.md)**
 
-Key ideas: AI collaborators, automated idea expansion, custom algorithms, web intelligence, diversity controls
+Key ideas: AI collaborators, automated thought expansion, custom algorithms, web intelligence, diversity controls
 
 ## 3D/Spatial Experience
 
-Immersive 3D visualization for exploring ideas like navigating through glowing rocks in Avatar. A new way of storytelling and experiencing thoughts.
+Immersive 3D visualization for exploring thoughts like navigating through glowing rocks in Avatar. A new way of storytelling and experiencing thoughts.
 
 **[→ Full feature doc](./features/3d-spatial-experience.md)**
 

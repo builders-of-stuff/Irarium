@@ -41,13 +41,13 @@ export type Payment = {
   status: string;
 };
 
-export type Idea = {
+export type Thought = {
   // not necessarily unique, just for reference purposes
   id: string;
   parentId?: string;
   // position relative to irarium root
   content: string;
-  children: Idea[];
+  children: Thought[];
   depth: number;
   created: string;
   updated: string;
@@ -55,29 +55,29 @@ export type Idea = {
 
 /**
   * e.g. {
-    "id": "idea_root_id",
-    "title": "Main Idea",
-    "content": "Description of main idea",
+    "id": "thought_root_id",
+    "title": "Main Thought",
+    "content": "Description of main thought",
     "children": [
       {
-        "id": "child_idea_1",
-        "content": "Description of child idea 1",
+        "id": "child_thought_1",
+        "content": "Description of child thought 1",
         "depth": 1,
         "children": [
           {
             "id": "grandchild_1",
-            "content": "Description of grandchild idea 1",
+            "content": "Description of grandchild thought 1",
             "depth": 2,
             "children": []
           },
           {
             "id": "grandchild_2",
-            "content": "Description of grandchild idea 2",
+            "content": "Description of grandchild thought 2",
             "depth": 2,
             "children": [
               {
                 "id": "great_grandchild_1",
-                "content": "Description of great grandchild idea 1",
+                "content": "Description of great grandchild thought 1",
                 "depth": 3,
                 "children": []
               }
@@ -86,15 +86,15 @@ export type Idea = {
         ]
       },
       {
-        "id": "child_idea_2",
-        "content": "Description of child idea 2",
+        "id": "child_thought_2",
+        "content": "Description of child thought 2",
         "depth": 1,
         "children": []
       }
     ]
   }
 */
-// Irarium is essentially a collection of loosely-linked ideas
+// Irarium is essentially a collection of loosely-linked thoughts
 export type Irarium = {
   id: string;
   userId: string;
@@ -104,6 +104,6 @@ export type Irarium = {
   description: string;
   tags: string;
   content: string;
-  children: Idea[];
+  children: Thought[];
   isPublic: boolean;
 };

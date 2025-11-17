@@ -67,14 +67,14 @@
           bind:value={editableTitle}
           onkeydown={handleKeyDown}
           onblur={finishEditing}
-          class="border-primary w-full max-w-md border-b bg-transparent px-1 py-0.5 text-xl font-semibold focus:ring-0 focus:outline-none"
+          class="w-full max-w-md border-b border-primary bg-transparent px-1 py-0.5 text-xl font-semibold focus:ring-0 focus:outline-none"
           type="text"
         />
       {:else}
         <button onclick={handleTitleClick}>
           <h1
             class="text-xl font-semibold {isTitleEditable
-              ? 'hover:text-primary cursor-pointer'
+              ? 'cursor-pointer hover:text-primary'
               : ''}"
           >
             {title}

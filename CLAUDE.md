@@ -19,7 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-Irarium is a web app for writing free-flowing thoughts and ideas in a tree-like structure.
+Irarium is a web app for writing free-flowing thoughts in a tree-like structure.
 
 ### Key Technologies
 
@@ -33,18 +33,18 @@ Irarium is a web app for writing free-flowing thoughts and ideas in a tree-like 
 
 ### Core Data Models
 
-**Irarium**: A collection of hierarchical ideas with title, description, content, and children
+**Irarium**: A collection of hierarchical thoughts with title, description, content, and children
 
 - Lives in `src/lib/shared/shared.type.ts`
 - Managed by `IrariumStore` class in `src/lib/irarium/irarium.store.svelte.ts`
 
-**Idea**: Individual nodes in the idea hierarchy with content, children, depth tracking
+**Thought**: Individual nodes in the thought hierarchy with content, children, depth tracking
 
 - Supports unlimited nesting levels
-- Each idea has unique ID, content, creation/update timestamps
-- **Important**: Ideas are stored as JSON tree inside irarium document (not relational)
+- Each thought has unique ID, content, creation/update timestamps
+- **Important**: Thoughts are stored as JSON tree inside irarium document (not relational)
 - This means one fetch gets entire irarium, easier to export, simpler queries
-- Trade-off: can't query individual ideas efficiently, entire tree loaded client-side
+- Trade-off: can't query individual thoughts efficiently, entire tree loaded client-side
 
 **User & Authentication**:
 
@@ -54,7 +54,7 @@ Irarium is a web app for writing free-flowing thoughts and ideas in a tree-like 
 
 ### Directory Structure
 
-- `src/lib/irarium/` - Core idea management logic and stores
+- `src/lib/irarium/` - Core thought management logic and stores
 - `src/lib/auth/` - Authentication and user management
 - `src/lib/components/ui/` - Reusable UI components (shadcn/ui style)
 - `src/lib/db/` - PocketBase client configuration
@@ -68,7 +68,7 @@ Irarium is a web app for writing free-flowing thoughts and ideas in a tree-like 
 Uses Svelte 5 runes (`$state`, `$derived`) extensively with **class-based store architecture**:
 
 - `AuthStore` - Global authentication state (ES6 class with runes)
-- `IrariumStore` - Working irarium state with complex idea navigation (ES6 class)
+- `IrariumStore` - Working irarium state with complex thought navigation (ES6 class)
 - `IrariumsStore` - Collection of user's irariums and public feed (ES6 class)
 - Individual component state where needed
 
@@ -84,7 +84,7 @@ Uses Svelte 5 runes (`$state`, `$derived`) extensively with **class-based store 
 
 **Dumb Components** (props in, events out):
 
-- `Idea.svelte` - Renders individual idea, receives props
+- `Thought.svelte` - Renders individual thought, receives props
 - `TextEditor.svelte` - TipTap wrapper, emits events
 - `ui/*` - Pure presentation components
 
@@ -183,13 +183,13 @@ Test infrastructure is configured but coverage is minimal:
 4. Response updates IrariumStore and IrariumsStore cache
 5. Navigate to /irarium/[id]
 
-**Navigating Ideas (Keyboard):**
+**Navigating Thoughts (Keyboard):**
 
 1. User presses arrow key → IrariumComposer handles keydown
 2. IrariumStore.navigateToFirstChild() (or other navigation method)
-3. Updates activeIdea $state
+3. Updates activeThought $state
 4. Svelte reactivity triggers re-render
-5. Idea.svelte receives isActive prop, highlights and scrolls into view
+5. Thought.svelte receives isActive prop, highlights and scrolls into view
 
 **Publishing an Irarium:**
 
@@ -203,7 +203,7 @@ Test infrastructure is configured but coverage is minimal:
 
 - Always run both `pnpm run dev` and `pnpm run dev:db` for full functionality
 - PocketBase admin interface available at `http://127.0.0.1:8090/_/` when running dev:db
-- The app uses a complex keyboard-driven idea navigation system with parent/child relationships and sibling navigation
+- The app uses a complex keyboard-driven thought navigation system with parent/child relationships and sibling navigation
 - Premium features are gated through user settings and payment verification
 - Application is client-side rendered only (no SSR)
 - Use pnpm as the package manager, not npm

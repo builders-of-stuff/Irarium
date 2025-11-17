@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid';
 
-import type { Idea, Irarium } from '$lib/shared/shared.type';
+import type { Thought, Irarium } from '$lib/shared/shared.type';
 import { DEFAULT_IRARIUM_ID } from '$lib/shared/shared.constant';
 
 // For in-memory working irarium
@@ -14,33 +14,35 @@ export class IrariumStore {
   description = $state('');
   tags = $state('');
   content = $state('');
-  children = $state<Idea[]>([]);
+  children = $state<Thought[]>([]);
   isPublic = $state(false);
 
   inputContent = $state('');
   isEditing = $state(false);
   isAdding = $state(false);
-  activeIdeaId = $state('');
-  lastActiveIdeaId = $state('');
+  activeThoughtId = $state('');
+  lastActiveThoughtId = $state('');
 
-  referenceIdeaId = $derived(
-    this.activeIdeaId || this.lastActiveIdeaId || this.id || ''
+  referenceThoughtId = $derived(
+    this.activeThoughtId || this.lastActiveThoughtId || this.id || ''
   );
-  activeIdea = $derived(
-    this.activeIdeaId ? this.findIdeaById(this.activeIdeaId) : undefined
+  activeThought = $derived(
+    this.activeThoughtId ? this.findThoughtById(this.activeThoughtId) : undefined
   );
-  lastActiveIdea = $derived(
-    this.lastActiveIdeaId ? this.findIdeaById(this.lastActiveIdeaId) : undefined
+  lastActiveThought = $derived(
+    this.lastActiveThoughtId
+      ? this.findThoughtById(this.lastActiveThoughtId)
+      : undefined
   );
-  referenceIdea = $derived(
-    this.referenceIdeaId ? this.findIdeaById(this.referenceIdeaId) : undefined
+  referenceThought = $derived(
+    this.referenceThoughtId ? this.findThoughtById(this.referenceThoughtId) : undefined
   );
 
   hasContent = $derived(this.content.length > 0);
   hasChildren = $derived(this.children.length > 0);
-  allIdeasAsOptions = $derived(this.allIdeasToOptions());
+  allThoughtsAsOptions = $derived(this.allThoughtsToOptions());
   isEmptyIrarium = $derived(!this.hasContent && !this.hasChildren);
-  ideasCount = $derived.by(() => this.getAllIdeas().length);
+  thoughtsCount = $derived.by(() => this.getAllThoughts().length);
 
   constructor(irarium?: Partial<Irarium>) {
     if (irarium) {
@@ -73,30 +75,30 @@ export class IrariumStore {
     this.inputContent = '';
     this.isEditing = false;
     this.isAdding = false;
-    this.activeIdeaId = '';
-    this.lastActiveIdeaId = '';
+    this.activeThoughtId = '';
+    this.lastActiveThoughtId = '';
   }
 
   setContent(content: string) {
     this.content = content;
   }
 
-  setActiveIdeaId(ideaId: string) {
-    this.lastActiveIdeaId = this.activeIdeaId
-      ? this.activeIdeaId
-      : this.lastActiveIdeaId;
-    this.activeIdeaId = ideaId;
+  setActiveThoughtId(thoughtId: string) {
+    this.lastActiveThoughtId = this.activeThoughtId
+      ? this.activeThoughtId
+      : this.lastActiveThoughtId;
+    this.activeThoughtId = thoughtId;
   }
 
-  clearActiveIdeaId() {
-    this.lastActiveIdeaId = this.activeIdeaId
-      ? this.activeIdeaId
-      : this.lastActiveIdeaId;
-    this.activeIdeaId = '';
+  clearActiveThoughtId() {
+    this.lastActiveThoughtId = this.activeThoughtId
+      ? this.activeThoughtId
+      : this.lastActiveThoughtId;
+    this.activeThoughtId = '';
   }
 
-  setLastActiveIdeaId(ideaId: string) {
-    this.lastActiveIdeaId = ideaId;
+  setLastActiveThoughtId(thoughtId: string) {
+    this.lastActiveThoughtId = thoughtId;
   }
 
   setIsEditing(isEditing: boolean) {
@@ -107,110 +109,117 @@ export class IrariumStore {
     this.isAdding = isAdding;
   }
 
-  addIdea(content: string, activeIdea?: Idea) {
-    const idea = this.buildNewIdea(content, activeIdea);
+  addThought(content: string, activeThought?: Thought) {
+    const thought = this.buildNewThought(content, activeThought);
 
-    if (!activeIdea?.id) {
+    if (!activeThought?.id) {
       // If no parent, add directly to root level
-      this.children = [...this.children, idea];
+      this.children = [...this.children, thought];
     } else {
-      const parentId = activeIdea.id;
-      const parent = this.findIdeaById(parentId);
+      const parentId = activeThought.id;
+      const parent = this.findThoughtById(parentId);
 
       if (parent) {
         const updatedParent = {
           ...parent,
-          children: [...parent.children, idea]
+          children: [...parent.children, thought]
         };
 
-        this.children = this.updateIdeaById(parentId, updatedParent);
+        this.children = this.updateThoughtById(parentId, updatedParent);
       }
     }
 
-    this.setActiveIdeaId(idea.id);
+    this.setActiveThoughtId(thought.id);
 
-    return idea;
+    return thought;
   }
 
-  findIdeaById(id: string, ideas: Idea[] = this.children): Idea | undefined {
-    const directMatch = ideas.find((idea) => idea.id === id);
+  findThoughtById(
+    id: string,
+    thoughts: Thought[] = this.children
+  ): Thought | undefined {
+    const directMatch = thoughts.find((thought) => thought.id === id);
 
     if (directMatch) return directMatch;
 
-    return ideas.flatMap((idea) => idea.children).length > 0
-      ? this.findIdeaById(
+    return thoughts.flatMap((thought) => thought.children).length > 0
+      ? this.findThoughtById(
           id,
-          ideas.flatMap((idea) => idea.children)
+          thoughts.flatMap((thought) => thought.children)
         )
       : undefined;
   }
 
-  updateIdeaById(id: string, updatedIdea: Idea, ideas: Idea[] = this.children): Idea[] {
-    return ideas.map((idea) => {
-      if (idea.id === id) {
-        return updatedIdea;
+  updateThoughtById(
+    id: string,
+    updatedThought: Thought,
+    thoughts: Thought[] = this.children
+  ): Thought[] {
+    return thoughts.map((thought) => {
+      if (thought.id === id) {
+        return updatedThought;
       }
 
-      if (idea.children.length > 0) {
+      if (thought.children.length > 0) {
         return {
-          ...idea,
-          children: this.updateIdeaById(id, updatedIdea, idea.children)
+          ...thought,
+          children: this.updateThoughtById(id, updatedThought, thought.children)
         };
       }
 
-      return idea;
+      return thought;
     });
   }
 
-  // Get all ideas in flat array (exclude root)
-  getAllIdeas() {
-    let allIdeas = [] as any[];
+  // Get all thoughts in flat array (exclude root)
+  getAllThoughts() {
+    let allThoughts = [] as any[];
 
-    const collectIdeas = (ideas) => {
-      for (const idea of ideas) {
-        allIdeas = [...allIdeas, idea];
-        if (idea.children && idea.children.length > 0) {
-          collectIdeas(idea.children);
+    const collectThoughts = (thoughts) => {
+      for (const thought of thoughts) {
+        allThoughts = [...allThoughts, thought];
+        if (thought.children && thought.children.length > 0) {
+          collectThoughts(thought.children);
         }
       }
     };
 
-    collectIdeas(this.children);
+    collectThoughts(this.children);
 
-    return allIdeas;
+    return allThoughts;
   }
 
-  getSiblingIdeas(parentId) {
-    const allIdeas = this.getAllIdeas();
-    const parentIdea = allIdeas.find((idea) => idea.id === parentId);
+  getSiblingThoughts(parentId) {
+    const allThoughts = this.getAllThoughts();
+    const parentThought = allThoughts.find((thought) => thought.id === parentId);
 
-    if (!parentIdea || !parentIdea?.children) {
+    if (!parentThought || !parentThought?.children) {
       return [];
     }
 
-    return parentIdea.children;
+    return parentThought.children;
   }
 
-  // Get chain of parent ideas (excludes last idea & root)
-  getParentChain(ideaId = this.referenceIdeaId) {
-    if (!ideaId) {
+  // Get chain of parent thoughts (excludes last thought & root)
+  getParentChain(thoughtId = this.referenceThoughtId) {
+    if (!thoughtId) {
       return [];
     }
 
     const buildParentChain = (
-      ideas: Idea[],
+      thoughts: Thought[],
       targetId: string,
-      currentPath: Idea[] = []
+      currentPath: Thought[] = []
     ) => {
-      for (const idea of ideas) {
-        if (idea.id === targetId) {
-          return [...currentPath, idea];
+      for (const thought of thoughts) {
+        if (thought.id === targetId) {
+          return [...currentPath, thought];
         }
 
-        if (idea.children && idea.children.length > 0) {
-          const parentChain = buildParentChain(idea.children, targetId, [
+        if (thought.children && thought.children.length > 0) {
+          const parentChain = buildParentChain(thought.children, targetId, [
             ...currentPath,
-            idea
+            thought
           ]);
 
           if (parentChain) return parentChain;
@@ -220,33 +229,33 @@ export class IrariumStore {
       return null;
     };
 
-    let startingIdeas = this.children;
-    let startingPath = [];
+    const startingThoughts = this.children;
+    const startingPath = [];
 
-    const parentChain = buildParentChain(startingIdeas, ideaId, startingPath);
+    const parentChain = buildParentChain(startingThoughts, thoughtId, startingPath);
 
     if (!parentChain || parentChain?.length === 0) return [];
 
-    // Exclude last idea because it's not a "parent"
+    // Exclude last thought because it's not a "parent"
     const uniqueChain = parentChain.slice(0, -1);
 
     return uniqueChain;
   }
 
-  getChildChain(ideaId = this.referenceIdeaId, index = 0) {
-    let id = ideaId;
-    let chain = [] as Idea[];
-    let preferredIndex = index;
+  getChildChain(thoughtId = this.referenceThoughtId, index = 0) {
+    const id = thoughtId;
+    const chain = [] as Thought[];
+    const preferredIndex = index;
 
     const buildChildChain = (
-      idea?: Idea,
-      chain: Idea[] = [],
+      thought?: Thought,
+      chain: Thought[] = [],
       isFirstIteration = false
-    ): Idea[] => {
+    ): Thought[] => {
       // Use preferredIndex only for the first iteration, then default to 0
       const childIndex = isFirstIteration ? preferredIndex : 0;
 
-      const children = idea ? idea.children : this.children;
+      const children = thought ? thought.children : this.children;
       const targetChild = children[childIndex] || children[0];
 
       if (!targetChild) return chain;
@@ -256,43 +265,43 @@ export class IrariumStore {
       return buildChildChain(targetChild, updatedChain);
     };
 
-    let lastIdea = this.findIdeaById(id);
-    const childChain = buildChildChain(lastIdea, chain, true);
+    const lastThought = this.findThoughtById(id);
+    const childChain = buildChildChain(lastThought, chain, true);
 
     return childChain;
   }
 
-  hasSiblingLeft(ideaId = this.referenceIdeaId) {
-    if (!ideaId) return false;
+  hasSiblingLeft(thoughtId = this.referenceThoughtId) {
+    if (!thoughtId) return false;
 
-    const siblings = this.getSiblings(ideaId);
+    const siblings = this.getSiblings(thoughtId);
     if (siblings.length <= 1) return false;
 
-    const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
+    const currentIndex = siblings.findIndex((thought) => thought.id === thoughtId);
     return currentIndex > 0;
   }
 
-  hasSiblingRight(ideaId = this.referenceIdeaId) {
-    if (!ideaId) return false;
+  hasSiblingRight(thoughtId = this.referenceThoughtId) {
+    if (!thoughtId) return false;
 
-    const siblings = this.getSiblings(ideaId);
+    const siblings = this.getSiblings(thoughtId);
     if (siblings.length <= 1) return false;
 
-    const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
+    const currentIndex = siblings.findIndex((thought) => thought.id === thoughtId);
     return currentIndex < siblings.length - 1;
   }
 
-  getSiblings(ideaId = this.referenceIdeaId) {
-    if (!ideaId || ideaId === this.id) return [];
+  getSiblings(thoughtId = this.referenceThoughtId) {
+    if (!thoughtId || thoughtId === this.id) return [];
 
-    const findParent = (ideas, targetId, parent = null) => {
-      for (const idea of ideas) {
-        if (idea.id === targetId) {
+    const findParent = (thoughts, targetId, parent = null) => {
+      for (const thought of thoughts) {
+        if (thought.id === targetId) {
           return parent;
         }
 
-        if (idea.children && idea.children.length > 0) {
-          const foundParent = findParent(idea.children, targetId, idea);
+        if (thought.children && thought.children.length > 0) {
+          const foundParent = findParent(thought.children, targetId, thought);
           if (foundParent) return foundParent;
         }
       }
@@ -300,23 +309,23 @@ export class IrariumStore {
       return null;
     };
 
-    let startingIdeas = this.children;
+    const startingThoughts = this.children;
 
-    const parent = findParent(startingIdeas, ideaId);
+    const parent = findParent(startingThoughts, thoughtId);
 
     if (!parent) {
-      return startingIdeas;
+      return startingThoughts;
     }
 
     return parent.children || [];
   }
 
   // Add these new methods for sibling navigation
-  getSiblingLeft(ideaId = this.referenceIdeaId) {
-    if (!ideaId || ideaId === this.id) return null;
+  getSiblingLeft(thoughtId = this.referenceThoughtId) {
+    if (!thoughtId || thoughtId === this.id) return null;
 
-    const siblings = this.getSiblings(ideaId);
-    const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
+    const siblings = this.getSiblings(thoughtId);
+    const currentIndex = siblings.findIndex((thought) => thought.id === thoughtId);
 
     if (currentIndex > 0) {
       return siblings[currentIndex - 1];
@@ -325,11 +334,11 @@ export class IrariumStore {
     return null;
   }
 
-  getSiblingRight(ideaId = this.referenceIdeaId) {
-    if (!ideaId || ideaId === this.id) return null;
+  getSiblingRight(thoughtId = this.referenceThoughtId) {
+    if (!thoughtId || thoughtId === this.id) return null;
 
-    const siblings = this.getSiblings(ideaId);
-    const currentIndex = siblings.findIndex((idea) => idea.id === ideaId);
+    const siblings = this.getSiblings(thoughtId);
+    const currentIndex = siblings.findIndex((thought) => thought.id === thoughtId);
 
     if (currentIndex < siblings.length - 1) {
       return siblings[currentIndex + 1];
@@ -338,36 +347,37 @@ export class IrariumStore {
     return null;
   }
 
-  deleteIdea(ideaId: string) {
+  deleteThought(thoughtId: string) {
     // Don't allow deleting the root
-    if (ideaId === this.id) return;
+    if (thoughtId === this.id) return;
 
-    // Helper function to remove idea from an array of ideas
-    const removeIdeaFromArray = (ideas: Idea[]): Idea[] => {
-      return ideas.filter((idea) => {
-        if (idea.id === ideaId) {
+    // Helper function to remove thought from an array of thoughts
+    const removeThoughtFromArray = (thoughts: Thought[]): Thought[] => {
+      return thoughts.filter((thought) => {
+        if (thought.id === thoughtId) {
           return false;
         }
-        idea.children = removeIdeaFromArray(idea.children);
+        thought.children = removeThoughtFromArray(thought.children);
         return true;
       });
     };
 
-    // Update children array with idea removed
-    this.children = removeIdeaFromArray(this.children);
+    // Update children array with thought removed
+    this.children = removeThoughtFromArray(this.children);
 
     // Clean up all state
-    this.activeIdeaId = '';
-    this.lastActiveIdeaId = '';
+    this.activeThoughtId = '';
+    this.lastActiveThoughtId = '';
     this.isEditing = false;
     this.isAdding = false;
   }
 
-  private buildNewIdea(content: string, activeIdea?: Idea) {
+  private buildNewThought(content: string, activeThought?: Thought) {
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Date is immediately converted to string, not used reactively
     const now = new Date().toISOString();
     const id = nanoid(5);
-    const parentId = activeIdea?.id;
-    const depth = activeIdea?.id ? activeIdea.depth + 1 : 0;
+    const parentId = activeThought?.id;
+    const depth = activeThought?.id ? activeThought.depth + 1 : 0;
 
     return {
       id,
@@ -380,40 +390,42 @@ export class IrariumStore {
     };
   }
 
-  private allIdeasToOptions() {
-    const collectAllIdeas = (ideas: Idea[]): { label: string; value: string }[] => {
-      return ideas.flatMap((idea) => {
-        const position = this.findIdeaPosition(idea);
+  private allThoughtsToOptions() {
+    const collectAllThoughts = (
+      thoughts: Thought[]
+    ): { label: string; value: string }[] => {
+      return thoughts.flatMap((thought) => {
+        const position = this.findThoughtPosition(thought);
 
-        const label = `${position} ${this.truncateContent(idea?.content, 8)}`;
+        const label = `${position} ${this.truncateContent(thought?.content, 8)}`;
 
-        return [{ label, value: idea.id }, ...collectAllIdeas(idea.children)];
+        return [{ label, value: thought.id }, ...collectAllThoughts(thought.children)];
       });
     };
 
-    return [{ label: 'Root', value: this.id }, ...collectAllIdeas(this.children)];
+    return [{ label: 'Root', value: this.id }, ...collectAllThoughts(this.children)];
   }
 
   // e.g. 1-1, 1-2, 2-1, 3-1, 3-2
   // 1st number is depth, 2nd number is index among siblings
-  private findIdeaPosition(idea: Idea): string {
-    const depth = idea.depth || 0;
+  private findThoughtPosition(thought: Thought): string {
+    const depth = thought.depth || 0;
 
     let index = 0;
 
-    if (idea.parentId) {
-      const parentIdea = this.findIdeaById(idea.parentId);
+    if (thought.parentId) {
+      const parentThought = this.findThoughtById(thought.parentId);
 
-      if (parentIdea && parentIdea.children) {
+      if (parentThought && parentThought.children) {
         // Find position among siblings (children of the same parent)
-        const siblingIndex = parentIdea.children.findIndex(
-          (child) => child.id === idea.id
+        const siblingIndex = parentThought.children.findIndex(
+          (child) => child.id === thought.id
         );
         index = siblingIndex >= 0 ? siblingIndex : 0;
       }
     } else {
-      // This is a root-level idea
-      const rootIndex = this.children.findIndex((child) => child.id === idea.id);
+      // This is a root-level thought
+      const rootIndex = this.children.findIndex((child) => child.id === thought.id);
       index = rootIndex >= 0 ? rootIndex : 0;
     }
 

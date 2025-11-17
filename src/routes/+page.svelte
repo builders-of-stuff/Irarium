@@ -47,7 +47,7 @@
           <div class="space-y-2 text-center">
             <div in:fly={{ y: -20, duration: 300, delay: 100 }}>
               <h1
-                class="from-primary bg-gradient-to-r via-amber-400 to-rose-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent"
+                class="bg-gradient-to-r from-primary via-amber-400 to-rose-500 bg-clip-text text-4xl font-bold tracking-tight text-transparent"
               >
                 IRARIUM
               </h1>
@@ -55,7 +55,7 @@
 
             <div
               in:fly={{ x: 100, duration: 300, delay: 200 }}
-              class="from-primary mx-auto h-px w-16 bg-gradient-to-r to-transparent"
+              class="mx-auto h-px w-16 bg-gradient-to-r from-primary to-transparent"
             ></div>
 
             <p
@@ -75,7 +75,7 @@
               <div class="relative">
                 <Button
                   variant="default"
-                  class="from-primary hover:from-primary/90 relative z-10 w-full border-none bg-gradient-to-r to-amber-500 transition-all duration-300 hover:to-amber-500/90"
+                  class="relative z-10 w-full border-none bg-gradient-to-r from-primary to-amber-500 transition-all duration-300 hover:from-primary/90 hover:to-amber-500/90"
                 >
                   Get Started
                 </Button>

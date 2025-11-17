@@ -21,8 +21,8 @@
 
   let editor = $state<Editor>();
   let isActive = $derived(
-    irarium.activeIdeaId === id ||
-      (irarium.lastActiveIdeaId === id && !irarium.activeIdeaId)
+    irarium.activeThoughtId === id ||
+      (irarium.lastActiveThoughtId === id && !irarium.activeThoughtId)
   );
   let isEditing = $derived(isActive && irarium.isEditing);
 
@@ -31,20 +31,20 @@
   const handleSiblingLeftClick = () => {
     const leftSibling = irarium.getSiblingLeft(id);
     if (leftSibling) {
-      irarium.setActiveIdeaId(leftSibling.id);
+      irarium.setActiveThoughtId(leftSibling.id);
     }
   };
 
   const handleSiblingRightClick = () => {
     const rightSibling = irarium.getSiblingRight(id);
     if (rightSibling) {
-      irarium.setActiveIdeaId(rightSibling.id);
+      irarium.setActiveThoughtId(rightSibling.id);
     }
   };
 
-  const handleIdeaClick = (event: MouseEvent) => {
+  const handleThoughtClick = (event: MouseEvent) => {
     event.stopPropagation();
-    irarium.setActiveIdeaId(id);
+    irarium.setActiveThoughtId(id);
     irarium.setIsEditing(true);
     irarium.setIsAdding(false);
   };
@@ -57,7 +57,7 @@
 
   const handleDelete = (event) => {
     event.stopPropagation();
-    irarium.deleteIdea(id);
+    irarium.deleteThought(id);
   };
 </script>
 
@@ -67,11 +67,11 @@
     <div
       class="absolute top-1/2 left-0 flex -translate-x-full -translate-y-1/2 items-center"
     >
-      <div class="bg-muted-foreground/30 h-0.5 w-4"></div>
+      <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
       <Button
         variant="outline"
         size="icon"
-        class="border-muted-foreground/30 text-muted-foreground h-6 w-6 rounded-full border p-0"
+        class="h-6 w-6 rounded-full border border-muted-foreground/30 p-0 text-muted-foreground"
         aria-label="Navigate to left sibling"
         onclick={handleSiblingLeftClick}
       >
@@ -80,25 +80,25 @@
     </div>
   {/if}
 
-  <!-- Current idea -->
+  <!-- Current thought -->
   <Button
     variant="ghost"
-    class="!bg-card/60 hover:!bg-card/60 focus:!bg-card/60 active:!bg-card/60 backdrop-blur-sm h-auto w-full justify-start rounded-lg border border-white/40 px-4 py-2 transition-all
+    class="h-auto w-full justify-start rounded-lg border border-white/40 !bg-card/60 px-4 py-2 backdrop-blur-sm transition-all hover:!bg-card/60 focus:!bg-card/60 active:!bg-card/60
           {isActive ? 'border-primary/60' : ''}"
-    onclick={(event) => handleIdeaClick(event)}
+    onclick={(event) => handleThoughtClick(event)}
     aria-current={isActive ? 'true' : 'false'}
   >
-    <div class="prose dark:prose-invert max-w-none w-full text-left">
+    <div class="prose w-full max-w-none text-left dark:prose-invert">
       <TextEditor bind:editor bind:content editable={isEditing} />
 
       {#if isActive && isEditing}
         <!-- Dividing line for actions -->
-        <div class="border-muted-foreground/20 mt-2 flex justify-between border-t pt-2">
+        <div class="mt-2 flex justify-between border-t border-muted-foreground/20 pt-2">
           <Button
             variant="ghost"
             size="icon"
-            class="text-muted-foreground/50 hover:bg-destructive/5 hover:text-destructive/50 h-8 w-8 rounded-full"
-            aria-label="Delete idea"
+            class="h-8 w-8 rounded-full text-muted-foreground/50 hover:bg-destructive/5 hover:text-destructive/50"
+            aria-label="Delete thought"
             onclick={(event) => handleDelete(event)}
           >
             <Trash2 class="h-4 w-4" />
@@ -106,7 +106,7 @@
           <Button
             variant="ghost"
             size="icon"
-            class="hover:bg-primary/10 hover:text-primary h-8 w-8 rounded-full"
+            class="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary"
             aria-label="Add new post"
             onclick={(event) => handleAddPost(event)}
           >
@@ -125,25 +125,25 @@
       <Button
         variant="outline"
         size="icon"
-        class="border-muted-foreground/30 text-muted-foreground h-6 w-6 rounded-full border p-0"
+        class="h-6 w-6 rounded-full border border-muted-foreground/30 p-0 text-muted-foreground"
         aria-label="Navigate to right sibling"
         onclick={handleSiblingRightClick}
       >
         <span>→</span>
       </Button>
-      <div class="bg-muted-foreground/30 h-0.5 w-4"></div>
+      <div class="h-0.5 w-4 bg-muted-foreground/30"></div>
     </div>
   {/if}
 
   <!-- Connector line (based on position) -->
   {#if position === 'parent'}
     <div
-      class="bg-muted-foreground/30 absolute bottom-0 left-1/2 h-6 w-0.5 -translate-x-1/2 translate-y-full"
+      class="absolute bottom-0 left-1/2 h-6 w-0.5 -translate-x-1/2 translate-y-full bg-muted-foreground/30"
       aria-hidden="true"
     ></div>
   {:else if position === 'child'}
     <div
-      class="bg-muted-foreground/30 absolute top-0 left-1/2 h-6 w-0.5 -translate-x-1/2 -translate-y-full"
+      class="absolute top-0 left-1/2 h-6 w-0.5 -translate-x-1/2 -translate-y-full bg-muted-foreground/30"
       aria-hidden="true"
     ></div>
   {/if}

@@ -8,7 +8,7 @@
 
 # 1.1.8 (2025-04-01)
 
-- Add delete idea functionality
+- Add delete thought functionality
 
 # 1.1.7 (2025-03-31)
 

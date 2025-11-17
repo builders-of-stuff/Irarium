@@ -57,7 +57,7 @@
             <Sidebar.MenuItem>
               <a
                 href={item.href}
-                class="hover:bg-accent hover:text-accent-foreground mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base"
+                class="mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base hover:bg-accent hover:text-accent-foreground"
               >
                 {#if item.icon}
                   <item.icon class="h-5 w-5" />
@@ -89,10 +89,10 @@
               <Popover.Root>
                 <Popover.Trigger class="w-full">
                   <button
-                    class="hover:bg-accent hover:text-accent-foreground mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base"
+                    class="mx-2 flex w-full items-center gap-3 rounded-md px-5 py-3 text-base hover:bg-accent hover:text-accent-foreground"
                   >
                     <div
-                      class="bg-muted flex h-5 w-5 items-center justify-center rounded-full"
+                      class="flex h-5 w-5 items-center justify-center rounded-full bg-muted"
                     >
                       <Settings class="h-5 w-5" />
                     </div>
@@ -103,7 +103,7 @@
                 <Popover.Content class="w-56 p-0">
                   <div class="flex flex-col">
                     <button
-                      class="text-destructive hover:bg-accent flex items-center gap-2 px-4 py-2 text-left"
+                      class="flex items-center gap-2 px-4 py-2 text-left text-destructive hover:bg-accent"
                       onclick={handleLogout}
                     >
                       <LogOut class="h-4 w-4" />

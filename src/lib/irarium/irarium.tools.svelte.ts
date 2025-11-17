@@ -1,20 +1,20 @@
-import type { Idea, Irarium } from '$lib/shared/shared.type';
+import type { Thought, Irarium } from '$lib/shared/shared.type';
 
 /**
- * Count total ideas in an irarium
- * Recursively counts all ideas including children and their descendants
+ * Count total thoughts in an irarium
+ * Recursively counts all thoughts including children and their descendants
  */
-export function countIdeas(irarium: Irarium): number {
+export function countThoughts(irarium: Irarium): number {
   if (!irarium || !irarium.children) return 0;
 
   let count = 0;
 
   // Count direct children and their descendants
-  const countAllChildren = (ideas: Idea[]) => {
-    for (const idea of ideas) {
+  const countAllChildren = (thoughts: Thought[]) => {
+    for (const thought of thoughts) {
       count++;
-      if (idea.children && idea.children.length > 0) {
-        countAllChildren(idea.children);
+      if (thought.children && thought.children.length > 0) {
+        countAllChildren(thought.children);
       }
     }
   };

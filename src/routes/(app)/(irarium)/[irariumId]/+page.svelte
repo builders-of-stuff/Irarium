@@ -127,7 +127,7 @@
       {#if isLoading}
         <div class="flex items-center justify-center">
           <div
-            class="border-primary h-8 w-8 animate-spin rounded-full border-t-2 border-b-2"
+            class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-primary"
           ></div>
         </div>
       {:else if error}

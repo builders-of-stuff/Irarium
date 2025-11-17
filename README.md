@@ -1,8 +1,8 @@
 # Irarium
 
-A space for thoughts and ideas.
+A space for thoughts.
 
-Each irarium starts with a root (idea/thought), and from there creating a tree of related thoughts and ideas.
+Each irarium starts with a root thought, and from there creating a tree of related thoughts.
 
 ## Documentation
 

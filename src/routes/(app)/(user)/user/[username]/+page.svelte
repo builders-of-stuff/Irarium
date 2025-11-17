@@ -4,7 +4,7 @@
 
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
-  import { countIdeas } from '$lib/irarium/irarium.tools.svelte';
+  import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import StarryNight from '$lib/components/starry-night.svelte';
@@ -98,7 +98,7 @@
 
     <div class="container mx-auto max-w-3xl px-4 py-6">
       <!-- Profile header -->
-      <div class="bg-muted/30 mb-8 rounded-xl p-6">
+      <div class="mb-8 rounded-xl bg-muted/30 p-6">
         <div class="flex flex-col md:flex-row md:items-start md:gap-6">
           <!-- Avatar placeholder -->
           <!-- <div class="mb-4 h-24 w-24 rounded-full bg-muted md:mb-0"></div> -->
@@ -109,7 +109,7 @@
                 <h1 class="text-2xl font-bold">
                   {authStore.user.name || 'Anonymous User'}
                 </h1>
-                <p class="text-muted-foreground text-sm">
+                <p class="text-sm text-muted-foreground">
                   @{authStore.username || authStore.userId?.substring(0, 8) || 'user'}
                 </p>
               </div>
@@ -122,10 +122,10 @@
             {#if authStore.user.bio}
               <p class="mb-4 text-base whitespace-pre-wrap">{authStore.user.bio}</p>
             {:else}
-              <p class="text-muted-foreground mb-4">No bio yet</p>
+              <p class="mb-4 text-muted-foreground">No bio yet</p>
             {/if}
 
-            <div class="text-muted-foreground flex items-center text-sm">
+            <div class="flex items-center text-sm text-muted-foreground">
               <span class="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -160,7 +160,7 @@
         {:else if userPublicIrariums.length === 0}
           <div class="rounded-lg border border-dashed p-8 text-center">
             <h3 class="mb-2 text-xl font-medium">No public irariums</h3>
-            <p class="text-muted-foreground mb-4">
+            <p class="mb-4 text-muted-foreground">
               You haven't made any irariums public yet.
             </p>
             <Button href="/collection">View All My Irariums</Button>
@@ -170,14 +170,14 @@
             {#each userPublicIrariums as irarium}
               <a
                 href={`/${irarium.id}`}
-                class="border-muted hover:bg-muted/30 block rounded-lg border p-4 transition-colors"
+                class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
               >
                 <div class="mb-2 line-clamp-3">
                   {@html irarium.content || 'No content'}
                 </div>
-                <div class="text-muted-foreground flex justify-between text-xs">
+                <div class="flex justify-between text-xs text-muted-foreground">
                   <span>{formatDate(irarium.updated)}</span>
-                  <span>{countIdeas(irarium)} thoughts</span>
+                  <span>{countThoughts(irarium)} thoughts</span>
                 </div>
               </a>
             {/each}
@@ -203,7 +203,7 @@
           id="name"
           type="text"
           bind:value={nameInput}
-          class="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm"
+          class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
           placeholder="Your name"
           maxlength="50"
         />
@@ -212,17 +212,17 @@
       <div class="space-y-2">
         <label for="username" class="text-sm font-medium">Username</label>
         <div class="flex items-center">
-          <span class="text-muted-foreground mr-1 text-sm">@</span>
+          <span class="mr-1 text-sm text-muted-foreground">@</span>
           <input
             id="username"
             type="text"
             bind:value={usernameInput}
-            class="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm"
+            class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
             placeholder="username"
             maxlength="30"
           />
         </div>
-        <p class="text-muted-foreground text-xs">
+        <p class="text-xs text-muted-foreground">
           Your username appears in your profile URL and irariums
         </p>
       </div>
@@ -232,7 +232,7 @@
         <textarea
           id="bio"
           bind:value={bioInput}
-          class="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm"
+          class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground"
           placeholder="Tell us about yourself"
           rows="4"
           maxlength="160"
@@ -240,7 +240,7 @@
       </div>
 
       {#if authStore.updateError}
-        <p class="text-destructive text-sm">{authStore.updateError}</p>
+        <p class="text-sm text-destructive">{authStore.updateError}</p>
       {/if}
     </div>
 

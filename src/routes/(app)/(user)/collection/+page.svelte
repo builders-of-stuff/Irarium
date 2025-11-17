@@ -5,7 +5,7 @@
   import { Button } from '$lib/components/ui/button';
 
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
-  import { countIdeas } from '$lib/irarium/irarium.tools.svelte';
+  import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import StarryNight from '$lib/components/starry-night.svelte';
 
   onMount(() => {
@@ -37,7 +37,7 @@
           </div>
         </div>
       {:else if irariumsStore.error}
-        <div class="bg-destructive/10 text-destructive rounded-lg p-4">
+        <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
           <p>{irariumsStore.error}</p>
           <Button
             variant="outline"
@@ -56,14 +56,14 @@
           {#each irariumsStore.userIrariums as irarium}
             <a
               href={`/${irarium.id}`}
-              class="border-muted hover:bg-muted/30 block rounded-lg border p-4 transition-colors"
+              class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
             >
               <div class="mb-2 line-clamp-3">
                 {@html irarium.content || 'No content'}
               </div>
-              <div class="text-muted-foreground flex justify-between text-xs">
+              <div class="flex justify-between text-xs text-muted-foreground">
                 <span>{formatDate(irarium.updated)}</span>
-                <span>{countIdeas(irarium)} thoughts</span>
+                <span>{countThoughts(irarium)} thoughts</span>
               </div>
             </a>
           {/each}

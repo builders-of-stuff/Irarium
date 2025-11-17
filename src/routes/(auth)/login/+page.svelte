@@ -39,7 +39,7 @@
           class="h-20 w-20 rounded-xl shadow-sm"
         />
       </a>
-      <h1 class="text-primary text-3xl font-bold">Irarium</h1>
+      <h1 class="text-3xl font-bold text-primary">Irarium</h1>
     </div>
 
     <Card.Root class="w-full max-w-md">
@@ -68,7 +68,7 @@
             <Input id="password" type="password" required bind:value={password} />
           </div>
           {#if error}
-            <div class="text-destructive text-sm">{error}</div>
+            <div class="text-sm text-destructive">{error}</div>
           {/if}
         </Card.Content>
         <Card.Footer class="pt-6">
