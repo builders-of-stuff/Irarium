@@ -395,7 +395,6 @@ export class IrariumStore {
   }
 
   private buildNewThought(content: string, activeThought?: Thought) {
-    // eslint-disable-next-line svelte/prefer-svelte-reactivity -- Date is immediately converted to string, not used reactively
     const now = new Date().toISOString();
     const id = nanoid(5);
     const parentId = activeThought?.id;

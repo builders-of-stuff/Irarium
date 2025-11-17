@@ -27,6 +27,7 @@ export default ts.config(
       'svelte/no-navigation-without-resolve': 'warn',
       'svelte/require-each-key': 'warn',
       'svelte/no-at-html-tags': 'warn',
+      'svelte/prefer-svelte-reactivity': 'off',
       '@typescript-eslint/triple-slash-reference': 'off',
       'no-undef': 'off'
     }
