@@ -88,12 +88,12 @@
     onclick={(event) => handleIdeaClick(event)}
     aria-current={isActive ? 'true' : 'false'}
   >
-    <div class="prose prose-lg dark:prose-invert w-full text-left">
+    <div class="prose prose-lg dark:prose-invert max-w-none w-full text-left">
       <TextEditor bind:editor bind:content editable={isEditing} />
 
       {#if isActive && isEditing}
         <!-- Dividing line for actions -->
-        <div class="border-muted-foreground/20 mt-4 flex justify-between border-t pt-2">
+        <div class="border-muted-foreground/20 mt-2 flex justify-between border-t pt-2">
           <Button
             variant="ghost"
             size="icon"
