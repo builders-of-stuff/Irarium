@@ -98,6 +98,18 @@
       toast.error('Failed to update public state');
     }
   }
+
+  function exportIrarium() {
+    if (!irarium) return;
+
+    try {
+      irarium.exportAsJson();
+      toast.success('Irarium exported successfully!');
+    } catch (error) {
+      console.error('Error exporting irarium:', error);
+      toast.error('Failed to export irarium');
+    }
+  }
 </script>
 
 {#snippet actions()}
@@ -107,6 +119,7 @@
       <Button variant="outline" onclick={togglePublicState}>
         {irarium?.isPublic ? 'Unpublish' : 'Publish'}
       </Button>
+      <Button variant="outline" onclick={exportIrarium}>Export</Button>
       <Button variant="secondary" onclick={saveIrarium}>Save</Button>
     {/if}
   </div>

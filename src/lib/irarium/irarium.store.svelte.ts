@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 
 import type { Thought, Irarium } from '$lib/shared/shared.type';
 import { DEFAULT_IRARIUM_ID } from '$lib/shared/shared.constant';
+import { downloadJsonFile, sanitizeFilename } from './irarium-export';
 
 // For in-memory working irarium
 export class IrariumStore {
@@ -370,6 +371,27 @@ export class IrariumStore {
     this.lastActiveThoughtId = '';
     this.isEditing = false;
     this.isAdding = false;
+  }
+
+  exportAsJson() {
+    const irariumData: Irarium = {
+      id: this.id,
+      userId: this.userId,
+      created: this.created,
+      updated: this.updated,
+      title: this.title,
+      description: this.description,
+      tags: this.tags,
+      content: this.content,
+      children: this.children,
+      isPublic: this.isPublic
+    };
+
+    const timestamp = new Date().toISOString().split('T')[0];
+    const sanitizedTitle = sanitizeFilename(this.title || 'irarium');
+    const filename = `${sanitizedTitle}-${timestamp}.json`;
+
+    downloadJsonFile(irariumData, filename);
   }
 
   private buildNewThought(content: string, activeThought?: Thought) {
