@@ -203,7 +203,7 @@
           id="name"
           type="text"
           bind:value={nameInput}
-          class="border-input w-full rounded-md border px-3 py-2 text-sm"
+          class="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm"
           placeholder="Your name"
           maxlength="50"
         />
@@ -217,7 +217,7 @@
             id="username"
             type="text"
             bind:value={usernameInput}
-            class="border-input w-full rounded-md border px-3 py-2 text-sm"
+            class="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm"
             placeholder="username"
             maxlength="30"
           />
@@ -232,7 +232,7 @@
         <textarea
           id="bio"
           bind:value={bioInput}
-          class="border-input w-full rounded-md border px-3 py-2 text-sm"
+          class="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm"
           placeholder="Tell us about yourself"
           rows="4"
           maxlength="160"
