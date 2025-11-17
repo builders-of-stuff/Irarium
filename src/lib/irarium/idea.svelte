@@ -88,7 +88,7 @@
     onclick={(event) => handleIdeaClick(event)}
     aria-current={isActive ? 'true' : 'false'}
   >
-    <div class="prose prose-lg dark:prose-invert max-w-none w-full text-left">
+    <div class="prose dark:prose-invert max-w-none w-full text-left">
       <TextEditor bind:editor bind:content editable={isEditing} />
 
       {#if isActive && isEditing}
