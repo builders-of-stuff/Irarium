@@ -50,16 +50,6 @@
           }
         ]
       }
-    ],
-    "Notification": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "osascript -e 'display notification \"Claude Code Finished\" with title \"Task Complete\"' && sounds=(.claude/sounds/jobs-finished.wav .claude/sounds/orders-captain.wav .claude/sounds/reporting-for-duty.wav) && nohup afplay \"${sounds[$RANDOM % ${#sounds[@]}]}\" >/dev/null 2>&1 &"
-          }
-        ]
-      }
     ]
   }
 }

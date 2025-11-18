@@ -40,7 +40,7 @@
   <div class="relative z-10">
     <UserNavbar title="Create" {actions} />
 
-    <div class="container flex min-h-screen flex-col items-center py-8">
+    <div class="container mx-auto max-w-4xl flex min-h-screen flex-col items-center py-8">
       <IrariumComposer {irarium} enableUpdates />
     </div>
   </div>

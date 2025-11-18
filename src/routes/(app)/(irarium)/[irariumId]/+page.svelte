@@ -136,7 +136,7 @@
       {actions}
     />
 
-    <div class="container flex min-h-screen flex-col items-center py-8">
+    <div class="container mx-auto max-w-4xl flex min-h-screen flex-col items-center py-8">
       {#if isLoading}
         <div class="flex items-center justify-center">
           <div

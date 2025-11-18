@@ -36,7 +36,7 @@
   }
 </script>
 
-<div class="container flex min-h-screen items-start justify-center pt-[10vh]">
+<div class="container mx-auto max-w-md flex min-h-screen items-start justify-center pt-[10vh]">
   <div class="w-full max-w-md space-y-10">
     <div class="flex flex-col items-center gap-4">
       <a href={ROUTE.LANDING}>
