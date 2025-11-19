@@ -1,235 +1,82 @@
 <script lang="ts">
-  import { DEFAULT_IRARIUM_ID, KEYBOARD_KEYS } from '$lib/shared/shared.constant';
+  import NodeItem from './node-item.svelte';
+  import { IrariumStore } from './irarium.store.svelte';
+  import type { Thought } from '$lib/shared/shared.type';
 
-  import Thought from './thought.svelte';
+  let {
+    irarium = $bindable(),
+    enableUpdates = false
+  }: {
+    irarium: IrariumStore;
+    enableUpdates?: boolean;
+  } = $props();
 
-  let { irarium = $bindable(), enableUpdates = false } = $props();
+  // Cast irarium to Thought-like structure for the root node
+  let rootNode = $derived({
+    id: irarium.id,
+    content: irarium.content,
+    children: irarium.children,
+    depth: 0,
+    isExpanded: true, // Root is always expanded
+    created: irarium.created,
+    updated: irarium.updated,
+    parentId: undefined
+  } as Thought);
 
-  // Handle click outside Thought components
-  const handleClickOutside = (event: MouseEvent) => {
-    const irariumElements = document.querySelectorAll('.irarium');
-    const target = event.target as HTMLElement;
+  // Sync changes from rootNode back to irarium (specifically content)
+  // Since NodeItem binds to node.content, and rootNode is derived, we need to handle updates.
+  // Actually, NodeItem binds to `node.content`. If `rootNode` is a derived object, binding might not propagate back to `irarium.content`.
+  // We should probably pass `irarium` directly if possible or handle root specially.
+  // Let's try to pass a proxy or just handle the root update manually if needed.
+  // But wait, `irarium` is a class instance (store).
+  // If I pass `irarium` as `node`, it might work if I cast it.
 
-    // Check if the click is inside any Thought component
-    let isInsideIrarium = false;
-    for (const irariumElement of irariumElements) {
-      if (irariumElement.contains(target)) {
-        isInsideIrarium = true;
-        break;
-      }
-    }
-
-    if (!isInsideIrarium && irarium.activeThoughtId) {
-      irarium.clearActiveThoughtId();
-    }
-  };
-
-  // Hotkey navigation
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === KEYBOARD_KEYS.ESCAPE && irarium.activeThoughtId) {
-      irarium.clearActiveThoughtId();
-      irarium.setIsEditing(false);
-      irarium.setIsAdding(false);
-      event.preventDefault();
-      return;
-    }
-
-    // Skip arrow key navigation if we're in an input or editor
-    if (
-      event.target instanceof HTMLInputElement ||
-      event.target instanceof HTMLTextAreaElement ||
-      (event.target as HTMLElement).isContentEditable
-    ) {
-      return;
-    }
-
-    // Only apply key navigation when there is NO active thought
-    if (!irarium.activeThoughtId) {
-      // Handle activation keys(Enter, Space)
-      if (
-        irarium.lastActiveThoughtId &&
-        (event.key === KEYBOARD_KEYS.ENTER || event.key === KEYBOARD_KEYS.SPACE)
-      ) {
-        irarium.setActiveThoughtId(irarium.lastActiveThoughtId);
-        irarium.setIsEditing(true);
-        irarium.setIsAdding(false);
-        event.preventDefault();
-        return;
-      }
-
-      // Handle arrow key navigation
-      let newThoughtId: string | null = null;
-
-      switch (event.key) {
-        case KEYBOARD_KEYS.ARROW_UP: {
-          // Navigate to parent
-          if (irarium.lastActiveThoughtId) {
-            const referenceThought = irarium.findThoughtById(
-              irarium.lastActiveThoughtId
-            );
-
-            if (
-              referenceThought?.parentId &&
-              referenceThought?.parentId !== irarium.id &&
-              referenceThought?.parentId !== DEFAULT_IRARIUM_ID
-            ) {
-              newThoughtId = referenceThought?.parentId;
-            } else if (
-              (referenceThought?.parentId === irarium.id ||
-                referenceThought?.parentId === DEFAULT_IRARIUM_ID) &&
-              irarium.hasContent
-            ) {
-              newThoughtId = irarium.id;
-            }
-          }
-          break;
-        }
-        case KEYBOARD_KEYS.ARROW_DOWN: {
-          // Navigate to first child
-          if (irarium.lastActiveThoughtId) {
-            // Special case for root
-            if (irarium.lastActiveThoughtId === irarium.id) {
-              if (irarium.children && irarium.children.length > 0) {
-                newThoughtId = irarium.children[0].id;
-              }
-            } else {
-              // Regular case for other thoughts
-              const referenceThought = irarium.findThoughtById(
-                irarium.lastActiveThoughtId
-              );
-              if (
-                referenceThought &&
-                referenceThought.children &&
-                referenceThought.children.length > 0
-              ) {
-                newThoughtId = referenceThought.children[0].id;
-              }
-            }
-          } else {
-            // No reference thought, try to select first child of root or root itself
-            if (irarium.hasChildren) {
-              newThoughtId = irarium.children[0].id;
-            } else if (irarium.hasContent) {
-              newThoughtId = irarium.id;
-            }
-          }
-          break;
-        }
-        case KEYBOARD_KEYS.ARROW_LEFT: {
-          // Navigate to left sibling
-          if (irarium.lastActiveThoughtId) {
-            const leftSibling = irarium.getSiblingLeft(irarium.lastActiveThoughtId);
-            if (leftSibling) {
-              newThoughtId = leftSibling.id;
-            }
-          }
-          break;
-        }
-        case KEYBOARD_KEYS.ARROW_RIGHT: {
-          // Navigate to right sibling
-          if (irarium.lastActiveThoughtId) {
-            const rightSibling = irarium.getSiblingRight(irarium.lastActiveThoughtId);
-            if (rightSibling) {
-              newThoughtId = rightSibling.id;
-            }
-          }
-          break;
-        }
-      }
-
-      // Update the lastActiveThoughtId if we found a new thought to navigate to
-      if (newThoughtId) {
-        irarium.setLastActiveThoughtId(newThoughtId);
-        event.preventDefault();
-      }
+  const handleReset = () => {
+    if (window.confirm('Are you sure you want to clear everything?')) {
+      irarium.clearStore();
+      irarium.content = 'Core Concept'; // Set default content
+      irarium.children = [];
     }
   };
-
-  // Set up event listeners with $effect to ensure they update when irarium changes
-  $effect(() => {
-    const clickHandler = handleClickOutside;
-
-    document.addEventListener('click', clickHandler);
-    document.addEventListener('keydown', handleKeyDown);
-
-    // Auto-activate root node if empty and updates are enabled
-    if (irarium.isEmptyIrarium && enableUpdates && !irarium.activeThoughtId) {
-      irarium.setActiveThoughtId(irarium.id);
-      irarium.setIsEditing(true);
-    }
-
-    return () => {
-      document.removeEventListener('click', clickHandler);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  });
 </script>
 
-<div class="mx-auto flex w-full max-w-4xl flex-col items-center">
-  <!-- Parent chain (above) - only show unique items in the chain -->
-  <div class="mb-8 flex w-full flex-col items-center space-y-8">
-    <!-- Root thought -->
-    {#if irarium.hasContent || irarium.hasChildren || (irarium.isEmptyIrarium && enableUpdates)}
-      <div class="irarium relative w-full">
-        <Thought
+<div
+  class="selection:bg-nebula-accent/30 relative flex h-full w-full flex-col overflow-hidden font-sans text-slate-200 selection:text-white"
+>
+  <!-- Main Canvas Area - Infinite Horizontal & Vertical Scroll -->
+  <main
+    class="relative flex-1 cursor-grab overflow-auto scroll-smooth active:cursor-grabbing"
+  >
+    <div class="flex min-h-full min-w-max flex-col items-center p-8">
+      <!-- Root Render -->
+      <div class="animate-slide-up pb-40">
+        <!-- 
+            We pass the irarium object itself as the root node. 
+            We need to ensure it satisfies the Thought interface or at least the parts NodeItem uses.
+            NodeItem uses: id, content, children, isExpanded.
+            Irarium has: id, content, children.
+            We need to make sure `isExpanded` exists or is handled.
+            Irarium doesn't have `isExpanded`.
+            We can add a getter/setter for `isExpanded` to IrariumStore or just treat root as always expanded in NodeItem.
+            NodeItem has `isRoot` prop.
+         -->
+        <NodeItem
+          node={irarium as unknown as Thought}
           {irarium}
-          bind:content={irarium.content}
-          id={irarium.id}
-          position="parent"
-          {enableUpdates}
+          depth={0}
+          isRoot={true}
         />
       </div>
-    {/if}
+    </div>
+  </main>
 
-    <!-- Parent chain -->
-    {#each irarium.getParentChain() as parentThought}
-      <div class="irarium relative w-full">
-        <Thought
-          {irarium}
-          bind:content={parentThought.content}
-          id={parentThought.id}
-          position="parent"
-          {enableUpdates}
-        />
-      </div>
-    {/each}
-
-    <!-- Active thought -->
-    {#if irarium.referenceThoughtId && !irarium
-        .getParentChain()
-        .some((thought) => thought.id === irarium.referenceThoughtId) && irarium.referenceThoughtId !== irarium.id}
-      {#each irarium.getAllThoughts() as thought}
-        {#if thought.id === irarium.referenceThoughtId}
-          <div class="irarium relative w-full">
-            <Thought
-              {irarium}
-              bind:content={thought.content}
-              id={thought.id}
-              position="parent"
-              {enableUpdates}
-            />
-          </div>
-        {/if}
-      {/each}
-    {/if}
+  <!-- Floating Shortcuts Hint -->
+  <div
+    class="bg-space-950/50 pointer-events-none fixed bottom-6 left-6 z-40 rounded-lg border border-white/5 px-3 py-2 font-mono text-xs text-slate-600 backdrop-blur select-none"
+  >
+    TAB: child • ENTER: sibling • DEL: remove
   </div>
 
-  <!-- Child chain -->
-  {#if irarium.getChildChain().length > 0}
-    <div class="mt-0 h-8 w-0.5 bg-muted-foreground/30"></div>
-
-    <div class="mt-0 w-full max-w-2xl space-y-8">
-      {#each irarium.getChildChain() as thought (thought.id)}
-        <div class="irarium relative w-full">
-          <Thought
-            content={thought.content}
-            id={thought.id}
-            position="child"
-            {irarium}
-            {enableUpdates}
-          />
-        </div>
-      {/each}
-    </div>
-  {/if}
+  <!-- AI Processing Indicator (Global) -->
+  <!-- We can add this if we have a global isGenerating state in store -->
 </div>

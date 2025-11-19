@@ -49,6 +49,7 @@ export type Thought = {
   content: string;
   children: Thought[];
   depth: number;
+  isExpanded?: boolean;
   created: string;
   updated: string;
 };

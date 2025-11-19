@@ -113,8 +113,8 @@ export class IrariumStore {
   addThought(content: string, activeThought?: Thought) {
     const thought = this.buildNewThought(content, activeThought);
 
-    if (!activeThought?.id) {
-      // If no parent, add directly to root level
+    if (!activeThought?.id || activeThought.id === this.id) {
+      // If no parent or parent is root, add directly to root level
       this.children = [...this.children, thought];
     } else {
       const parentId = activeThought.id;
@@ -123,6 +123,7 @@ export class IrariumStore {
       if (parent) {
         const updatedParent = {
           ...parent,
+          isExpanded: true,
           children: [...parent.children, thought]
         };
 
@@ -140,10 +141,23 @@ export class IrariumStore {
     referenceThought: Thought,
     position: 'left' | 'right'
   ) {
-    const thought = this.buildNewThought(content, {
-      ...referenceThought,
-      id: referenceThought.parentId || this.id
-    });
+    // Calculate correct depth for sibling (same as reference)
+    // and ensure we pass the correct parent ID
+    const parentId = referenceThought.parentId || this.id;
+    const depth = referenceThought.depth; 
+    
+    // Manually build thought to ensure correct depth
+    const now = new Date().toISOString();
+    const thought: Thought = {
+      id: nanoid(5),
+      parentId,
+      content,
+      children: [],
+      depth,
+      isExpanded: true,
+      created: now,
+      updated: now
+    };
 
     // If parent is root
     if (!referenceThought.parentId || referenceThought.parentId === this.id) {
@@ -418,6 +432,17 @@ export class IrariumStore {
     this.isAdding = false;
   }
 
+  toggleExpand(thoughtId: string) {
+    const thought = this.findThoughtById(thoughtId);
+    if (thought) {
+      // We need to trigger reactivity, so we might need to update the tree
+      // But with Svelte 5 deep reactivity on the store's children, direct mutation might work
+      // if the thought object is part of the state tree.
+      // However, to be safe and consistent with immutable patterns if needed, or just direct mutation:
+      thought.isExpanded = !thought.isExpanded;
+    }
+  }
+
   exportAsJson() {
     const irariumData: Irarium = {
       id: this.id,
@@ -451,6 +476,7 @@ export class IrariumStore {
       content,
       children: [],
       depth,
+      isExpanded: true,
       created: now,
       updated: now
     };

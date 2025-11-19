@@ -7,7 +7,16 @@
     editor = $bindable(),
     content = $bindable(),
     editable = $bindable(),
-    minHeight = $bindable()
+    minHeight = $bindable(),
+    onKeyDown,
+    onFocus
+  }: {
+    editor?: Editor;
+    content?: string;
+    editable?: boolean;
+    minHeight?: string;
+    onKeyDown?: (event: KeyboardEvent) => boolean;
+    onFocus?: () => void;
   } = $props();
   let editorElement: HTMLElement = $state() as any;
   let isEditorMounted = $state(false);
@@ -23,11 +32,22 @@
       parseOptions: {
         preserveWhitespace: 'full'
       },
+      editorProps: {
+        handleKeyDown: (view, event) => {
+          if (onKeyDown) {
+            return onKeyDown(event);
+          }
+          return false;
+        }
+      },
       content,
       editable,
       autofocus: 'end',
       onUpdate: ({ editor }) => {
         content = editor.getHTML();
+      },
+      onFocus: () => {
+        if (onFocus) onFocus();
       }
     });
     isEditorMounted = true;
