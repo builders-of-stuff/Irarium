@@ -8,6 +8,7 @@
     content = $bindable(),
     editable = $bindable(),
     minHeight = $bindable(),
+    className = '',
     onKeyDown,
     onFocus
   }: {
@@ -15,6 +16,7 @@
     content?: string;
     editable?: boolean;
     minHeight?: string;
+    className?: string;
     onKeyDown?: (event: KeyboardEvent) => boolean;
     onFocus?: () => void;
   } = $props();
@@ -87,7 +89,7 @@
 <div class="tiptap-editor">
   <div
     bind:this={editorElement}
-    class="prose max-w-none text-card-foreground focus-within:outline-none"
+    class="prose max-w-none text-card-foreground focus-within:outline-none {className}"
     style="min-height: {minHeight};"
   ></div>
 </div>

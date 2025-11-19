@@ -46,16 +46,16 @@
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      // If root, Enter adds a child (since it has no siblings in this view usually, or we treat it special)
+      irarium.addThought('', node);
+      return true;
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      // If root, Tab adds a child (since it has no siblings in this view usually, or we treat it special)
       if (depth === 0) {
         irarium.addThought('', node);
       } else {
         irarium.addSibling('', node, 'right');
       }
-      return true;
-    } else if (e.key === 'Tab') {
-      e.preventDefault();
-      irarium.addThought('', node);
       return true;
     } else if (
       e.key === 'Backspace' &&
@@ -93,11 +93,11 @@
     role="group"
   >
     <div
-      class="relative flex w-[240px] shrink-0 flex-col rounded-xl
-        border backdrop-blur-md transition-all duration-300 md:w-[280px]
+      class="relative flex shrink-0 flex-col rounded-xl
+        border backdrop-blur-md transition-all duration-300 ease-in-out
         {isFocused
-        ? 'bg-space-900 border-nebula-accent ring-nebula-accent/50 z-20 scale-[1.02] shadow-[0_0_30px_rgba(99,102,241,0.2)] ring-1'
-        : 'bg-space-950/80 hover:bg-space-900/90 border-white/10 hover:border-white/20 hover:shadow-lg'}
+        ? 'bg-space-900 border-nebula-accent ring-nebula-accent/50 z-30 w-[800px] scale-[1.02] shadow-[0_0_30px_rgba(99,102,241,0.2)] ring-1'
+        : 'bg-space-950/80 hover:bg-space-900/90 w-[240px] border-white/10 hover:border-white/20 hover:shadow-lg md:w-[280px]'}
       "
     >
       <div class="flex items-start gap-2 p-3">
@@ -110,6 +110,7 @@
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
             minHeight="20px"
+            className={!isFocused ? 'line-clamp-3 overflow-hidden text-ellipsis' : ''}
           />
 
           <!-- Action Bar - Only visible on hover/focus -->
