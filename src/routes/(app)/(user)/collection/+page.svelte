@@ -6,7 +6,6 @@
 
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
-  import StarryNight from '$lib/components/starry-night.svelte';
 
   onMount(() => {
     if (authStore.userId) {
@@ -23,9 +22,7 @@
   }
 </script>
 
-<div class="relative min-h-screen overflow-hidden bg-black">
-  <StarryNight />
-
+<div class="relative min-h-screen overflow-hidden">
   <div class="relative z-10">
     <UserNavbar title="My Collection" />
 

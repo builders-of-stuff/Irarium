@@ -10,7 +10,7 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
-  import Starfield from '$lib/components/starfield.svelte';
+
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { ROUTE } from '$lib/shared/shared.constant';
@@ -127,9 +127,7 @@
   </div>
 {/snippet}
 
-<div class="relative min-h-screen overflow-hidden bg-black">
-  <Starfield />
-
+<div class="relative min-h-screen overflow-hidden">
   <div class="relative z-10 flex h-screen flex-col">
     <UserNavbar
       title={displayTitle}
