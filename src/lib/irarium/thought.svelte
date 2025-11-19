@@ -11,12 +11,14 @@
     content = $bindable(),
     id,
     position,
-    irarium
+    irarium,
+    enableUpdates = false
   }: {
     content: string;
     id: string;
     position: 'parent' | 'child' | 'sibling';
     irarium: IrariumStore;
+    enableUpdates?: boolean;
   } = $props();
 
   let editor = $state<Editor>();
@@ -103,18 +105,61 @@
           >
             <Trash2 class="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            class="h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary"
-            aria-label="Add new post"
-            onclick={(event) => handleAddPost(event)}
-          >
-            <Plus class="h-5 w-5" />
-          </Button>
+
+          <!-- Add Child Button (Bottom) -->
+          {#if enableUpdates}
+            <Button
+              variant="ghost"
+              size="icon"
+              class="absolute -bottom-5 left-1/2 h-6 w-6 -translate-x-1/2 rounded-full border border-muted-foreground/30 bg-background shadow-sm hover:bg-primary hover:text-primary-foreground"
+              aria-label="Add child thought"
+              onclick={(event) => {
+                event.stopPropagation();
+                irarium.addThought('', irarium.activeThought);
+              }}
+            >
+              <Plus class="h-4 w-4" />
+            </Button>
+          {/if}
         </div>
       {/if}
     </div>
+
+    {#if isActive && enableUpdates}
+      {#if id !== irarium.id}
+        <!-- Add Sibling Left Button -->
+        <Button
+          variant="ghost"
+          size="icon"
+          class="absolute -top-3 -left-3 h-6 w-6 rounded-full border border-muted-foreground/30 bg-background shadow-sm hover:bg-primary hover:text-primary-foreground"
+          aria-label="Add sibling left"
+          onclick={(event) => {
+            event.stopPropagation();
+            if (irarium.activeThought) {
+              irarium.addSibling('', irarium.activeThought, 'left');
+            }
+          }}
+        >
+          <Plus class="h-4 w-4" />
+        </Button>
+
+        <!-- Add Sibling Right Button -->
+        <Button
+          variant="ghost"
+          size="icon"
+          class="absolute -top-3 -right-3 h-6 w-6 rounded-full border border-muted-foreground/30 bg-background shadow-sm hover:bg-primary hover:text-primary-foreground"
+          aria-label="Add sibling right"
+          onclick={(event) => {
+            event.stopPropagation();
+            if (irarium.activeThought) {
+              irarium.addSibling('', irarium.activeThought, 'right');
+            }
+          }}
+        >
+          <Plus class="h-4 w-4" />
+        </Button>
+      {/if}
+    {/if}
   </Button>
 
   <!-- Right sibling indicator -->

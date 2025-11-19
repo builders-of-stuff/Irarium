@@ -1,37 +1,9 @@
 <script lang="ts">
-  import { Editor } from '@tiptap/core';
-  import { tick } from 'svelte';
-
-  import { Button } from '$lib/components/ui/button';
-  import TextEditor from '$lib/text-editor/text-editor.svelte';
-  import * as Select from '$lib/components/ui/select/index.js';
   import { DEFAULT_IRARIUM_ID, KEYBOARD_KEYS } from '$lib/shared/shared.constant';
 
   import Thought from './thought.svelte';
 
   let { irarium = $bindable(), enableUpdates = false } = $props();
-
-  let editor = $state<Editor>();
-
-  const handleAddThought = () => {
-    if (!editor) return;
-
-    if (!irarium.hasContent) {
-      irarium.setContent(irarium.inputContent);
-    } else {
-      irarium.addThought(irarium.inputContent, irarium.activeThought);
-    }
-
-    irarium.inputContent = '';
-    editor.commands.clearContent();
-    irarium.setIsAdding(true);
-
-    tick().then(() => {
-      if (editor) {
-        editor.commands.focus('end');
-      }
-    });
-  };
 
   // Handle click outside Thought components
   const handleClickOutside = (event: MouseEvent) => {
@@ -180,6 +152,12 @@
     document.addEventListener('click', clickHandler);
     document.addEventListener('keydown', handleKeyDown);
 
+    // Auto-activate root node if empty and updates are enabled
+    if (irarium.isEmptyIrarium && enableUpdates && !irarium.activeThoughtId) {
+      irarium.setActiveThoughtId(irarium.id);
+      irarium.setIsEditing(true);
+    }
+
     return () => {
       document.removeEventListener('click', clickHandler);
       document.removeEventListener('keydown', handleKeyDown);
@@ -191,13 +169,14 @@
   <!-- Parent chain (above) - only show unique items in the chain -->
   <div class="mb-8 flex w-full flex-col items-center space-y-8">
     <!-- Root thought -->
-    {#if irarium.hasContent || irarium.hasChildren}
+    {#if irarium.hasContent || irarium.hasChildren || (irarium.isEmptyIrarium && enableUpdates)}
       <div class="irarium relative w-full">
         <Thought
           {irarium}
           bind:content={irarium.content}
           id={irarium.id}
           position="parent"
+          {enableUpdates}
         />
       </div>
     {/if}
@@ -210,6 +189,7 @@
           bind:content={parentThought.content}
           id={parentThought.id}
           position="parent"
+          {enableUpdates}
         />
       </div>
     {/each}
@@ -226,44 +206,13 @@
               bind:content={thought.content}
               id={thought.id}
               position="parent"
+              {enableUpdates}
             />
           </div>
         {/if}
       {/each}
     {/if}
   </div>
-
-  <!-- New thought -->
-  {#if enableUpdates && (irarium.isAdding || irarium.isEmptyIrarium)}
-    <div class="irarium relative w-full max-w-2xl">
-      <!-- Editor -->
-      <div class="w-full rounded-lg border-2 border-primary bg-card p-4 shadow-md">
-        <TextEditor
-          bind:editor
-          bind:content={irarium.inputContent}
-          editable={enableUpdates && (irarium.isAdding || irarium.isEmptyIrarium)}
-        />
-
-        <!-- Content/CTAs Divider -->
-        <div class="mt-4 flex justify-end border-t border-muted-foreground/20 pt-3">
-          <div class="relative flex w-full justify-end">
-            <Button onclick={handleAddThought}>Add</Button>
-            <Select.Root type="single" bind:value={irarium.activeThoughtId}>
-              <Select.Trigger
-                class="h-full w-10 rounded-l-none border-l border-l-input px-2"
-              ></Select.Trigger>
-              <Select.Content>
-                <div class="px-2 py-1.5 text-xs text-muted-foreground">Add to</div>
-                {#each irarium.allThoughtsAsOptions as option}
-                  <Select.Item value={option.value}>{option.label}</Select.Item>
-                {/each}
-              </Select.Content>
-            </Select.Root>
-          </div>
-        </div>
-      </div>
-    </div>
-  {/if}
 
   <!-- Child chain -->
   {#if irarium.getChildChain().length > 0}
@@ -277,6 +226,7 @@
             id={thought.id}
             position="child"
             {irarium}
+            {enableUpdates}
           />
         </div>
       {/each}

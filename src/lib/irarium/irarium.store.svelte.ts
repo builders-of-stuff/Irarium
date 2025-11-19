@@ -135,6 +135,51 @@ export class IrariumStore {
     return thought;
   }
 
+  addSibling(
+    content: string,
+    referenceThought: Thought,
+    position: 'left' | 'right'
+  ) {
+    const thought = this.buildNewThought(content, {
+      ...referenceThought,
+      id: referenceThought.parentId || this.id
+    });
+
+    // If parent is root
+    if (!referenceThought.parentId || referenceThought.parentId === this.id) {
+      const index = this.children.findIndex((t) => t.id === referenceThought.id);
+      if (index !== -1) {
+        const insertIndex = position === 'left' ? index : index + 1;
+        const newChildren = [...this.children];
+        newChildren.splice(insertIndex, 0, thought);
+        this.children = newChildren;
+      }
+    } else {
+      // If parent is another thought
+      const parent = this.findThoughtById(referenceThought.parentId);
+      if (parent) {
+        const index = parent.children.findIndex(
+          (t) => t.id === referenceThought.id
+        );
+        if (index !== -1) {
+          const insertIndex = position === 'left' ? index : index + 1;
+          const newChildren = [...parent.children];
+          newChildren.splice(insertIndex, 0, thought);
+
+          const updatedParent = {
+            ...parent,
+            children: newChildren
+          };
+
+          this.children = this.updateThoughtById(parent.id, updatedParent);
+        }
+      }
+    }
+
+    this.setActiveThoughtId(thought.id);
+    return thought;
+  }
+
   findThoughtById(
     id: string,
     thoughts: Thought[] = this.children
