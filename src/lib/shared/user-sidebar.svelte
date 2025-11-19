@@ -41,7 +41,7 @@
   }
 </script>
 
-<Sidebar.Root>
+<Sidebar.Root variant="floating">
   <Sidebar.Header class="relative mx-2 flex justify-between px-4 pt-4">
     <a href={ROUTE.HOME}>
       <img src={IRARIUM_LOGO} class="h-10 w-10" alt="Irarium Logo" />

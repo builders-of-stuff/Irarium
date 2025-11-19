@@ -5,7 +5,7 @@
 </script>
 
 {#if !sidebar.isMobile && sidebar.state === 'collapsed'}
-  <div class="fixed top-4 left-0 z-50 hidden md:block">
+  <div class="fixed top-4 left-0 z-50 ml-2 hidden md:block">
     <Trigger
       class="flex h-10 w-8 items-center justify-center rounded-r-lg border border-sidebar-border bg-sidebar text-sidebar-foreground shadow transition-all hover:bg-sidebar-accent"
     />

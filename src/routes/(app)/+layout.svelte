@@ -3,9 +3,12 @@
   import * as Sidebar from '$lib/components/ui/sidebar/index';
   import UserSidebar from '../../lib/shared/user-sidebar.svelte';
   import SidebarShowButton from '$lib/components/ui/sidebar/SidebarShowButton.svelte';
+  import Starfield from '$lib/components/starfield.svelte';
   let { children } = $props();
   const isMobile = new IsMobile();
 </script>
+
+<Starfield />
 
 <Sidebar.Provider>
   <UserSidebar />
