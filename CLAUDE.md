@@ -164,6 +164,18 @@ Uses latest Svelte 5 syntax throughout:
 - Snippet syntax for component composition
 - No legacy syntax (`$:`, `export let`, etc.)
 
+## Coding Style & Conventions
+
+Please refer to [docs/STYLE_GUIDE.md](docs/STYLE_GUIDE.md) for detailed coding standards.
+
+**Key Highlights:**
+- **File Naming**: `kebab-case` for all files (e.g., `difficulty-badge.svelte`)
+- **Suffixes**: `.store.svelte.ts`, `.remote.ts`, `.type.ts`, `.constants.ts`, `.tools.ts`
+- **Variables/Functions**: `camelCase`
+- **Constants**: `SCREAMING_SNAKE_CASE`
+- **Types**: `PascalCase`
+- **Stores**: Export singleton instances, use classes with Svelte 5 runes
+
 ## Testing
 
 Test infrastructure is configured but coverage is minimal:

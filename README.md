@@ -9,6 +9,8 @@ Each irarium starts with a root thought, and from there creating a tree of relat
 - [Roadmap](docs/ROADMAP.md) — Features planned and in progress
 - [Requirements](docs/REQUIREMENTS.md) — Technical standards and goals
 - [Features](docs/FEATURES.md) — Detailed specs for upcoming features
+- [Style Guide](docs/STYLE_GUIDE.md) — Coding conventions and best practices
+- [Contributing](CONTRIBUTING.md) — How to contribute to the project
 - [Stripe Integration](docs/STRIPE.md) — Payment testing setup
 
 ## Getting Started
