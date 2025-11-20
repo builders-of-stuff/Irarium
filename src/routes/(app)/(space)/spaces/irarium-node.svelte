@@ -15,8 +15,8 @@
   let ignoreNextWindowClick = false;
 
   const position = irarium.position || [0, 0, 0];
-  const color = $derived(hovered ? '#ff3e00' : '#ffffff');
-  const scale = $derived(hovered ? 1.5 : 1);
+  const color = $derived(hovered || isActive ? '#ff3e00' : '#ffffff');
+  const scale = $derived(hovered || isActive ? 1.5 : 1);
   const thoughtCount = countThoughts(irarium);
 
   function handleClick(e: any) {
@@ -52,41 +52,6 @@
     hovered = false;
     document.body.style.cursor = 'default';
   }
-
-  function lineConnector(node: HTMLElement) {
-    if (!browser) return;
-
-    let frameId: number;
-    const updateLine = () => {
-      const rect = node.getBoundingClientRect();
-
-      const svg = node.querySelector('svg');
-      if (svg) {
-        const line = svg.querySelector('line');
-        if (line) {
-          const x1 = rect.left;
-          const y1 = rect.top;
-          const x2 = window.innerWidth - 382;
-          const y2 = 120;
-
-          line.setAttribute('x1', x1.toString());
-          line.setAttribute('y1', y1.toString());
-          line.setAttribute('x2', x2.toString());
-          line.setAttribute('y2', y2.toString());
-        }
-      }
-
-      frameId = requestAnimationFrame(updateLine);
-    };
-
-    updateLine();
-
-    return {
-      destroy() {
-        cancelAnimationFrame(frameId);
-      }
-    };
-  }
 </script>
 
 <T.Group {position}>
@@ -108,32 +73,8 @@
       />
     </T.Mesh>
 
-    <!-- Info Card (shown on click) -->
+    <!-- Anchor for position tracking (logic only, no visual) -->
     {#if isActive}
-      <HTML
-        position={[0, 0, 0]}
-        center
-        distanceFactor={150}
-        portal={browser ? document.body : undefined}
-      >
-        <!-- Anchor point at the node's position -->
-        <div class="absolute top-0 left-0 h-0 w-0" use:lineConnector>
-          <svg class="pointer-events-none fixed top-0 left-0 z-[999] h-full w-full">
-            <line
-              x1="0"
-              y1="0"
-              x2="0"
-              y2="0"
-              stroke="white"
-              stroke-width="1"
-              stroke-opacity="0.2"
-            />
-            <circle cx="0" cy="0" r="2" fill="white" fill-opacity="0.5">
-              <!-- Update circle position too if we want a dot at the node -->
-            </circle>
-          </svg>
-        </div>
-      </HTML>
     {/if}
   </Float>
 </T.Group>
