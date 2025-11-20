@@ -2,6 +2,7 @@
   import { T } from '@threlte/core';
   import { Float, HTML } from '@threlte/extras';
   import { goto } from '$app/navigation';
+  import { browser } from '$app/environment';
   import { X } from 'lucide-svelte';
   import type { Irarium } from '$lib/shared/shared.type';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
@@ -11,6 +12,7 @@
   let hovered = $state(false);
   let showCard = $state(false);
   let mesh = $state<any>();
+  let ignoreNextWindowClick = false;
 
   const position = irarium.position || [0, 0, 0];
   const color = $derived(hovered ? '#ff3e00' : '#ffffff');
@@ -18,28 +20,40 @@
   const thoughtCount = countThoughts(irarium);
 
   function handleClick(e: any) {
+    console.log('handleClick');
     e.stopPropagation();
     showCard = !showCard;
+    if (showCard) {
+      ignoreNextWindowClick = true;
+    }
   }
 
-  function handleViewClick(e: any) {
-    e.stopPropagation();
-    goto(`/${irarium.id}`);
+  function handleWindowClick() {
+    if (ignoreNextWindowClick) {
+      ignoreNextWindowClick = false;
+      return;
+    }
+    if (showCard) {
+      showCard = false;
+    }
   }
 
-  function handleCloseCard(e: any) {
+  function handleCloseCard(e: MouseEvent) {
+    console.log('Close button clicked');
     e.stopPropagation();
     showCard = false;
   }
 
-  function handleCardClick(e: any) {
+  function handleCardClick(e: MouseEvent) {
+    console.log('Card clicked');
     // Prevent clicks inside the card from closing it
     e.stopPropagation();
   }
 
-  function handleOverlayClick(e: any) {
-    e.stopPropagation();
-    showCard = false;
+  function handleCardKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      showCard = false;
+    }
   }
 
   function handlePointerEnter(e: any) {
@@ -76,49 +90,67 @@
 
     <!-- Info Card (shown on click) -->
     {#if showCard}
-      <HTML position={[0, 3, 0]} center>
-        <!-- Clickable overlay to close card -->
+      <HTML
+        position={[0, 3, 0]}
+        center
+        distanceFactor={150}
+        portal={browser ? document.body : undefined}
+      >
+        <!-- Card content positioned above sphere -->
         <div
-          class="pointer-events-auto select-none"
-          onclick={handleOverlayClick}
-          role="button"
+          onkeydown={handleCardKeydown}
+          onclick={handleCardClick}
+          onpointerdown={(e) => {
+            console.log('Card pointerdown');
+            e.stopPropagation();
+          }}
+          onpointerup={(e) => {
+            console.log('Card pointerup');
+            e.stopPropagation();
+          }}
+          class="info-card pointer-events-auto relative z-[1000] max-w-[350px] min-w-[250px] rounded-lg border border-white/20 bg-black/95 p-4 shadow-xl backdrop-blur-sm select-none"
+          role="dialog"
           tabindex="-1"
         >
-          <!-- Info Card -->
-          <div
-            onclick={handleCardClick}
-            class="relative max-w-[350px] min-w-[250px] rounded-lg border border-white/20 bg-black/95 p-4 shadow-xl backdrop-blur-sm"
-            role="dialog"
+          <!-- Close button -->
+          <button
+            onclick={handleCloseCard}
+            onpointerdown={(e) => e.stopPropagation()}
+            class="absolute top-2 right-2 rounded-full p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+            aria-label="Close"
+            type="button"
           >
-            <!-- Close button -->
-            <button
-              onclick={handleCloseCard}
-              class="absolute top-2 right-2 rounded-full p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
-              aria-label="Close"
-            >
-              <X size={16} />
-            </button>
+            <X size={16} />
+          </button>
 
-            <h3 class="mb-2 pr-6 text-lg font-semibold text-white">
-              {irarium.title || 'Untitled'}
-            </h3>
-            {#if irarium.description}
-              <p class="mb-3 line-clamp-3 text-sm text-gray-300">
-                {irarium.description}
-              </p>
-            {/if}
-            <div class="mb-3 flex items-center gap-2 text-xs text-gray-400">
-              <span>{thoughtCount} thought{thoughtCount !== 1 ? 's' : ''}</span>
-            </div>
-            <button
-              onclick={handleViewClick}
-              class="w-full rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-500"
-            >
-              View Irarium
-            </button>
+          <h3 class="mb-2 pr-6 text-lg font-semibold text-white">
+            {irarium.title || 'Untitled'}
+          </h3>
+          {#if irarium.description}
+            <p class="mb-3 line-clamp-3 text-sm text-gray-300">
+              {irarium.description}
+            </p>
+          {/if}
+          <div class="mb-3 flex items-center gap-2 text-xs text-gray-400">
+            <span>{thoughtCount} thought{thoughtCount !== 1 ? 's' : ''}</span>
           </div>
+          <a
+            href={`/${irarium.id}`}
+            onclick={(e) => {
+              console.log('View clicked');
+              e.preventDefault();
+              e.stopPropagation();
+              goto(`/${irarium.id}`);
+            }}
+            onpointerdown={(e) => e.stopPropagation()}
+            class="block w-full rounded-md bg-orange-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-orange-500"
+          >
+            View
+          </a>
         </div>
       </HTML>
     {/if}
   </Float>
 </T.Group>
+
+<svelte:window onclick={handleWindowClick} />
