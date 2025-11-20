@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import SpaceView from '$lib/components/space/SpaceView.svelte';
+  import SpaceView from '../space-view.svelte';
 
   const slug = $derived(page.params.slug || 'general');
 </script>

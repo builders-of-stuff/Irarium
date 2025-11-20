@@ -2,7 +2,7 @@
   import { T } from '@threlte/core';
   import { Text, interactivity } from '@threlte/extras';
   import type { Irarium } from '$lib/shared/shared.type';
-  import IrariumNode from './IrariumNode.svelte';
+  import IrariumNode from './irarium-node.svelte';
 
   // Enable interactivity for this scene
   interactivity();

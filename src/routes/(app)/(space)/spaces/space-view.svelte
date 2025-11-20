@@ -3,7 +3,7 @@
   import { OrbitControls } from '@threlte/extras';
   import { T } from '@threlte/core';
   import { Pause, Play } from 'lucide-svelte';
-  import SpaceBox from '$lib/components/space/SpaceBox.svelte';
+  import SpaceBox from './space-box.svelte';
   import Starfield from '$lib/components/starfield.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { pb } from '$lib/db/client';

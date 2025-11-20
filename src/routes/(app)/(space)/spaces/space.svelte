@@ -2,7 +2,7 @@
   import { Canvas } from '@threlte/core';
   import { OrbitControls } from '@threlte/extras';
   import { T } from '@threlte/core';
-  import SpaceBox from './SpaceBox.svelte';
+  import SpaceBox from './space-box.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { onMount } from 'svelte';
 

@@ -22,11 +22,23 @@
     showCard = !showCard;
   }
 
-  function handleViewClick() {
+  function handleViewClick(e: any) {
+    e.stopPropagation();
     goto(`/${irarium.id}`);
   }
 
-  function handleCloseCard() {
+  function handleCloseCard(e: any) {
+    e.stopPropagation();
+    showCard = false;
+  }
+
+  function handleCardClick(e: any) {
+    // Prevent clicks inside the card from closing it
+    e.stopPropagation();
+  }
+
+  function handleOverlayClick(e: any) {
+    e.stopPropagation();
     showCard = false;
   }
 
@@ -65,15 +77,24 @@
     <!-- Info Card (shown on click) -->
     {#if showCard}
       <HTML position={[0, 3, 0]} center>
-        <div class="pointer-events-auto select-none">
+        <!-- Clickable overlay to close card -->
+        <div
+          class="pointer-events-auto select-none"
+          onclick={handleOverlayClick}
+          role="button"
+          tabindex="-1"
+        >
           <!-- Info Card -->
           <div
+            onclick={handleCardClick}
             class="relative max-w-[350px] min-w-[250px] rounded-lg border border-white/20 bg-black/95 p-4 shadow-xl backdrop-blur-sm"
+            role="dialog"
           >
             <!-- Close button -->
             <button
               onclick={handleCloseCard}
               class="absolute top-2 right-2 rounded-full p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+              aria-label="Close"
             >
               <X size={16} />
             </button>
