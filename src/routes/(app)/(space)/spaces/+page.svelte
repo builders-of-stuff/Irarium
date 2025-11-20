@@ -19,7 +19,11 @@
         id: item.id,
         name: item.name,
         description: item.description,
-        slug: item.slug
+        slug: item.slug,
+        tags: item.tags,
+        type: item.type,
+        createdBy: item.createdBy,
+        mods: item.mods
       }));
     } catch (err) {
       console.error('Error fetching spaces:', err);

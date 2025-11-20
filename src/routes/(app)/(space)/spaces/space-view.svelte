@@ -59,7 +59,11 @@
           id: spaces.items[0].id,
           name: spaces.items[0].name,
           description: spaces.items[0].description,
-          slug: spaces.items[0].slug
+          slug: spaces.items[0].slug,
+          tags: spaces.items[0].tags,
+          type: spaces.items[0].type,
+          createdBy: spaces.items[0].createdBy,
+          mods: spaces.items[0].mods
         };
       } else {
         error = 'Space not found';

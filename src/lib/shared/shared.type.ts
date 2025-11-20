@@ -117,4 +117,8 @@ export type Space = {
   name: string;
   description: string;
   slug: string;
+  tags: string;
+  type: string;
+  createdBy: string;
+  mods: string[];
 };
