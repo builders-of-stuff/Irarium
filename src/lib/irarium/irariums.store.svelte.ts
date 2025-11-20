@@ -103,6 +103,9 @@ export class IrariumsStore {
   }
 
   async createIrarium(irarium: Irarium) {
+    this.isLoading = true;
+    this.error = null;
+
     try {
       // Use provided spaceId or default to empty (will be set when publishing)
       const spaceId = irarium.spaceId || '';
@@ -111,9 +114,11 @@ export class IrariumsStore {
         .create(this.mapIrariumToCreate(irarium, spaceId));
 
       this.userIrariums = [...this.userIrariums, this.mapRecordToIrarium(record)];
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error creating irarium:', err);
-      this.error = 'Failed to create irarium. Please try again later.';
+      if (err.data) console.error('Validation errors:', err.data);
+      this.error = err.message || 'Failed to create irarium. Please try again later.';
+      throw err;
     } finally {
       this.isLoading = false;
     }
@@ -189,34 +194,7 @@ export class IrariumsStore {
     }
   }
 
-  async checkPositionAvailability(
-    positionText: string,
-    spaceId: string,
-    excludeIrariumId?: string
-  ): Promise<boolean> {
-    try {
-      // Parse the first 3 numbers from the position text
-      const coords = positionText.split(',').map(s => parseFloat(s.trim()));
-      if (coords.length < 3 || coords.some(isNaN)) {
-        return false;
-      }
 
-      // Query for irariums with the same position in the same space
-      const filter = excludeIrariumId
-        ? `spaceId = "${spaceId}" && position = "${positionText}" && id != "${excludeIrariumId}"`
-        : `spaceId = "${spaceId}" && position = "${positionText}"`;
-
-      const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 1, {
-        filter
-      });
-
-      // Position is available if no records found
-      return records.items.length === 0;
-    } catch (err) {
-      console.error('Error checking position availability:', err);
-      throw err;
-    }
-  }
 
   findIrariumById(id: string) {
     return this.allIrariums.find((irarium) => irarium.id === id);
@@ -233,14 +211,18 @@ export class IrariumsStore {
 
 
   private mapIrariumToCreate(irarium: Irarium, spaceId: string) {
+    // Deep clone children to remove Svelte proxies
+    const children = irarium.children ? JSON.parse(JSON.stringify(irarium.children)) : [];
+    
     return {
-      userId: irarium.userId,
+      userId: irarium.userId || pb.authStore.model?.id,
       title: irarium.title,
       description: irarium.description,
       tags: irarium.tags,
       content: irarium.content,
-      children: irarium.children,
-      spaceId: spaceId
+      children: children,
+      spaceId: spaceId || null, // Ensure empty string becomes null for relation field
+      position: null
     };
   }
 
@@ -316,19 +298,19 @@ export class IrariumsStore {
       hash |= 0;
     }
     
-    // Map to -50 to 50 range (100x100x100 container centered at 0)
-    const x = (Math.abs(hash % 100) - 50);
-    const y = (Math.abs((hash >> 8) % 100) - 50);
-    const z = (Math.abs((hash >> 16) % 100) - 50);
+    // Map to 0 to 100 range
+    const x = Math.abs(hash % 100);
+    const y = Math.abs((hash >> 8) % 100);
+    const z = Math.abs((hash >> 16) % 100);
     
     return [x, y, z];
   }
 
   private generateRandomPosition(): [number, number, number] {
-    // Generate random position within -50 to 50 range
-    const x = Math.random() * 100 - 50;
-    const y = Math.random() * 100 - 50;
-    const z = Math.random() * 100 - 50;
+    // Generate random position within 0 to 100 range
+    const x = Math.random() * 100;
+    const y = Math.random() * 100;
+    const z = Math.random() * 100;
     return [x, y, z];
   }
 

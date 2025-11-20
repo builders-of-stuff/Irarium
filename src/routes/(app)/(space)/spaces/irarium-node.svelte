@@ -14,7 +14,13 @@
   let mesh = $state<any>();
   let ignoreNextWindowClick = false;
 
-  const position = irarium.position || [0, 0, 0];
+  // Offset position to center in space box (coordinates are 0-100, box is -50 to +50)
+  const rawPosition = irarium.position || [50, 50, 50];
+  const position: [number, number, number] = [
+    rawPosition[0] - 50,
+    rawPosition[1] - 50,
+    rawPosition[2] - 50
+  ];
   const color = $derived(hovered || isActive ? '#ff3e00' : '#ffffff');
   const scale = $derived(hovered || isActive ? 1.5 : 1);
   const thoughtCount = countThoughts(irarium);
@@ -74,8 +80,7 @@
     </T.Mesh>
 
     <!-- Anchor for position tracking (logic only, no visual) -->
-    {#if isActive}
-    {/if}
+    {#if isActive}{/if}
   </Float>
 </T.Group>
 

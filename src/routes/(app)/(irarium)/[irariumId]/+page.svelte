@@ -203,5 +203,37 @@
 </div>
 
 {#if irarium}
-  <PublishIrariumDialog bind:open={showPublishDialog} {irarium} />
+  <PublishIrariumDialog
+    bind:open={showPublishDialog}
+    {irarium}
+    onPublishSuccess={(updatedIrarium) => {
+      if (irarium) {
+        irarium.isPublic = updatedIrarium.isPublic;
+        irarium.spaceId = updatedIrarium.spaceId;
+        irarium.position = updatedIrarium.position;
+
+        // Refetch space if it changed
+        if (updatedIrarium.spaceId && updatedIrarium.spaceId !== space?.id) {
+          pb.collection(COLLECTION.SPACES)
+            .getOne(updatedIrarium.spaceId)
+            .then((spaceRecord) => {
+              space = {
+                id: spaceRecord.id,
+                name: spaceRecord.name,
+                description: spaceRecord.description,
+                slug: spaceRecord.slug,
+                tags: spaceRecord.tags,
+                type: spaceRecord.type,
+                createdBy: spaceRecord.createdBy,
+                mods: spaceRecord.mods,
+                isPublic: spaceRecord.isPublic
+              };
+            })
+            .catch((err) => {
+              console.error('Error fetching space:', err);
+            });
+        }
+      }
+    }}
+  />
 {/if}

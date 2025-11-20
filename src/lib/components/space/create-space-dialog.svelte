@@ -26,7 +26,10 @@
     isLoading = true;
     try {
       // Check if user already has a space
-      if (spaceStore.userSpaces.length > 0) {
+      if (
+        spaceStore.userSpaces.length > 0 &&
+        !authStore.userSettings?.isFullyUpgraded
+      ) {
         toast.error('You can only create one space.');
         return;
       }

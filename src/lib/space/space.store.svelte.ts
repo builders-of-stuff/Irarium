@@ -9,6 +9,10 @@ export class SpaceStore {
   
   irariumCounts = $state<Record<string, number>>({});
 
+  lastFetchedUserSpaces = $state('');
+  
+  hasFetchedUserSpaces = $derived(!!this.lastFetchedUserSpaces);
+
   // Auto-rotate is enabled when no irarium is active
   isAutoRotateEnabled = $derived(this.activeIrariumId === null);
 
@@ -16,13 +20,16 @@ export class SpaceStore {
     this.activeIrariumId = id;
   }
 
-  async fetchUserSpaces(userId: string) {
+  async fetchUserSpaces(userId: string, force = false) {
+    if (this.hasFetchedUserSpaces && !force) return;
+
     this.isLoading = true;
     this.error = null;
     try {
       const records = await pb.collection(COLLECTION.SPACES).getList(1, 50, {
         filter: `createdBy = "${userId}"`,
-        sort: '-created'
+        sort: '-created',
+        requestKey: null // Allow multiple requests without auto-cancel if needed, but we handle abort below
       });
 
       this.userSpaces = records.items.map((item: any) => ({
@@ -37,9 +44,14 @@ export class SpaceStore {
         isPublic: item.isPublic
       }));
       
+      this.lastFetchedUserSpaces = new Date().toISOString();
+      
       // Fetch counts for these spaces
       this.userSpaces.forEach(space => this.fetchIrariumCount(space.id));
-    } catch (err) {
+    } catch (err: any) {
+      // Ignore auto-cancellation errors
+      if (err.isAbort) return;
+      
       console.error('Error fetching user spaces:', err);
       this.error = 'Failed to load spaces';
     } finally {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
@@ -12,16 +12,19 @@
   import CreateSpaceDialog from '$lib/components/space/create-space-dialog.svelte';
 
   let isCreateSpaceOpen = $state(false);
+  let activeTab = $state('irariums');
 
   $effect(() => {
     if (authStore.userId) {
-      // Only fetch if not already loaded or if forced
-      (async () => {
-        if (!irariumsStore.hasFetchedUserIrariums) {
-          await irariumsStore.fetchUserIrariums(authStore.userId);
-        }
-        spaceStore.fetchUserSpaces(authStore.userId);
-      })();
+      untrack(() => {
+        // Only fetch if not already loaded or if forced
+        (async () => {
+          if (!irariumsStore.hasFetchedUserIrariums) {
+            await irariumsStore.fetchUserIrariums(authStore.userId);
+          }
+          spaceStore.fetchUserSpaces(authStore.userId);
+        })();
+      });
     }
   });
 
@@ -34,12 +37,20 @@
   }
 </script>
 
+{#snippet actions()}
+  {#if activeTab === 'spaces'}
+    {#if spaceStore.userSpaces.length < 1 || authStore.userSettings?.isFullyUpgraded}
+      <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
+    {/if}
+  {/if}
+{/snippet}
+
 <div class="relative min-h-screen overflow-hidden">
   <div class="relative z-10">
-    <UserNavbar title="My Collection" />
+    <UserNavbar title="My Collection" {actions} />
 
     <div class="container mx-auto max-w-6xl px-4 py-8">
-      <Tabs.Root value="irariums" class="w-full">
+      <Tabs.Root bind:value={activeTab} class="w-full">
         <Tabs.List class="grid w-full grid-cols-2">
           <Tabs.Trigger value="irariums">Irariums</Tabs.Trigger>
           <Tabs.Trigger value="spaces">Spaces</Tabs.Trigger>
@@ -114,13 +125,6 @@
                 <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
               </div>
             {:else}
-              <div class="mb-4 flex justify-end">
-                {#if spaceStore.userSpaces.length < 1}
-                  <Button onclick={() => (isCreateSpaceOpen = true)}
-                    >Create Space</Button
-                  >
-                {/if}
-              </div>
               <div class="grid gap-4 md:grid-cols-2">
                 {#each spaceStore.userSpaces as space}
                   <a

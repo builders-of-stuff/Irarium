@@ -8,9 +8,14 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { toast } from 'svelte-sonner';
 
-  let { open = $bindable(false), irarium } = $props<{
+  let {
+    open = $bindable(false),
+    irarium,
+    onPublishSuccess
+  } = $props<{
     open: boolean;
     irarium: Irarium;
+    onPublishSuccess?: (updatedIrarium: Irarium) => void;
   }>();
 
   let spaces = $state<Space[]>([]);
@@ -35,10 +40,10 @@
         y = coords[1].toString();
         z = coords[2].toString();
       } else {
-        // Generate random coordinates between -50 and 50
-        x = (Math.random() * 100 - 50).toFixed(1);
-        y = (Math.random() * 100 - 50).toFixed(1);
-        z = (Math.random() * 100 - 50).toFixed(1);
+        // Generate random coordinates between 0 and 100
+        x = (Math.random() * 100).toFixed(1);
+        y = (Math.random() * 100).toFixed(1);
+        z = (Math.random() * 100).toFixed(1);
       }
       positionError = '';
     }
@@ -83,38 +88,14 @@
       return false;
     }
 
-    // Check if position is within bounds (-50 to 50)
-    if (Math.abs(xNum) > 50 || Math.abs(yNum) > 50 || Math.abs(zNum) > 50) {
-      positionError = 'Coordinates must be between -50 and 50';
+    // Check if position is within bounds (0 to 100)
+    if (xNum < 0 || xNum > 100 || yNum < 0 || yNum > 100 || zNum < 0 || zNum > 100) {
+      positionError = 'Coordinates must be between 0 and 100';
       return false;
     }
 
-    // Format position as text (comma-separated)
-    const positionText = `${xNum},${yNum},${zNum}`;
-
-    // Check if position is unique within the space
-    isCheckingPosition = true;
-    try {
-      const isAvailable = await irariumsStore.checkPositionAvailability(
-        positionText,
-        selectedSpaceId,
-        irarium.id
-      );
-
-      if (!isAvailable) {
-        positionError = 'This position is already occupied in the selected space';
-        return false;
-      }
-
-      positionError = '';
-      return true;
-    } catch (err) {
-      console.error('Error checking position:', err);
-      positionError = 'Failed to validate position';
-      return false;
-    } finally {
-      isCheckingPosition = false;
-    }
+    positionError = '';
+    return true;
   }
 
   async function handlePublish() {
@@ -129,9 +110,19 @@
       const zNum = parseFloat(z);
       const position: [number, number, number] = [xNum, yNum, zNum];
 
-      await irariumsStore.togglePublicState(irarium, selectedSpaceId, position);
+      const updatedIrarium = await irariumsStore.togglePublicState(
+        irarium,
+        selectedSpaceId,
+        position
+      );
 
       toast.success('Irarium published successfully!');
+
+      // Call the callback to update parent state
+      if (onPublishSuccess) {
+        onPublishSuccess(updatedIrarium);
+      }
+
       open = false;
     } catch (err) {
       console.error('Error publishing irarium:', err);
@@ -183,8 +174,8 @@
               bind:value={x}
               placeholder="0"
               step="0.1"
-              min="-50"
-              max="50"
+              min="0"
+              max="100"
               onchange={() => (positionError = '')}
             />
           </div>

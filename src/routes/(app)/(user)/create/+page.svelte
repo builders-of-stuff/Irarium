@@ -22,6 +22,7 @@
       toast.success('Irarium saved successfully!');
     } catch (error) {
       console.error('Error saving irarium:', error);
+      toast.error('Failed to create irarium. Please try again.');
     }
   }
 </script>

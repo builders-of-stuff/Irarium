@@ -30,12 +30,18 @@
     );
   });
 
-  let activeIrarium = $derived.by(() => {
-    if (!spaceStore.activeIrariumId) return null;
-    return spaceIrariums.find((i) => i.id === spaceStore.activeIrariumId);
-  });
+  let activeIrariums = $derived.by(() => {
+    if (!spaceStore.activeIrariumId) return [];
+    const primary = spaceIrariums.find((i) => i.id === spaceStore.activeIrariumId);
+    if (!primary) return [];
 
-  let activeThoughtCount = $derived(activeIrarium ? countThoughts(activeIrarium) : 0);
+    // Find all irariums with the same position
+    return spaceIrariums.filter((i) => {
+      const posA = primary.position || [0, 0, 0];
+      const posB = i.position || [0, 0, 0];
+      return posA.toString() === posB.toString();
+    });
+  });
 
   function handleCloseCard(e: MouseEvent) {
     e.stopPropagation();
@@ -143,45 +149,54 @@
       <SpaceBox id={space.slug} irariums={spaceIrariums} />
     </Canvas>
 
-    <!-- Info Card (Fixed Position) -->
-    {#if activeIrarium}
+    <!-- Info Cards (Fixed Position) -->
+    {#if activeIrariums.length > 0}
       <div
-        onkeydown={handleCardKeydown}
-        class="info-card pointer-events-auto fixed top-24 right-8 z-[1000] w-[350px] rounded-lg border border-white/20 bg-black/95 p-4 shadow-xl backdrop-blur-sm select-none"
-        role="dialog"
-        tabindex="-1"
+        class="pointer-events-auto fixed top-24 right-8 z-[1000] flex flex-col gap-4 select-none"
       >
-        <!-- Close button -->
-        <button
-          onclick={handleCloseCard}
-          class="absolute top-2 right-2 rounded-full p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
-          aria-label="Close"
-          type="button"
-        >
-          <X size={16} />
-        </button>
+        {#each activeIrariums as irarium (irarium.id)}
+          {@const thoughtCount = countThoughts(irarium)}
+          <div
+            onkeydown={handleCardKeydown}
+            class="info-card relative w-[350px] rounded-lg border border-white/20 bg-black/95 p-4 shadow-xl backdrop-blur-sm"
+            role="dialog"
+            tabindex="-1"
+          >
+            <!-- Close button (only on first card to close all) -->
+            {#if irarium === activeIrariums[0]}
+              <button
+                onclick={handleCloseCard}
+                class="absolute top-2 right-2 rounded-full p-1 text-gray-400 transition-colors hover:bg-white/10 hover:text-white"
+                aria-label="Close"
+                type="button"
+              >
+                <X size={16} />
+              </button>
+            {/if}
 
-        <h3 class="mb-2 pr-6 text-lg font-semibold text-white">
-          {activeIrarium.title || 'Untitled'}
-        </h3>
-        {#if activeIrarium.description}
-          <p class="mb-3 line-clamp-3 text-sm text-gray-300">
-            {activeIrarium.description}
-          </p>
-        {/if}
-        <div class="mb-3 flex items-center gap-2 text-xs text-gray-400">
-          <span>{activeThoughtCount} thought{activeThoughtCount !== 1 ? 's' : ''}</span>
-        </div>
-        <a
-          href={`/${activeIrarium.id}`}
-          onclick={(e) => {
-            e.preventDefault();
-            goto(`/${activeIrarium.id}`);
-          }}
-          class="block w-full rounded-md bg-orange-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-orange-500"
-        >
-          View
-        </a>
+            <h3 class="mb-2 pr-6 text-lg font-semibold text-white">
+              {irarium.title || 'Untitled'}
+            </h3>
+            {#if irarium.description}
+              <p class="mb-3 line-clamp-3 text-sm text-gray-300">
+                {irarium.description}
+              </p>
+            {/if}
+            <div class="mb-3 flex items-center gap-2 text-xs text-gray-400">
+              <span>{thoughtCount} thought{thoughtCount !== 1 ? 's' : ''}</span>
+            </div>
+            <a
+              href={`/${irarium.id}`}
+              onclick={(e) => {
+                e.preventDefault();
+                goto(`/${irarium.id}`);
+              }}
+              class="block w-full rounded-md bg-orange-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-orange-500"
+            >
+              View
+            </a>
+          </div>
+        {/each}
       </div>
     {/if}
   </div>
