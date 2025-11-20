@@ -103,9 +103,10 @@ export class IrariumsStore {
 
   async createIrarium(irarium: Irarium) {
     try {
+      const spaceId = await this.getGeneralSpaceId();
       const record = await pb
         .collection(COLLECTION.IRARIUMS)
-        .create(this.mapIrariumToCreate(irarium));
+        .create(this.mapIrariumToCreate(irarium, spaceId));
 
       this.userIrariums.push(this.mapRecordToIrarium(record));
     } catch (err) {
@@ -132,11 +133,24 @@ export class IrariumsStore {
 
   async togglePublicState(irarium: Irarium) {
     try {
-      const updatedIrarium = { ...irarium, isPublic: !irarium.isPublic };
+      // Generate position if making public and no position exists
+      let position = irarium.position;
+      if (!irarium.isPublic && !position) {
+        position = await this.generateUniquePosition(irarium.spaceId || '');
+      }
+
+      const updatedIrarium = { 
+        ...irarium, 
+        isPublic: !irarium.isPublic,
+        position 
+      };
 
       await pb
         .collection(COLLECTION.IRARIUMS)
-        .update(irarium.id, { isPublic: !irarium.isPublic });
+        .update(irarium.id, { 
+          isPublic: !irarium.isPublic,
+          position: position ? JSON.stringify(position) : null
+        });
 
       // Update in both user and public collections
       this.userIrariums = this.userIrariums.map((item) =>
@@ -171,14 +185,34 @@ export class IrariumsStore {
     this.error = null;
   }
 
-  private mapIrariumToCreate(irarium: Irarium) {
+  private async getGeneralSpaceId(): Promise<string> {
+    try {
+      const spaces = await pb.collection(COLLECTION.SPACES).getList(1, 1, {
+        filter: 'slug = "general"'
+      });
+      
+      if (spaces.items.length > 0) {
+        return spaces.items[0].id;
+      }
+      
+      // Fallback: if no general space found, return empty string
+      console.warn('General space not found');
+      return '';
+    } catch (err) {
+      console.error('Error fetching general space:', err);
+      return '';
+    }
+  }
+
+  private mapIrariumToCreate(irarium: Irarium, spaceId: string) {
     return {
       userId: irarium.userId,
       title: irarium.title,
       description: irarium.description,
       tags: irarium.tags,
       content: irarium.content,
-      children: irarium.children
+      children: irarium.children,
+      spaceId: spaceId
     };
   }
 
@@ -193,6 +227,25 @@ export class IrariumsStore {
   }
 
   private mapRecordToIrarium(recordItem: any): Irarium {
+    // Parse position from JSON if it's a string
+    let position: [number, number, number] | undefined;
+    if (recordItem.position) {
+      if (typeof recordItem.position === 'string') {
+        try {
+          position = JSON.parse(recordItem.position);
+        } catch (e) {
+          console.error('Failed to parse position:', e);
+          position = this.getMockPosition(recordItem.id);
+        }
+      } else if (Array.isArray(recordItem.position)) {
+        position = recordItem.position as [number, number, number];
+      } else {
+        position = this.getMockPosition(recordItem.id);
+      }
+    } else {
+      position = this.getMockPosition(recordItem.id);
+    }
+    
     return {
       id: recordItem.id,
       userId: recordItem.userId,
@@ -203,8 +256,79 @@ export class IrariumsStore {
       children: recordItem.children || [],
       isPublic: recordItem.isPublic || false,
       created: recordItem.created,
-      updated: recordItem.updated
+      updated: recordItem.updated,
+      spaceId: recordItem.spaceId || '', // Use actual spaceId from DB
+      position: position
     };
+  }
+
+  private getMockSpaceId(id: string): string {
+    // Deterministically assign to one of 3 mock spaces
+    const spaces = ['tech', 'art', 'random'];
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = (hash << 5) - hash + id.charCodeAt(i);
+      hash |= 0;
+    }
+    return spaces[Math.abs(hash) % spaces.length];
+  }
+
+  private getMockPosition(id: string): [number, number, number] {
+    // Simple deterministic random based on ID
+    let hash = 0;
+    for (let i = 0; i < id.length; i++) {
+      hash = (hash << 5) - hash + id.charCodeAt(i);
+      hash |= 0;
+    }
+    
+    // Map to -50 to 50 range (100x100x100 container centered at 0)
+    const x = (Math.abs(hash % 100) - 50);
+    const y = (Math.abs((hash >> 8) % 100) - 50);
+    const z = (Math.abs((hash >> 16) % 100) - 50);
+    
+    return [x, y, z];
+  }
+
+  private generateRandomPosition(): [number, number, number] {
+    // Generate random position within -50 to 50 range
+    const x = Math.random() * 100 - 50;
+    const y = Math.random() * 100 - 50;
+    const z = Math.random() * 100 - 50;
+    return [x, y, z];
+  }
+
+  private async generateUniquePosition(spaceId: string): Promise<[number, number, number]> {
+    const maxAttempts = 100;
+    const minDistance = 5; // Minimum distance between nodes
+
+    // Get all irariums in this space
+    const spaceIrariums = this.publicIrariums.filter(
+      (irarium) => irarium.spaceId === spaceId && irarium.position
+    );
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const newPosition = this.generateRandomPosition();
+      
+      // Check if position is too close to any existing position
+      const isTooClose = spaceIrariums.some((irarium) => {
+        if (!irarium.position) return false;
+        const [x1, y1, z1] = irarium.position;
+        const [x2, y2, z2] = newPosition;
+        const distance = Math.sqrt(
+          Math.pow(x2 - x1, 2) + 
+          Math.pow(y2 - y1, 2) + 
+          Math.pow(z2 - z1, 2)
+        );
+        return distance < minDistance;
+      });
+
+      if (!isTooClose) {
+        return newPosition;
+      }
+    }
+
+    // If we couldn't find a unique position, just return a random one
+    return this.generateRandomPosition();
   }
 }
 

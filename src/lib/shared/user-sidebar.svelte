@@ -7,7 +7,8 @@
     MoreHorizontal,
     LogOut,
     HelpCircle,
-    Shield
+    Shield,
+    Box
   } from 'lucide-svelte';
   import { goto } from '$app/navigation';
 
@@ -28,6 +29,7 @@
       href: `/home`
     },
     { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' },
+    { title: 'Spaces', icon: Box, href: '/spaces' },
     { title: 'Profile', icon: User, href: `/user/${authStore?.username}` }
     // { title: 'Saved', icon: Save, href: '/saved' }
   ]);

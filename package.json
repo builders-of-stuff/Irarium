@@ -62,14 +62,18 @@
     "vitest": "^4.0.8"
   },
   "dependencies": {
+    "@threlte/core": "^8.3.0",
+    "@threlte/extras": "^9.7.0",
     "@tiptap/core": "^3.10.4",
     "@tiptap/extension-image": "^3.10.4",
     "@tiptap/extension-link": "^3.10.4",
     "@tiptap/pm": "^3.10.4",
     "@tiptap/starter-kit": "^3.10.4",
+    "@types/three": "^0.181.0",
     "nanoid": "^5.1.6",
     "pocketbase": "^0.26.3",
     "stripe": "^19.3.0",
-    "svelte-motion": "^0.12.2"
+    "svelte-motion": "^0.12.2",
+    "three": "^0.181.2"
   }
 }

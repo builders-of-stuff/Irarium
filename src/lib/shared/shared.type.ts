@@ -3,7 +3,8 @@ export enum COLLECTION {
   USERS = 'users',
   USER_SETTINGS = 'userSettings',
   IRARIUMS = 'irariums',
-  PAYMENTS = 'payments'
+  PAYMENTS = 'payments',
+  SPACES = 'spaces'
 }
 
 export type User = {
@@ -107,4 +108,13 @@ export type Irarium = {
   content: string;
   children: Thought[];
   isPublic: boolean;
+  spaceId?: string;
+  position?: [number, number, number];
+};
+
+export type Space = {
+  id: string;
+  name: string;
+  description: string;
+  slug: string;
 };
