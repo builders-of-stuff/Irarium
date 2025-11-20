@@ -3,6 +3,8 @@
   import { tick } from 'svelte';
   import { MapPin } from 'lucide-svelte';
 
+  import { useSidebar } from '$lib/components/ui/sidebar/context.svelte';
+
   let {
     title = 'Irarium',
     actions,
@@ -20,6 +22,8 @@
     spaceSlug?: string;
     spaceId?: string;
   }>();
+
+  const sidebar = useSidebar();
 
   let isEditing = $state(false);
   let editableTitle = $state(title);
@@ -67,7 +71,12 @@
 
 <NavigationMenu.Root>
   <div class="border-b border-white/10 bg-black/30 backdrop-blur-xl">
-    <div class="flex items-center justify-between px-8 py-3">
+    <div
+      class="flex items-center justify-between py-3 pr-8 transition-all duration-300 {!sidebar.isMobile &&
+      sidebar.state === 'collapsed'
+        ? 'pl-14'
+        : 'pl-8'}"
+    >
       <div class="flex items-center gap-4">
         {#if isEditing}
           <input
