@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Trash2, ChevronDown, CornerDownRight } from 'lucide-svelte';
+  import { Trash2, ChevronDown, CornerDownRight } from '@lucide/svelte';
   import { Editor } from '@tiptap/core';
   import type { Thought } from '$lib/shared/shared.type';
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';

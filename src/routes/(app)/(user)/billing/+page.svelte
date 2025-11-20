@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Check, CheckCircle, AlertCircle, XCircle } from 'lucide-svelte';
+  import { Check, CheckCircle, AlertCircle, XCircle } from '@lucide/svelte';
 
   import { Button } from '$lib/components/ui/button';
   import {

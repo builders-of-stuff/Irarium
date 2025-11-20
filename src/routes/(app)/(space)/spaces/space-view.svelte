@@ -2,7 +2,7 @@
   import { Canvas } from '@threlte/core';
   import { OrbitControls } from '@threlte/extras';
   import { T } from '@threlte/core';
-  import { Pause, Play, Settings } from 'lucide-svelte';
+  import { Pause, Play, Settings, X } from '@lucide/svelte';
   import SpaceBox from './space-box.svelte';
   import Starfield from '$lib/components/starfield.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
@@ -11,7 +11,6 @@
   import { COLLECTION, type Space } from '$lib/shared/shared.type';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { X } from 'lucide-svelte';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
 
@@ -25,9 +24,10 @@
   let spaceIrariums = $derived.by(() => {
     const spaceId = space?.id;
     if (!spaceId) return [];
-    return irariumsStore.publicIrariums.filter(
+    const filtered = irariumsStore.publicIrariums.filter(
       (irarium) => irarium.spaceId === spaceId
     );
+    return filtered;
   });
 
   let activeIrariums = $derived.by(() => {

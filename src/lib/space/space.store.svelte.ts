@@ -63,12 +63,19 @@ export class SpaceStore {
     try {
       const result = await pb.collection(COLLECTION.IRARIUMS).getList(1, 1, {
         filter: `spaceId = "${spaceId}" && isPublic = true`,
-        fields: 'id' // Minimal fetch
+        fields: 'id', // Minimal fetch
+        requestKey: `irarium-count-${spaceId}` // Unique key per space to prevent auto-cancel
       });
-      this.irariumCounts[spaceId] = result.totalItems;
-    } catch (err) {
+
+      // Create a new object to trigger reactivity
+      this.irariumCounts = { ...this.irariumCounts, [spaceId]: result.totalItems };
+    } catch (err: any) {
       console.error(`Error fetching count for space ${spaceId}:`, err);
-      this.irariumCounts[spaceId] = 0;
+
+      // Only set to 0 if not an abort error
+      if (!err.isAbort) {
+        this.irariumCounts = { ...this.irariumCounts, [spaceId]: 0 };
+      }
     }
   }
 }

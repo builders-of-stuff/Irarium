@@ -1,5 +1,6 @@
 import { pb } from '$lib/db/client';
 import { COLLECTION, type Irarium } from '$lib/shared/shared.type';
+import { spaceStore } from '$lib/space/space.store.svelte';
 
 export class IrariumsStore {
   userIrariums = $state<Irarium[]>([]);
@@ -170,7 +171,7 @@ export class IrariumsStore {
         .collection(COLLECTION.IRARIUMS)
         .update(irarium.id, { 
           isPublic: !irarium.isPublic,
-          spaceId: targetSpaceId,
+          spaceId: targetSpaceId || null,
           position: positionText
         });
 
@@ -185,6 +186,11 @@ export class IrariumsStore {
         this.publicIrariums = this.publicIrariums.filter(
           (item) => item.id !== irarium.id
         );
+      }
+
+      // Refresh the space's irarium count to update the UI
+      if (targetSpaceId) {
+        await spaceStore.fetchIrariumCount(targetSpaceId);
       }
 
       return updatedIrarium;

@@ -9,7 +9,7 @@
     HelpCircle,
     Shield,
     Box
-  } from 'lucide-svelte';
+  } from '@lucide/svelte';
   import { goto } from '$app/navigation';
 
   import IRARIUM_LOGO from '$lib/assets/irarium.png';

@@ -13,7 +13,7 @@
   } from '$lib/shared/shared.constant';
   import DiscordIcon from '$lib/components/icons/discord-icon.svelte';
   import XIcon from '$lib/components/icons/x.svelte';
-  import { Circle } from 'lucide-svelte';
+  import { Circle } from '@lucide/svelte';
 
   let mounted = false;
 

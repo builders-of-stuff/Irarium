@@ -1,7 +1,7 @@
 <script lang="ts">
   import { NavigationMenu } from 'bits-ui';
   import { tick } from 'svelte';
-  import { MapPin } from 'lucide-svelte';
+  import { MapPin } from '@lucide/svelte';
 
   import { useSidebar } from '$lib/components/ui/sidebar/context.svelte';
 
