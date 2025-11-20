@@ -1,8 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { Button } from '$lib/components/ui/button';
-  import { Trash2 } from 'lucide-svelte';
+  import { Trash2, MoreVertical } from 'lucide-svelte';
   import { toast } from 'svelte-sonner';
+  import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
@@ -14,10 +15,13 @@
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { ROUTE } from '$lib/shared/shared.constant';
+  import { pb } from '$lib/db/client';
+  import { COLLECTION, type Space } from '$lib/shared/shared.type';
 
   let irarium = $state<IrariumStore | null>(null);
   let isLoading = $state(true);
   let error = $state<string | null>(null);
+  let space = $state<Space | null>(null);
 
   const irariumId = $derived(page.params.irariumId);
   const isOwner = $derived(irarium?.userId === authStore.userId);
@@ -38,6 +42,28 @@
 
       if (fetchedIrarium) {
         irarium = new IrariumStore(fetchedIrarium);
+
+        // Fetch space if irarium has a spaceId
+        if (fetchedIrarium.spaceId) {
+          try {
+            const spaceRecord = await pb
+              .collection(COLLECTION.SPACES)
+              .getOne(fetchedIrarium.spaceId);
+            space = {
+              id: spaceRecord.id,
+              name: spaceRecord.name,
+              description: spaceRecord.description,
+              slug: spaceRecord.slug,
+              tags: spaceRecord.tags,
+              type: spaceRecord.type,
+              createdBy: spaceRecord.createdBy,
+              mods: spaceRecord.mods,
+              isPublic: spaceRecord.isPublic
+            };
+          } catch (err) {
+            console.error('Error fetching space:', err);
+          }
+        }
       } else {
         error = 'Irarium not found';
       }
@@ -117,12 +143,31 @@
 {#snippet actions()}
   <div class="flex gap-2">
     {#if isOwner}
-      <Button variant="destructive" onclick={deleteIrarium}>Delete</Button>
-      <Button variant="outline" onclick={togglePublicState}>
-        {irarium?.isPublic ? 'Unpublish' : 'Publish'}
+      <Button
+        variant="secondary"
+        onclick={saveIrarium}
+        class="border-0 bg-orange-600 text-white hover:bg-orange-500"
+      >
+        Save
       </Button>
-      <Button variant="outline" onclick={exportIrarium}>Export</Button>
-      <Button variant="secondary" onclick={saveIrarium}>Save</Button>
+
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger
+          class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-white/20 bg-white/5 text-sm font-medium transition-colors hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+        >
+          <MoreVertical size={16} />
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content class="w-48">
+          <DropdownMenu.Item onclick={togglePublicState}>
+            {irarium?.isPublic ? 'Unpublish' : 'Publish'}
+          </DropdownMenu.Item>
+          <DropdownMenu.Item onclick={exportIrarium}>Export</DropdownMenu.Item>
+          <DropdownMenu.Separator />
+          <DropdownMenu.Item onclick={deleteIrarium} class="text-destructive">
+            Delete
+          </DropdownMenu.Item>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
     {/if}
   </div>
 {/snippet}
@@ -134,6 +179,9 @@
       {actions}
       isTitleEditable={isOwner}
       handleTitleChange={updateTitle}
+      spaceName={space?.name}
+      spaceSlug={space?.slug}
+      spaceId={space?.id}
     />
 
     <div class="flex-1 overflow-hidden">
