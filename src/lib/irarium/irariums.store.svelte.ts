@@ -131,25 +131,40 @@ export class IrariumsStore {
     }
   }
 
-  async togglePublicState(irarium: Irarium) {
+  async togglePublicState(
+    irarium: Irarium, 
+    spaceId?: string, 
+    position?: [number, number, number]
+  ) {
     try {
-      // Generate position if making public and no position exists
-      let position = irarium.position;
-      if (!irarium.isPublic && !position) {
-        position = await this.generateUniquePosition(irarium.spaceId || '');
+      // Use provided values or existing ones
+      const targetSpaceId = spaceId || irarium.spaceId || '';
+      const targetPosition = position || irarium.position;
+
+      // If publishing and no position provided, generate one
+      let finalPosition = targetPosition;
+      if (!irarium.isPublic && !finalPosition) {
+        finalPosition = await this.generateUniquePosition(targetSpaceId);
       }
 
       const updatedIrarium = { 
         ...irarium, 
         isPublic: !irarium.isPublic,
-        position 
+        spaceId: targetSpaceId,
+        position: finalPosition
       };
+
+      // Format position as text (comma-separated) for the database
+      const positionText = finalPosition 
+        ? `${finalPosition[0]},${finalPosition[1]},${finalPosition[2]}` 
+        : null;
 
       await pb
         .collection(COLLECTION.IRARIUMS)
         .update(irarium.id, { 
           isPublic: !irarium.isPublic,
-          position: position ? JSON.stringify(position) : null
+          spaceId: targetSpaceId,
+          position: positionText
         });
 
       // Update in both user and public collections
@@ -168,6 +183,35 @@ export class IrariumsStore {
       return updatedIrarium;
     } catch (err) {
       console.error('Error toggling public state:', err);
+      throw err;
+    }
+  }
+
+  async checkPositionAvailability(
+    positionText: string,
+    spaceId: string,
+    excludeIrariumId?: string
+  ): Promise<boolean> {
+    try {
+      // Parse the first 3 numbers from the position text
+      const coords = positionText.split(',').map(s => parseFloat(s.trim()));
+      if (coords.length < 3 || coords.some(isNaN)) {
+        return false;
+      }
+
+      // Query for irariums with the same position in the same space
+      const filter = excludeIrariumId
+        ? `spaceId = "${spaceId}" && position = "${positionText}" && id != "${excludeIrariumId}"`
+        : `spaceId = "${spaceId}" && position = "${positionText}"`;
+
+      const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 1, {
+        filter
+      });
+
+      // Position is available if no records found
+      return records.items.length === 0;
+    } catch (err) {
+      console.error('Error checking position availability:', err);
       throw err;
     }
   }
@@ -227,15 +271,22 @@ export class IrariumsStore {
   }
 
   private mapRecordToIrarium(recordItem: any): Irarium {
-    // Parse position from JSON if it's a string
+    // Parse position from text (comma-separated) or JSON
     let position: [number, number, number] | undefined;
     if (recordItem.position) {
       if (typeof recordItem.position === 'string') {
-        try {
-          position = JSON.parse(recordItem.position);
-        } catch (e) {
-          console.error('Failed to parse position:', e);
-          position = this.getMockPosition(recordItem.id);
+        // Try parsing as comma-separated values first
+        const coords = recordItem.position.split(',').map((s: string) => parseFloat(s.trim()));
+        if (coords.length === 3 && !coords.some(isNaN)) {
+          position = coords as [number, number, number];
+        } else {
+          // Fallback to JSON parsing for backward compatibility
+          try {
+            position = JSON.parse(recordItem.position);
+          } catch (e) {
+            console.error('Failed to parse position:', e);
+            position = this.getMockPosition(recordItem.id);
+          }
         }
       } else if (Array.isArray(recordItem.position)) {
         position = recordItem.position as [number, number, number];

@@ -11,6 +11,7 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
+  import PublishIrariumDialog from '$lib/components/irarium/publish-irarium-dialog.svelte';
 
   import IrariumComposer from '$lib/irarium/irarium-composer.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
@@ -22,6 +23,7 @@
   let isLoading = $state(true);
   let error = $state<string | null>(null);
   let space = $state<Space | null>(null);
+  let showPublishDialog = $state(false);
 
   const irariumId = $derived(page.params.irariumId);
   const isOwner = $derived(irarium?.userId === authStore.userId);
@@ -112,18 +114,21 @@
   async function togglePublicState() {
     if (!irarium) return;
 
+    // If currently private, show modal to publish
+    if (!irarium.isPublic) {
+      showPublishDialog = true;
+      return;
+    }
+
+    // If currently public, unpublish directly
     try {
       const updatedIrarium = await irariumsStore.togglePublicState(irarium);
       irarium.isPublic = updatedIrarium.isPublic;
 
-      const message = irarium.isPublic
-        ? 'Published successfully'
-        : 'Unpublished successfully';
-
-      toast.success(message);
+      toast.success('Unpublished successfully');
     } catch (error) {
-      console.error('Error toggling public state:', error);
-      toast.error('Failed to update public state');
+      console.error('Error unpublishing:', error);
+      toast.error('Failed to unpublish');
     }
   }
 
@@ -196,3 +201,7 @@
     </div>
   </div>
 </div>
+
+{#if irarium}
+  <PublishIrariumDialog bind:open={showPublishDialog} {irarium} />
+{/if}
