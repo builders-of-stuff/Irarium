@@ -2,7 +2,7 @@
   import { Canvas } from '@threlte/core';
   import { OrbitControls } from '@threlte/extras';
   import { T } from '@threlte/core';
-  import { Pause, Play } from 'lucide-svelte';
+  import { Pause, Play, Settings } from 'lucide-svelte';
   import SpaceBox from './space-box.svelte';
   import Starfield from '$lib/components/starfield.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
@@ -13,6 +13,7 @@
   import { goto } from '$app/navigation';
   import { X } from 'lucide-svelte';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
+  import { authStore } from '$lib/auth/auth.store.svelte';
 
   let { slug } = $props<{ slug: string }>();
 
@@ -49,21 +50,24 @@
 
   onMount(async () => {
     try {
-      // Fetch the space by slug
-      const spaces = await pb.collection(COLLECTION.SPACES).getList(1, 1, {
-        filter: `slug = "${slug}"`
-      });
+      // Extract ID from slug (format: slug-id)
+      const parts = slug.split('-');
+      const id = parts[parts.length - 1];
 
-      if (spaces.items.length > 0) {
+      // Fetch the space by ID
+      const record = await pb.collection(COLLECTION.SPACES).getOne(id);
+
+      if (record) {
         space = {
-          id: spaces.items[0].id,
-          name: spaces.items[0].name,
-          description: spaces.items[0].description,
-          slug: spaces.items[0].slug,
-          tags: spaces.items[0].tags,
-          type: spaces.items[0].type,
-          createdBy: spaces.items[0].createdBy,
-          mods: spaces.items[0].mods
+          id: record.id,
+          name: record.name,
+          description: record.description,
+          slug: record.slug,
+          tags: record.tags,
+          type: record.type,
+          createdBy: record.createdBy,
+          mods: record.mods,
+          isPublic: record.isPublic
         };
       } else {
         error = 'Space not found';
@@ -97,17 +101,30 @@
 {:else if space}
   <div class="relative h-full w-full">
     <!-- Play/Pause Button -->
-    <button
-      onclick={() =>
-        spaceStore.setActiveIrarium(spaceStore.isAutoRotateEnabled ? 'paused' : null)}
-      class="absolute top-4 right-4 z-10 rounded-full bg-black/50 p-3 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
-    >
-      {#if spaceStore.isAutoRotateEnabled}
-        <Pause size={20} />
-      {:else}
-        <Play size={20} />
+    <!-- Controls -->
+    <div class="absolute top-4 right-4 z-10 flex gap-2">
+      {#if space.createdBy === authStore.userId}
+        <a
+          href={`/spaces/${space.slug}-${space.id}/settings`}
+          class="rounded-full bg-black/50 p-3 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
+          title="Settings"
+        >
+          <Settings size={20} />
+        </a>
       {/if}
-    </button>
+
+      <button
+        onclick={() =>
+          spaceStore.setActiveIrarium(spaceStore.isAutoRotateEnabled ? 'paused' : null)}
+        class="rounded-full bg-black/50 p-3 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
+      >
+        {#if spaceStore.isAutoRotateEnabled}
+          <Pause size={20} />
+        {:else}
+          <Play size={20} />
+        {/if}
+      </button>
+    </div>
 
     <Canvas>
       <T.PerspectiveCamera makeDefault position={[150, 150, 150]} fov={50}>

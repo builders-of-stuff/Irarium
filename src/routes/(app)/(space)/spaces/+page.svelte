@@ -12,7 +12,8 @@
   onMount(async () => {
     try {
       const records = await pb.collection(COLLECTION.SPACES).getList(1, 50, {
-        sort: 'name'
+        sort: 'name',
+        filter: 'isPublic = true'
       });
 
       spaces = records.items.map((item: any) => ({
@@ -23,7 +24,8 @@
         tags: item.tags,
         type: item.type,
         createdBy: item.createdBy,
-        mods: item.mods
+        mods: item.mods,
+        isPublic: item.isPublic
       }));
     } catch (err) {
       console.error('Error fetching spaces:', err);
@@ -59,7 +61,7 @@
           <div class="grid gap-4 md:grid-cols-2">
             {#each spaces as space}
               <a
-                href={`/spaces/${space.slug}`}
+                href={`/spaces/${space.slug}-${space.id}`}
                 class="block rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"
               >
                 <h3 class="mb-2 text-xl font-semibold">{space.name}</h3>

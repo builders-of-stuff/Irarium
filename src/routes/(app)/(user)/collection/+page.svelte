@@ -7,9 +7,16 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
 
+  import * as Tabs from '$lib/components/ui/tabs';
+  import { spaceStore } from '$lib/space/space.store.svelte';
+  import CreateSpaceDialog from '$lib/components/space/create-space-dialog.svelte';
+
+  let isCreateSpaceOpen = $state(false);
+
   onMount(() => {
     if (authStore.userId) {
       irariumsStore.fetchUserIrariums(authStore.userId);
+      spaceStore.fetchUserSpaces(authStore.userId);
     }
   });
 
@@ -27,45 +34,120 @@
     <UserNavbar title="My Collection" />
 
     <div class="container mx-auto max-w-6xl px-4 py-8">
-      {#if irariumsStore.isLoading}
-        <div class="flex justify-center py-12">
-          <div class="animate-pulse text-center">
-            <p>Loading your irariums...</p>
+      <Tabs.Root value="irariums" class="w-full">
+        <Tabs.List class="grid w-full grid-cols-2">
+          <Tabs.Trigger value="irariums">Irariums</Tabs.Trigger>
+          <Tabs.Trigger value="spaces">Spaces</Tabs.Trigger>
+        </Tabs.List>
+
+        <Tabs.Content value="irariums">
+          {#if irariumsStore.isLoading}
+            <div class="flex justify-center py-12">
+              <div class="animate-pulse text-center">
+                <p>Loading your irariums...</p>
+              </div>
+            </div>
+          {:else if irariumsStore.error}
+            <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
+              <p>{irariumsStore.error}</p>
+              <Button
+                variant="outline"
+                class="mt-2"
+                onclick={() => irariumsStore.fetchUserIrariums(authStore.userId)}
+                >Try Again</Button
+              >
+            </div>
+          {:else if irariumsStore.userIrariums.length === 0}
+            <div class="rounded-lg border border-dashed p-8 text-center">
+              <h3 class="mb-3 text-xl font-medium">No irariums found</h3>
+              <Button href="/create">Create irarium</Button>
+            </div>
+          {:else}
+            <div class="mt-4 space-y-4">
+              {#each irariumsStore.userIrariums as irarium}
+                <a
+                  href={`/${irarium.id}`}
+                  class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
+                >
+                  <div class="mb-2 line-clamp-3">
+                    {@html irarium.content || 'No content'}
+                  </div>
+                  <div class="flex justify-between text-xs text-muted-foreground">
+                    <span>{formatDate(irarium.updated)}</span>
+                    <span>{countThoughts(irarium)} thoughts</span>
+                  </div>
+                </a>
+              {/each}
+            </div>
+          {/if}
+        </Tabs.Content>
+
+        <Tabs.Content value="spaces">
+          <div class="mt-4">
+            {#if spaceStore.isLoading}
+              <div class="flex justify-center py-12">
+                <div class="animate-pulse text-center">
+                  <p>Loading your spaces...</p>
+                </div>
+              </div>
+            {:else if spaceStore.error}
+              <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
+                <p>{spaceStore.error}</p>
+                <Button
+                  variant="outline"
+                  class="mt-2"
+                  onclick={() => spaceStore.fetchUserSpaces(authStore.userId)}
+                  >Try Again</Button
+                >
+              </div>
+            {:else if spaceStore.userSpaces.length === 0}
+              <div class="rounded-lg border border-dashed p-8 text-center">
+                <h3 class="mb-3 text-xl font-medium">No spaces found</h3>
+                <p class="mb-4 text-muted-foreground">
+                  You haven't created any spaces yet.
+                </p>
+                <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
+              </div>
+            {:else}
+              <div class="mb-4 flex justify-end">
+                {#if spaceStore.userSpaces.length < 1}
+                  <Button onclick={() => (isCreateSpaceOpen = true)}
+                    >Create Space</Button
+                  >
+                {/if}
+              </div>
+              <div class="grid gap-4 md:grid-cols-2">
+                {#each spaceStore.userSpaces as space}
+                  <a
+                    href={`/spaces/${space.slug}-${space.id}`}
+                    class="block rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"
+                  >
+                    <div class="mb-2 flex items-center justify-between">
+                      <h3 class="text-xl font-semibold">{space.name}</h3>
+                      {#if space.isPublic}
+                        <span
+                          class="rounded-full bg-green-500/10 px-2 py-1 text-xs text-green-500"
+                          >Public</span
+                        >
+                      {:else}
+                        <span
+                          class="rounded-full bg-yellow-500/10 px-2 py-1 text-xs text-yellow-500"
+                          >Private</span
+                        >
+                      {/if}
+                    </div>
+                    <p class="text-sm text-muted-foreground">
+                      {space.description || 'No description'}
+                    </p>
+                  </a>
+                {/each}
+              </div>
+            {/if}
           </div>
-        </div>
-      {:else if irariumsStore.error}
-        <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
-          <p>{irariumsStore.error}</p>
-          <Button
-            variant="outline"
-            class="mt-2"
-            onclick={() => irariumsStore.fetchUserIrariums(authStore.userId)}
-            >Try Again</Button
-          >
-        </div>
-      {:else if irariumsStore.userIrariums.length === 0}
-        <div class="rounded-lg border border-dashed p-8 text-center">
-          <h3 class="mb-3 text-xl font-medium">No irariums found</h3>
-          <Button href="/create">Create irarium</Button>
-        </div>
-      {:else}
-        <div class="space-y-4">
-          {#each irariumsStore.userIrariums as irarium}
-            <a
-              href={`/${irarium.id}`}
-              class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
-            >
-              <div class="mb-2 line-clamp-3">
-                {@html irarium.content || 'No content'}
-              </div>
-              <div class="flex justify-between text-xs text-muted-foreground">
-                <span>{formatDate(irarium.updated)}</span>
-                <span>{countThoughts(irarium)} thoughts</span>
-              </div>
-            </a>
-          {/each}
-        </div>
-      {/if}
+        </Tabs.Content>
+      </Tabs.Root>
     </div>
   </div>
 </div>
+
+<CreateSpaceDialog bind:open={isCreateSpaceOpen} />

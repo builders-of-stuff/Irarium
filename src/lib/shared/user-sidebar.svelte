@@ -23,13 +23,8 @@
   import { ROUTE } from '$lib/shared/shared.constant';
 
   const menuItems = $derived([
-    {
-      title: 'Home',
-      icon: House,
-      href: `/home`
-    },
-    { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' },
     { title: 'Spaces', icon: Box, href: '/spaces' },
+    { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' },
     { title: 'Profile', icon: User, href: `/user/${authStore?.username}` }
     // { title: 'Saved', icon: Save, href: '/saved' }
   ]);

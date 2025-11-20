@@ -121,4 +121,5 @@ export type Space = {
   type: string;
   createdBy: string;
   mods: string[];
+  isPublic: boolean;
 };
