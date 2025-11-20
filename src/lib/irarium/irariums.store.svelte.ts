@@ -41,8 +41,8 @@ export class IrariumsStore {
     }
   }
 
-  async fetchUserIrariums(userId: string) {
-    if (this.hasFetchedUserIrariums) return;
+  async fetchUserIrariums(userId: string, force = false) {
+    if (this.hasFetchedUserIrariums && !force) return;
 
     this.isLoading = true;
     this.error = null;
@@ -50,7 +50,8 @@ export class IrariumsStore {
     try {
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
         filter: `userId = "${userId}"`,
-        sort: '-created'
+        sort: '-created',
+        requestKey: null
       });
 
       this.userIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
@@ -103,12 +104,13 @@ export class IrariumsStore {
 
   async createIrarium(irarium: Irarium) {
     try {
-      const spaceId = await this.getGeneralSpaceId();
+      // Use provided spaceId or default to empty (will be set when publishing)
+      const spaceId = irarium.spaceId || '';
       const record = await pb
         .collection(COLLECTION.IRARIUMS)
         .create(this.mapIrariumToCreate(irarium, spaceId));
 
-      this.userIrariums.push(this.mapRecordToIrarium(record));
+      this.userIrariums = [...this.userIrariums, this.mapRecordToIrarium(record)];
     } catch (err) {
       console.error('Error creating irarium:', err);
       this.error = 'Failed to create irarium. Please try again later.';
@@ -229,24 +231,6 @@ export class IrariumsStore {
     this.error = null;
   }
 
-  private async getGeneralSpaceId(): Promise<string> {
-    try {
-      const spaces = await pb.collection(COLLECTION.SPACES).getList(1, 1, {
-        filter: 'slug = "general"'
-      });
-      
-      if (spaces.items.length > 0) {
-        return spaces.items[0].id;
-      }
-      
-      // Fallback: if no general space found, return empty string
-      console.warn('General space not found');
-      return '';
-    } catch (err) {
-      console.error('Error fetching general space:', err);
-      return '';
-    }
-  }
 
   private mapIrariumToCreate(irarium: Irarium, spaceId: string) {
     return {

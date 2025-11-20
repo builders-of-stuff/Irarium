@@ -4,9 +4,11 @@
 
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import { spaceStore } from '$lib/space/space.store.svelte';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
+  import * as Tabs from '$lib/components/ui/tabs';
 
   // Dialog components
   import * as Dialog from '$lib/components/ui/dialog';
@@ -25,12 +27,13 @@
       nameInput = authStore.user.name || '';
       usernameInput = authStore.username || '';
 
-      // Fetch the user's irariums
+      // Fetch the user's irariums and spaces
       try {
         await irariumsStore.fetchUserIrariums(authStore.userId);
         await irariumsStore.fetchPublicIrariums();
+        await spaceStore.fetchUserSpaces(authStore.userId);
       } catch (error) {
-        toast.error('Failed to load irariums. Please refresh the page.');
+        toast.error('Failed to load profile data. Please refresh the page.');
       }
     } else {
       toast.error('You must be logged in to view your profile.');
@@ -146,40 +149,101 @@
         </div>
       </div>
 
-      <!-- Public Irariums section -->
+      <!-- Public Content section -->
       <div>
-        {#if irariumsStore.isLoading}
-          <div class="flex justify-center py-8">
-            <div class="animate-pulse text-center">
-              <p>Loading irariums...</p>
-            </div>
-          </div>
-        {:else if userPublicIrariums.length === 0}
-          <div class="rounded-lg border border-dashed p-8 text-center">
-            <h3 class="mb-2 text-xl font-medium">No public irariums</h3>
-            <p class="mb-4 text-muted-foreground">
-              You haven't made any irariums public yet.
-            </p>
-            <Button href="/collection">View All My Irariums</Button>
-          </div>
-        {:else}
-          <div class="space-y-4">
-            {#each userPublicIrariums as irarium}
-              <a
-                href={`/${irarium.id}`}
-                class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
-              >
-                <div class="mb-2 line-clamp-3">
-                  {@html irarium.content || 'No content'}
+        <Tabs.Root value="irariums" class="w-full">
+          <Tabs.List class="grid w-full grid-cols-2">
+            <Tabs.Trigger value="irariums">Irariums</Tabs.Trigger>
+            <Tabs.Trigger value="spaces">Spaces</Tabs.Trigger>
+          </Tabs.List>
+
+          <Tabs.Content value="irariums" class="mt-4">
+            {#if irariumsStore.isLoading}
+              <div class="flex justify-center py-8">
+                <div class="animate-pulse text-center">
+                  <p>Loading irariums...</p>
                 </div>
-                <div class="flex justify-between text-xs text-muted-foreground">
-                  <span>{formatDate(irarium.updated)}</span>
-                  <span>{countThoughts(irarium)} thoughts</span>
+              </div>
+            {:else if userPublicIrariums.length === 0}
+              <div class="rounded-lg border border-dashed p-8 text-center">
+                <h3 class="mb-2 text-xl font-medium">No public irariums</h3>
+                <p class="mb-4 text-muted-foreground">
+                  This user hasn't made any irariums public yet.
+                </p>
+              </div>
+            {:else}
+              <div class="space-y-4">
+                {#each userPublicIrariums as irarium}
+                  <a
+                    href={`/${irarium.id}`}
+                    class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
+                  >
+                    <div class="mb-2 line-clamp-3">
+                      {@html irarium.content || 'No content'}
+                    </div>
+                    <div class="flex justify-between text-xs text-muted-foreground">
+                      <span>{formatDate(irarium.updated)}</span>
+                      <span>{countThoughts(irarium)} thoughts</span>
+                    </div>
+                  </a>
+                {/each}
+              </div>
+            {/if}
+          </Tabs.Content>
+
+          <Tabs.Content value="spaces" class="mt-4">
+            {#if spaceStore.isLoading}
+              <div class="flex justify-center py-8">
+                <div class="animate-pulse text-center">
+                  <p>Loading spaces...</p>
                 </div>
-              </a>
-            {/each}
-          </div>
-        {/if}
+              </div>
+            {:else if spaceStore.userSpaces.filter((s) => s.isPublic).length === 0}
+              <div class="rounded-lg border border-dashed p-8 text-center">
+                <h3 class="mb-2 text-xl font-medium">No public spaces</h3>
+                <p class="mb-4 text-muted-foreground">
+                  This user hasn't made any spaces public yet.
+                </p>
+              </div>
+            {:else}
+              <div class="grid gap-4 md:grid-cols-2">
+                {#each spaceStore.userSpaces.filter((s) => s.isPublic) as space}
+                  <a
+                    href={`/spaces/${space.slug}-${space.id}`}
+                    class="block rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"
+                  >
+                    <h3 class="mb-2 text-xl font-semibold">{space.name}</h3>
+                    <p class="text-sm text-muted-foreground">
+                      {space.description || 'No description'}
+                    </p>
+                    <div class="mt-4 flex items-center text-xs text-muted-foreground">
+                      <span class="flex items-center">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          class="mr-1"
+                          ><path
+                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                          ></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"
+                          ></polyline><line x1="12" y1="22.08" x2="12" y2="12"
+                          ></line></svg
+                        >
+                        {spaceStore.irariumCounts[space.id] || 0} irariums
+                      </span>
+                    </div>
+                  </a>
+                {/each}
+              </div>
+            {/if}
+          </Tabs.Content>
+        </Tabs.Root>
       </div>
     </div>
   </div>

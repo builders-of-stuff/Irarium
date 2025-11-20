@@ -7,6 +7,8 @@ export class SpaceStore {
   isLoading = $state(false);
   error = $state<string | null>(null);
   
+  irariumCounts = $state<Record<string, number>>({});
+
   // Auto-rotate is enabled when no irarium is active
   isAutoRotateEnabled = $derived(this.activeIrariumId === null);
 
@@ -34,11 +36,27 @@ export class SpaceStore {
         mods: item.mods,
         isPublic: item.isPublic
       }));
+      
+      // Fetch counts for these spaces
+      this.userSpaces.forEach(space => this.fetchIrariumCount(space.id));
     } catch (err) {
       console.error('Error fetching user spaces:', err);
       this.error = 'Failed to load spaces';
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  async fetchIrariumCount(spaceId: string) {
+    try {
+      const result = await pb.collection(COLLECTION.IRARIUMS).getList(1, 1, {
+        filter: `spaceId = "${spaceId}" && isPublic = true`,
+        fields: 'id' // Minimal fetch
+      });
+      this.irariumCounts[spaceId] = result.totalItems;
+    } catch (err) {
+      console.error(`Error fetching count for space ${spaceId}:`, err);
+      this.irariumCounts[spaceId] = 0;
     }
   }
 }

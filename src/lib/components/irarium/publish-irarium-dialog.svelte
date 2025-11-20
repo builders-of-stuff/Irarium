@@ -23,6 +23,7 @@
   let positionError = $state<string>('');
 
   // Fetch public spaces when dialog opens
+  // Fetch public spaces when dialog opens
   $effect(() => {
     if (open) {
       fetchSpaces();
@@ -34,9 +35,10 @@
         y = coords[1].toString();
         z = coords[2].toString();
       } else {
-        x = '0';
-        y = '0';
-        z = '0';
+        // Generate random coordinates between -50 and 50
+        x = (Math.random() * 100 - 50).toFixed(1);
+        y = (Math.random() * 100 - 50).toFixed(1);
+        z = (Math.random() * 100 - 50).toFixed(1);
       }
       positionError = '';
     }

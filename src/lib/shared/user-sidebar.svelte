@@ -24,7 +24,7 @@
 
   const menuItems = $derived([
     { title: 'Spaces', icon: Box, href: '/spaces' },
-    { title: 'Collection', icon: GalleryVerticalEnd, href: '/collection' },
+    { title: 'Collections', icon: GalleryVerticalEnd, href: '/collection' },
     { title: 'Profile', icon: User, href: `/user/${authStore?.username}` }
     // { title: 'Saved', icon: Save, href: '/saved' }
   ]);
