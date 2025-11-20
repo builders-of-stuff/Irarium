@@ -38,7 +38,51 @@
       irarium.children = [];
     }
   };
+
+  const handleGlobalKeyDown = (e: KeyboardEvent) => {
+    // If we are editing (activeThoughtId is set), let the editor handle keys
+    // UNLESS we want to trap Escape to exit edit mode
+    if (irarium.activeThoughtId) {
+      if (e.key === 'Escape') {
+        irarium.clearActiveThoughtId();
+        // Optionally select the thought we just exited
+        if (irarium.lastActiveThoughtId) {
+          irarium.setSelectedThoughtId(irarium.lastActiveThoughtId);
+        }
+      }
+      return;
+    }
+
+    // Navigation keys when not editing
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault();
+        irarium.navigate('up');
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        irarium.navigate('down');
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        irarium.navigate('left');
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        irarium.navigate('right');
+        break;
+      case 'Enter':
+        if (irarium.selectedThoughtId) {
+          e.preventDefault();
+          irarium.setActiveThoughtId(irarium.selectedThoughtId);
+          irarium.clearSelectedThoughtId();
+        }
+        break;
+    }
+  };
 </script>
+
+<svelte:window onkeydown={handleGlobalKeyDown} />
 
 <div
   class="selection:bg-nebula-accent/30 relative flex h-full w-full flex-col overflow-hidden font-sans text-slate-200 selection:text-white"

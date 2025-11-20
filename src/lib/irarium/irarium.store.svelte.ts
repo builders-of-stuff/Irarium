@@ -23,6 +23,7 @@ export class IrariumStore {
   isAdding = $state(false);
   activeThoughtId = $state('');
   lastActiveThoughtId = $state('');
+  selectedThoughtId = $state('');
 
   referenceThoughtId = $derived(
     this.activeThoughtId || this.lastActiveThoughtId || this.id || ''
@@ -100,6 +101,14 @@ export class IrariumStore {
 
   setLastActiveThoughtId(thoughtId: string) {
     this.lastActiveThoughtId = thoughtId;
+  }
+
+  setSelectedThoughtId(thoughtId: string) {
+    this.selectedThoughtId = thoughtId;
+  }
+
+  clearSelectedThoughtId() {
+    this.selectedThoughtId = '';
   }
 
   setIsEditing(isEditing: boolean) {
@@ -405,6 +414,66 @@ export class IrariumStore {
     }
 
     return null;
+  }
+
+  navigate(direction: 'up' | 'down' | 'left' | 'right') {
+    const currentId = this.selectedThoughtId || this.activeThoughtId;
+    
+    // If nothing selected, select root or first child
+    if (!currentId) {
+      if (this.children.length > 0) {
+        this.setSelectedThoughtId(this.children[0].id);
+      } else {
+        this.setSelectedThoughtId(this.id);
+      }
+      return;
+    }
+
+    const currentThought = this.findThoughtById(currentId);
+    
+    // Handle Root Node Navigation
+    if (currentId === this.id) {
+        if (direction === 'down' && this.children.length > 0) {
+            this.setSelectedThoughtId(this.children[0].id);
+        }
+        return;
+    }
+
+    if (!currentThought) return;
+
+    let nextThought: Thought | undefined | null;
+
+    switch (direction) {
+      case 'up':
+        // Go to parent
+        if (currentThought.parentId && currentThought.parentId !== this.id) {
+          nextThought = this.findThoughtById(currentThought.parentId);
+        } else if (currentThought.parentId === this.id) {
+             this.setSelectedThoughtId(this.id);
+             return;
+        }
+        break;
+      case 'down':
+        // Go to first child
+        if (currentThought.children && currentThought.children.length > 0) {
+            if (currentThought.isExpanded) {
+                nextThought = currentThought.children[0];
+            }
+        }
+        break;
+      case 'left':
+        // Go to previous sibling
+        nextThought = this.getSiblingLeft(currentId);
+        break;
+      case 'right':
+        // Go to next sibling
+        nextThought = this.getSiblingRight(currentId);
+        break;
+    }
+
+    if (nextThought) {
+      this.setSelectedThoughtId(nextThought.id);
+    }
   }
 
   deleteThought(thoughtId: string) {

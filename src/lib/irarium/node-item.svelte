@@ -22,6 +22,7 @@
   let isHovered = $state(false);
 
   let isFocused = $derived(irarium.activeThoughtId === node.id);
+  let isSelected = $derived(irarium.selectedThoughtId === node.id);
   let hasChildren = $derived(node.children && node.children.length > 0);
   let isExpanded = $derived(node.isExpanded ?? true);
 
@@ -31,7 +32,13 @@
       if (editor && !editor.isFocused) {
         editor.commands.focus('end');
       }
+      // Clear selection when focused
+      if (irarium.selectedThoughtId) {
+        irarium.clearSelectedThoughtId();
+      }
+    }
 
+    if (isFocused || isSelected) {
       // Smooth scroll to center this node in viewport
       if (cardRef) {
         cardRef.scrollIntoView({
@@ -77,7 +84,10 @@
 
   const handleAddChild = () => irarium.addThought('', node);
   const handleDelete = () => irarium.deleteThought(node.id);
-  const handleFocus = () => irarium.setActiveThoughtId(node.id);
+  const handleFocus = () => {
+    irarium.setActiveThoughtId(node.id);
+    irarium.clearSelectedThoughtId();
+  };
 </script>
 
 <div class="flex flex-col items-center">
@@ -97,7 +107,9 @@
         border backdrop-blur-md transition-all duration-300 ease-in-out
         {isFocused
         ? 'bg-space-900 border-nebula-accent ring-nebula-accent/50 z-30 w-[800px] scale-[1.02] shadow-[0_0_30px_rgba(99,102,241,0.2)] ring-1'
-        : 'bg-space-950/80 hover:bg-space-900/90 w-[240px] border-white/10 hover:border-white/20 hover:shadow-lg md:w-[280px]'}
+        : isSelected
+          ? 'bg-space-950/90 border-nebula-accent/70 ring-nebula-accent/30 z-20 w-[240px] scale-[1.01] shadow-[0_0_15px_rgba(99,102,241,0.1)] ring-1 md:w-[280px]'
+          : 'bg-space-950/80 hover:bg-space-900/90 w-[240px] border-white/10 hover:border-white/20 hover:shadow-lg md:w-[280px]'}
       "
     >
       <div class="flex items-start gap-2 p-3">
