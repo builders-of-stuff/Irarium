@@ -34,7 +34,7 @@
   }
 </script>
 
-<Sidebar.Root variant="floating" class="border-r bg-background/50 backdrop-blur-sm">
+<Sidebar.Root variant="sidebar" class="border-r bg-background/50 backdrop-blur-sm">
   <Sidebar.Header class="flex flex-row items-center justify-between px-6 pt-6 pb-2">
     <a
       href={ROUTE.HOME}
