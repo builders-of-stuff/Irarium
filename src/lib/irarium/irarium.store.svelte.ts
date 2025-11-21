@@ -11,6 +11,7 @@ export class IrariumStore {
   created = $state('');
   updated = $state('');
   username = $state('');
+  createdBy = $state('');
 
   title = $state('');
   description = $state('');
@@ -64,6 +65,7 @@ export class IrariumStore {
       if (irarium.children) this.children = irarium.children;
       if (irarium.isPublic !== undefined) this.isPublic = irarium.isPublic;
       if (irarium.username) this.username = irarium.username;
+      if (irarium.createdBy) this.createdBy = irarium.createdBy;
       if (irarium.spaceId) this.spaceId = irarium.spaceId;
       if (irarium.position) this.position = irarium.position;
     }
@@ -75,6 +77,7 @@ export class IrariumStore {
     this.created = '';
     this.updated = '';
     this.username = '';
+    this.createdBy = '';
     this.title = '';
     this.description = '';
     this.tags = '';

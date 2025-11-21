@@ -189,7 +189,7 @@
       spaceName={space?.name}
       spaceSlug={space?.slug}
       spaceId={space?.id}
-      username={irarium?.username}
+      username={irarium?.createdBy}
     />
 
     <div class="flex-1 overflow-hidden">

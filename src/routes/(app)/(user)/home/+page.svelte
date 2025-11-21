@@ -59,13 +59,13 @@
               </div>
               <div class="flex justify-between text-xs text-muted-foreground">
                 <div class="flex items-center gap-2">
-                  {#if irarium.username}
+                  {#if irarium.createdBy}
                     <a
-                      href={`/user/${irarium.username}`}
+                      href={`/user/${irarium.createdBy}`}
                       class="hover:underline"
                       onclick={(e) => e.stopPropagation()}
                     >
-                      @{irarium.username}
+                      @{irarium.createdBy}
                     </a>
                   {/if}
                   <span>{formatDate(irarium.updated)}</span>

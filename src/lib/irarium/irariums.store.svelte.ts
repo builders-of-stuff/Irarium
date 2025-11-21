@@ -245,7 +245,8 @@ export class IrariumsStore {
       content: irarium.content,
       children: children,
       spaceId: spaceId || null, // Ensure empty string becomes null for relation field
-      position: null
+      position: null,
+      createdBy: authStore.username || '' // Capture username at creation time
     };
   }
 
@@ -299,7 +300,8 @@ export class IrariumsStore {
       updated: recordItem.updated,
       spaceId: recordItem.spaceId || '', // Use actual spaceId from DB
       position: position,
-      username: recordItem.expand?.userId?.username || ''
+      username: recordItem.expand?.userId?.username || '',
+      createdBy: recordItem.createdBy || '' // Username at time of creation
     };
   }
 
