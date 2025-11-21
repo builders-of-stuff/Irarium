@@ -3,6 +3,7 @@
   import { authStore } from '$lib/auth/auth.store.svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
+  import { Input } from '$lib/components/ui/input';
 
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
@@ -13,6 +14,10 @@
 
   let isCreateSpaceOpen = $state(false);
   let activeTab = $state('irariums');
+
+  // Filter states
+  let searchQuery = $state('');
+  let visibilityFilter = $state<'all' | 'public' | 'private'>('all');
 
   $effect(() => {
     if (authStore.userId) {
@@ -26,6 +31,53 @@
         })();
       });
     }
+  });
+
+  // Filtered irariums based on search and visibility
+  let filteredIrariums = $derived.by(() => {
+    let items = irariumsStore.userIrariums;
+
+    // Apply visibility filter
+    if (visibilityFilter === 'public') {
+      items = items.filter((i) => i.isPublic);
+    } else if (visibilityFilter === 'private') {
+      items = items.filter((i) => !i.isPublic);
+    }
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      items = items.filter((i) => {
+        const content = i.content?.toLowerCase() || '';
+        return content.includes(query);
+      });
+    }
+
+    return items;
+  });
+
+  // Filtered spaces based on search and visibility
+  let filteredSpaces = $derived.by(() => {
+    let items = spaceStore.userSpaces;
+
+    // Apply visibility filter
+    if (visibilityFilter === 'public') {
+      items = items.filter((s) => s.isPublic);
+    } else if (visibilityFilter === 'private') {
+      items = items.filter((s) => !s.isPublic);
+    }
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      items = items.filter((s) => {
+        const name = s.name?.toLowerCase() || '';
+        const description = s.description?.toLowerCase() || '';
+        return name.includes(query) || description.includes(query);
+      });
+    }
+
+    return items;
   });
 
   function formatDate(dateString: string) {
@@ -53,10 +105,33 @@
 
     <div class="container mx-auto max-w-6xl px-4 py-8">
       <Tabs.Root bind:value={activeTab} class="w-full">
-        <Tabs.List class="grid w-full grid-cols-2">
-          <Tabs.Trigger value="irariums">Irariums</Tabs.Trigger>
-          <Tabs.Trigger value="spaces">Spaces</Tabs.Trigger>
-        </Tabs.List>
+        <div
+          class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <Tabs.List class="w-fit">
+            <Tabs.Trigger value="irariums">Irariums</Tabs.Trigger>
+            <Tabs.Trigger value="spaces">Spaces</Tabs.Trigger>
+          </Tabs.List>
+
+          <div class="flex flex-1 gap-2 sm:max-w-md">
+            <Input
+              type="text"
+              placeholder={activeTab === 'irariums'
+                ? 'Search irariums...'
+                : 'Search spaces...'}
+              bind:value={searchQuery}
+              class="flex-1"
+            />
+            <select
+              bind:value={visibilityFilter}
+              class="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs ring-offset-background transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+            >
+              <option value="all">All</option>
+              <option value="public">Public</option>
+              <option value="private">Private</option>
+            </select>
+          </div>
+        </div>
 
         <Tabs.Content value="irariums">
           {#if irariumsStore.isLoading}
@@ -75,14 +150,24 @@
                 >Try Again</Button
               >
             </div>
-          {:else if irariumsStore.userIrariums.length === 0}
+          {:else if filteredIrariums.length === 0}
             <div class="rounded-lg border border-dashed p-8 text-center">
-              <h3 class="mb-3 text-xl font-medium">No irariums found</h3>
-              <Button href="/create">Create irarium</Button>
+              <h3 class="mb-3 text-xl font-medium">
+                {irariumsStore.userIrariums.length === 0
+                  ? 'No irariums found'
+                  : 'No matching irariums'}
+              </h3>
+              {#if irariumsStore.userIrariums.length === 0}
+                <Button href="/create">Create irarium</Button>
+              {:else}
+                <p class="text-sm text-muted-foreground">
+                  Try adjusting your search or filters
+                </p>
+              {/if}
             </div>
           {:else}
             <div class="mt-4 space-y-4">
-              {#each irariumsStore.userIrariums as irarium}
+              {#each filteredIrariums as irarium}
                 <a
                   href={`/${irarium.id}`}
                   class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
@@ -131,17 +216,29 @@
                   >Try Again</Button
                 >
               </div>
-            {:else if spaceStore.userSpaces.length === 0}
+            {:else if filteredSpaces.length === 0}
               <div class="rounded-lg border border-dashed p-8 text-center">
-                <h3 class="mb-3 text-xl font-medium">No spaces found</h3>
-                <p class="mb-4 text-muted-foreground">
-                  You haven't created any spaces yet.
-                </p>
-                <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
+                <h3 class="mb-3 text-xl font-medium">
+                  {spaceStore.userSpaces.length === 0
+                    ? 'No spaces found'
+                    : 'No matching spaces'}
+                </h3>
+                {#if spaceStore.userSpaces.length === 0}
+                  <p class="mb-4 text-muted-foreground">
+                    You haven't created any spaces yet.
+                  </p>
+                  <Button onclick={() => (isCreateSpaceOpen = true)}
+                    >Create Space</Button
+                  >
+                {:else}
+                  <p class="text-sm text-muted-foreground">
+                    Try adjusting your search or filters
+                  </p>
+                {/if}
               </div>
             {:else}
               <div class="grid gap-4 md:grid-cols-2">
-                {#each spaceStore.userSpaces as space}
+                {#each filteredSpaces as space}
                   <a
                     href={`/spaces/${space.slug}-${space.id}`}
                     class="block rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"
