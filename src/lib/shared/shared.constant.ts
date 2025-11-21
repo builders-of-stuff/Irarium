@@ -13,7 +13,7 @@ export const ROUTE_IDS = {
 
   // Private routes
   HOME: '/(app)/(user)/home',
-  COLLECTION: '/(app)/(user)/collection',
+  COLLECTION: '/(app)/(user)/collections',
   CHECKOUT: '/(app)/(user)/billing/checkout',
 
   // Webhook routes
@@ -27,7 +27,7 @@ export const ROUTE = {
   HOME: '/home',
   CHECKOUT: '/billing/checkout',
   CREATE: '/create',
-  COLLECTION: '/collection'
+  COLLECTION: '/collections'
 };
 
 // event.route.id -> e.g. for `src/routes/blog/[slug]`, it would be `/blog/[slug]`

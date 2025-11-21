@@ -10,6 +10,7 @@ export class IrariumStore {
   userId = $state('');
   created = $state('');
   updated = $state('');
+  username = $state('');
 
   title = $state('');
   description = $state('');
@@ -60,6 +61,7 @@ export class IrariumStore {
       if (irarium.content) this.content = irarium.content;
       if (irarium.children) this.children = irarium.children;
       if (irarium.isPublic !== undefined) this.isPublic = irarium.isPublic;
+      if (irarium.username) this.username = irarium.username;
     }
   }
 
@@ -68,6 +70,7 @@ export class IrariumStore {
     this.userId = '';
     this.created = '';
     this.updated = '';
+    this.username = '';
     this.title = '';
     this.description = '';
     this.tags = '';

@@ -58,7 +58,18 @@
                 {@html irarium.content || 'No content'}
               </div>
               <div class="flex justify-between text-xs text-muted-foreground">
-                <span>{formatDate(irarium.updated)}</span>
+                <div class="flex items-center gap-2">
+                  {#if irarium.username}
+                    <a
+                      href={`/user/${irarium.username}`}
+                      class="hover:underline"
+                      onclick={(e) => e.stopPropagation()}
+                    >
+                      @{irarium.username}
+                    </a>
+                  {/if}
+                  <span>{formatDate(irarium.updated)}</span>
+                </div>
                 <span>{countThoughts(irarium)} thoughts</span>
               </div>
             </a>

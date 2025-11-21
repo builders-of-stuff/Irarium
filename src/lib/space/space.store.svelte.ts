@@ -62,7 +62,7 @@ export class SpaceStore {
   async fetchIrariumCount(spaceId: string) {
     try {
       const result = await pb.collection(COLLECTION.IRARIUMS).getList(1, 1, {
-        filter: `spaceId = "${spaceId}" && isPublic = true`,
+        filter: `spaceId = "${spaceId}"`,
         fields: 'id', // Minimal fetch
         requestKey: `irarium-count-${spaceId}` // Unique key per space to prevent auto-cancel
       });

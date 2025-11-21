@@ -12,7 +12,8 @@
     handleTitleChange = (newTitle: string) => {},
     spaceName,
     spaceSlug,
-    spaceId
+    spaceId,
+    username
   } = $props<{
     title?: string;
     actions?: () => unknown;
@@ -21,6 +22,7 @@
     spaceName?: string;
     spaceSlug?: string;
     spaceId?: string;
+    username?: string;
   }>();
 
   const sidebar = useSidebar();
@@ -106,6 +108,15 @@
           >
             <MapPin size={14} />
             <span>{spaceName}</span>
+          </a>
+        {/if}
+
+        {#if username}
+          <a
+            href={`/user/${username}`}
+            class="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-white/10 hover:text-white"
+          >
+            <span>@{username}</span>
           </a>
         {/if}
       </div>

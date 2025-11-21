@@ -90,7 +90,20 @@
                   </div>
                   <div class="flex justify-between text-xs text-muted-foreground">
                     <span>{formatDate(irarium.updated)}</span>
-                    <span>{countThoughts(irarium)} thoughts</span>
+                    <div class="flex items-center gap-2">
+                      {#if irarium.isPublic}
+                        <span
+                          class="rounded-full bg-green-500/10 px-2 py-0.5 text-[10px] text-green-500"
+                          >Public</span
+                        >
+                      {:else}
+                        <span
+                          class="rounded-full bg-yellow-500/10 px-2 py-0.5 text-[10px] text-yellow-500"
+                          >Private</span
+                        >
+                      {/if}
+                      <span>{countThoughts(irarium)} thoughts</span>
+                    </div>
                   </div>
                 </a>
               {/each}

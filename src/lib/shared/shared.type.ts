@@ -110,6 +110,7 @@ export type Irarium = {
   isPublic: boolean;
   spaceId?: string;
   position?: [number, number, number];
+  username?: string;
 };
 
 export type Space = {

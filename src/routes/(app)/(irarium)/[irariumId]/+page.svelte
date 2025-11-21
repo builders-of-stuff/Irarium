@@ -104,7 +104,7 @@
       await irariumsStore.deleteIrarium(irariumId);
 
       toast.success('Irarium deleted successfully!');
-      goto('/collection');
+      goto('/collections');
     } catch (error) {
       console.error('Error deleting irarium:', error);
       toast.error('Failed to delete irarium');
@@ -187,6 +187,7 @@
       spaceName={space?.name}
       spaceSlug={space?.slug}
       spaceId={space?.id}
+      username={irarium?.username}
     />
 
     <div class="flex-1 overflow-hidden">
