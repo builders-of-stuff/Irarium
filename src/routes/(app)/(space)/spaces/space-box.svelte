@@ -18,7 +18,7 @@
   <!-- Space Wireframe -->
   <!-- Space Wireframe (Edges Only) -->
   <T.LineSegments>
-    <T.EdgesGeometry args={[new THREE.SphereGeometry(radius, 16, 16)]} />
+    <T.EdgesGeometry args={[new THREE.SphereGeometry(radius, 64, 64)]} />
     <T.LineBasicMaterial color="#444" />
   </T.LineSegments>
 
