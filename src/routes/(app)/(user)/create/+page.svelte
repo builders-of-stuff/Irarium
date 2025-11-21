@@ -18,6 +18,7 @@
 
     try {
       await irariumsStore.createIrarium(irarium);
+      await irariumsStore.refreshAllData(authStore.userId);
       await goto(ROUTE.COLLECTION);
       toast.success('Irarium saved successfully!');
     } catch (error) {

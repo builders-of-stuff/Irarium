@@ -1,6 +1,7 @@
 import { pb } from '$lib/db/client';
 import { COLLECTION, type Irarium } from '$lib/shared/shared.type';
 import { spaceStore } from '$lib/space/space.store.svelte';
+import { authStore } from '$lib/auth/auth.store.svelte';
 
 export class IrariumsStore {
   userIrariums = $state<Irarium[]>([]);
@@ -198,6 +199,21 @@ export class IrariumsStore {
     } catch (err) {
       console.error('Error toggling public state:', err);
       throw err;
+    }
+  }
+
+  async refreshAllData(userId: string) {
+    this.isLoading = true;
+    try {
+      await Promise.all([
+        authStore.refreshUser(),
+        this.fetchUserIrariums(userId, true),
+        spaceStore.fetchUserSpaces(userId, true)
+      ]);
+    } catch (error) {
+      console.error('Error refreshing all data:', error);
+    } finally {
+      this.isLoading = false;
     }
   }
 

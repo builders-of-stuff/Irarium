@@ -102,6 +102,7 @@
     try {
       if (!irariumId) return;
       await irariumsStore.deleteIrarium(irariumId);
+      await irariumsStore.refreshAllData(authStore.userId);
 
       toast.success('Irarium deleted successfully!');
       goto('/collections');
@@ -234,6 +235,8 @@
               console.error('Error fetching space:', err);
             });
         }
+
+        irariumsStore.refreshAllData(authStore.userId);
       }
     }}
   />
