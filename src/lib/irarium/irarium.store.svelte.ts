@@ -18,6 +18,8 @@ export class IrariumStore {
   content = $state('');
   children = $state<Thought[]>([]);
   isPublic = $state(false);
+  spaceId = $state('');
+  position = $state<[number, number, number] | undefined>(undefined);
 
   inputContent = $state('');
   isEditing = $state(false);
@@ -62,6 +64,8 @@ export class IrariumStore {
       if (irarium.children) this.children = irarium.children;
       if (irarium.isPublic !== undefined) this.isPublic = irarium.isPublic;
       if (irarium.username) this.username = irarium.username;
+      if (irarium.spaceId) this.spaceId = irarium.spaceId;
+      if (irarium.position) this.position = irarium.position;
     }
   }
 
@@ -77,6 +81,8 @@ export class IrariumStore {
     this.content = '';
     this.children = [];
     this.isPublic = false;
+    this.spaceId = '';
+    this.position = undefined;
     this.inputContent = '';
     this.isEditing = false;
     this.isAdding = false;

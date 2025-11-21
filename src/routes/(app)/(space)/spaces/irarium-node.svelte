@@ -14,13 +14,8 @@
   let mesh = $state<any>();
   let ignoreNextWindowClick = false;
 
-  // Offset position to center in space box (coordinates are 0-100, box is -50 to +50)
-  const rawPosition = irarium.position || [50, 50, 50];
-  const position: [number, number, number] = [
-    rawPosition[0] - 50,
-    rawPosition[1] - 50,
-    rawPosition[2] - 50
-  ];
+  // Position is now centered at 0,0,0 with range -50 to 50
+  const position = irarium.position || [0, 0, 0];
   const color = $derived(hovered || isActive ? '#ff3e00' : '#ffffff');
   const scale = $derived(hovered || isActive ? 1.5 : 1);
   const thoughtCount = countThoughts(irarium);

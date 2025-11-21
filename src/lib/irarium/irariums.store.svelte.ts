@@ -306,19 +306,29 @@ export class IrariumsStore {
       hash |= 0;
     }
     
-    // Map to 0 to 100 range
-    const x = Math.abs(hash % 100);
-    const y = Math.abs((hash >> 8) % 100);
-    const z = Math.abs((hash >> 16) % 100);
+    // Map to -50 to 50 range, keeping it somewhat spherical if possible, 
+    // but for mock deterministic positions, a simple box mapping is often enough 
+    // or we can do a simple rejection sampling or just clamp.
+    // Let's just map to box -30 to 30 to be safe inside sphere 50
+    const x = (Math.abs(hash % 60)) - 30;
+    const y = (Math.abs((hash >> 8) % 60)) - 30;
+    const z = (Math.abs((hash >> 16) % 60)) - 30;
     
     return [x, y, z];
   }
 
   private generateRandomPosition(): [number, number, number] {
-    // Generate random position within 0 to 100 range
-    const x = Math.random() * 100;
-    const y = Math.random() * 100;
-    const z = Math.random() * 100;
+    // Generate random position within sphere of radius 50
+    const u = Math.random();
+    const v = Math.random();
+    const theta = 2 * Math.PI * u;
+    const phi = Math.acos(2 * v - 1);
+    const r = 50 * Math.cbrt(Math.random());
+    
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
+
     return [x, y, z];
   }
 

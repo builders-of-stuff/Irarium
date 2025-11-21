@@ -10,22 +10,22 @@
 
   let { id, irariums } = $props<{ id: string; irariums: Irarium[] }>();
 
-  // Space size
-  const size = 100;
+  // Space size (radius)
+  const radius = 50;
 </script>
 
 <T.Group>
   <!-- Space Wireframe -->
   <!-- Space Wireframe (Edges Only) -->
   <T.LineSegments>
-    <T.EdgesGeometry args={[new THREE.BoxGeometry(size, size, size)]} />
+    <T.EdgesGeometry args={[new THREE.SphereGeometry(radius, 16, 16)]} />
     <T.LineBasicMaterial color="#444" />
   </T.LineSegments>
 
   <!-- Space Label -->
   <Text
     text={id.toUpperCase()}
-    position={[0, size / 2 + 5, 0]}
+    position={[0, radius + 5, 0]}
     fontSize={4}
     color="#888"
     anchorX="center"

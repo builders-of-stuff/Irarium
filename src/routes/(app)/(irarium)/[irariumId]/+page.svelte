@@ -210,7 +210,7 @@
     onPublishSuccess={(updatedIrarium) => {
       if (irarium) {
         irarium.isPublic = updatedIrarium.isPublic;
-        irarium.spaceId = updatedIrarium.spaceId;
+        irarium.spaceId = updatedIrarium.spaceId || '';
         irarium.position = updatedIrarium.position;
 
         // Refetch space if it changed

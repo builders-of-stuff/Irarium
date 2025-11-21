@@ -27,6 +27,16 @@
   let isCheckingPosition = $state(false);
   let positionError = $state<string>('');
 
+  const distance = $derived(
+    Math.sqrt(
+      Math.pow(parseFloat(x) || 0, 2) +
+        Math.pow(parseFloat(y) || 0, 2) +
+        Math.pow(parseFloat(z) || 0, 2)
+    )
+  );
+
+  const isPositionValid = $derived(distance <= 50);
+
   // Fetch public spaces when dialog opens
   // Fetch public spaces when dialog opens
   $effect(() => {
@@ -40,10 +50,20 @@
         y = coords[1].toString();
         z = coords[2].toString();
       } else {
-        // Generate random coordinates between 0 and 100
-        x = (Math.random() * 100).toFixed(1);
-        y = (Math.random() * 100).toFixed(1);
-        z = (Math.random() * 100).toFixed(1);
+        // Generate random coordinates within sphere of radius 50
+        const u = Math.random();
+        const v = Math.random();
+        const theta = 2 * Math.PI * u;
+        const phi = Math.acos(2 * v - 1);
+        const r = 50 * Math.cbrt(Math.random());
+
+        const xVal = r * Math.sin(phi) * Math.cos(theta);
+        const yVal = r * Math.sin(phi) * Math.sin(theta);
+        const zVal = r * Math.cos(phi);
+
+        x = xVal.toFixed(1);
+        y = yVal.toFixed(1);
+        z = zVal.toFixed(1);
       }
       positionError = '';
     }
@@ -88,9 +108,15 @@
       return false;
     }
 
-    // Check if position is within bounds (0 to 100)
-    if (xNum < 0 || xNum > 100 || yNum < 0 || yNum > 100 || zNum < 0 || zNum > 100) {
-      positionError = 'Coordinates must be between 0 and 100';
+    // Check if position is within bounds (-50 to 50)
+    if (xNum < -50 || xNum > 50 || yNum < -50 || yNum > 50 || zNum < -50 || zNum > 50) {
+      positionError = 'Coordinates must be between -50 and 50';
+      return false;
+    }
+
+    // Check if position is within sphere radius 50
+    if (distance > 50) {
+      positionError = `Position is outside the sphere (Distance: ${distance.toFixed(1)} > 50)`;
       return false;
     }
 
@@ -174,9 +200,9 @@
               bind:value={x}
               placeholder="0"
               step="0.1"
-              min="0"
-              max="100"
-              onchange={() => (positionError = '')}
+              min="-50"
+              max="50"
+              oninput={() => (positionError = '')}
             />
           </div>
           <div>
@@ -189,7 +215,7 @@
               step="0.1"
               min="-50"
               max="50"
-              onchange={() => (positionError = '')}
+              oninput={() => (positionError = '')}
             />
           </div>
           <div>
@@ -202,7 +228,7 @@
               step="0.1"
               min="-50"
               max="50"
-              onchange={() => (positionError = '')}
+              oninput={() => (positionError = '')}
             />
           </div>
         </div>
@@ -220,6 +246,13 @@
         <p class="text-muted-foreground">
           Position: ({x}, {y}, {z})
         </p>
+        <p
+          class={isPositionValid
+            ? 'text-muted-foreground'
+            : 'font-medium text-destructive'}
+        >
+          Distance from center: {distance.toFixed(1)} / 50
+        </p>
       </div>
     </div>
 
@@ -229,7 +262,10 @@
       </Button>
       <Button
         onclick={handlePublish}
-        disabled={isLoading || isCheckingPosition || !selectedSpaceId}
+        disabled={isLoading ||
+          isCheckingPosition ||
+          !selectedSpaceId ||
+          !isPositionValid}
       >
         {isLoading ? 'Publishing...' : isCheckingPosition ? 'Checking...' : 'Publish'}
       </Button>
