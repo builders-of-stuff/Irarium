@@ -2,6 +2,8 @@
 
 A space for thoughts
 
+[Website](https://irarium.com/)
+
 ## Getting Started
 
 Everything can be hosted on a single server, DB included. I recommend using hetzner for cost efficiency along with Coolify for convenience.
