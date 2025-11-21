@@ -1,13 +1,10 @@
 # Irarium
 
-A space for thoughts
+"A space for thoughts"
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18+ and pnpm
-- [PocketBase](https://pocketbase.io/) executable
+Everything can be hosted on a single server, DB included. I recommend using hetzner for cost efficiency along with Coolify for convenience.
 
 ### Development Setup
 
