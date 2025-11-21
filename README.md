@@ -1,17 +1,6 @@
 # Irarium
 
-A space for thoughts.
-
-Each irarium starts with a root thought, and from there creating a tree of related thoughts.
-
-## Documentation
-
-- [Roadmap](docs/ROADMAP.md) — Features planned and in progress
-- [Requirements](docs/REQUIREMENTS.md) — Technical standards and goals
-- [Features](docs/FEATURES.md) — Detailed specs for upcoming features
-- [Style Guide](docs/STYLE_GUIDE.md) — Coding conventions and best practices
-- [Contributing](CONTRIBUTING.md) — How to contribute to the project
-- [Stripe Integration](docs/STRIPE.md) — Payment testing setup
+A space for thoughts
 
 ## Getting Started
 
@@ -48,17 +37,3 @@ pnpm run dev
 ```
 
 The app will be available at `http://localhost:5173`
-
-### Available Commands
-
-- `pnpm run dev` — Start development server
-- `pnpm run dev:db` — Start PocketBase (alternative to manual start)
-- `pnpm run build` — Build for production
-- `pnpm run preview` — Preview production build
-- `pnpm run lint` — Run linter
-- `pnpm run format` — Format code
-- `pnpm run check` — Type checking
-- `pnpm run test:unit` — Run unit tests
-- `pnpm run test:e2e` — Run E2E tests
-
-For Stripe integration and testing payments, see [docs/STRIPE.md](docs/STRIPE.md).
