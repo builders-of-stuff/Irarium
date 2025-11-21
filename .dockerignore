@@ -1,0 +1,67 @@
+# Sensitive files
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Dependencies
+node_modules
+
+# Build output
+.svelte-kit
+build
+.output
+.vercel
+.netlify
+.wrangler
+
+# Testing
+test-results
+playwright-report
+coverage
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# PocketBase data and binaries
+pocketbase/pocketbase
+pocketbase/pb_data
+pocketbase/pb_public
+
+# Development files
+*.md
+!README.md
+.prettierrc
+.prettierignore
+.eslintrc*
+tsconfig.json
+vitest.config.ts
+playwright.config.ts
+
+# Paraglide
+src/lib/paraglide
+
+# Documentation
+docs

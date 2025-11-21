@@ -1,7 +1,7 @@
 import PocketBase from 'pocketbase';
 import { redirect } from '@sveltejs/kit';
-import { PUBLIC_POCKETBASE_URL } from '$env/static/public';
-import { WEBOOK_ADMIN_EMAIL, WEBOOK_ADMIN_PASSWORD } from '$env/static/private';
+import { env } from '$env/dynamic/private';
+import { env as publicEnv } from '$env/dynamic/public';
 
 import {
   ROUTE,
@@ -55,7 +55,7 @@ export async function handle({ event, resolve }) {
   /**
    * PocketBase
    */
-  event.locals.pb = new PocketBase(PUBLIC_POCKETBASE_URL);
+  event.locals.pb = new PocketBase(publicEnv.PUBLIC_POCKETBASE_URL);
 
   /**
    * Auth handling
@@ -63,7 +63,7 @@ export async function handle({ event, resolve }) {
   if (isWebhook) {
     await event.locals.pb
       .collection(COLLECTION.SUPERUSERS)
-      .authWithPassword(WEBOOK_ADMIN_EMAIL, WEBOOK_ADMIN_PASSWORD);
+      .authWithPassword(env.WEBOOK_ADMIN_EMAIL, env.WEBOOK_ADMIN_PASSWORD);
   } else {
     const cookie =
       event.request.headers.get('cookie') || event.cookies.get('pb_auth') || '';

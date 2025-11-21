@@ -1,9 +1,9 @@
 import Stripe from 'stripe';
 import { error, json } from '@sveltejs/kit';
-import { STRIPE_SECRET_API_KEY, FULL_UPGRADE_PRICE_ID } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 
 export async function POST({ request, locals }) {
-  const stripe = new Stripe(STRIPE_SECRET_API_KEY);
+  const stripe = new Stripe(env.STRIPE_SECRET_API_KEY);
 
   if (!locals.pb.authStore.isValid) {
     throw error(401, 'Unauthorized');
@@ -17,7 +17,7 @@ export async function POST({ request, locals }) {
   try {
     const lineItems = [
       {
-        price: FULL_UPGRADE_PRICE_ID,
+        price: env.FULL_UPGRADE_PRICE_ID,
         quantity: 1
       }
     ];

@@ -1,11 +1,11 @@
 import { json } from '@sveltejs/kit';
 import Stripe from 'stripe';
 
-import { STRIPE_SECRET_API_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { handleSuccessfulPayment } from './payments.tools';
 
 export async function POST(event) {
-  const stripe = new Stripe(STRIPE_SECRET_API_KEY);
+  const stripe = new Stripe(env.STRIPE_SECRET_API_KEY);
   const pb = event.locals.pb;
 
   // Extract and validate request data
@@ -22,7 +22,7 @@ export async function POST(event) {
     stripeEvent = stripe.webhooks.constructEvent(
       payload,
       signature,
-      STRIPE_WEBHOOK_SECRET
+      env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
     console.error('Error verifying webhook signature:', err);
