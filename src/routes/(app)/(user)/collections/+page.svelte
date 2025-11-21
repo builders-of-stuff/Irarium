@@ -38,7 +38,9 @@
 </script>
 
 {#snippet actions()}
-  {#if activeTab === 'spaces'}
+  {#if activeTab === 'irariums'}
+    <Button href="/create">Create Irarium</Button>
+  {:else if activeTab === 'spaces'}
     {#if spaceStore.userSpaces.length < 1 || authStore.userSettings?.isFullyUpgraded}
       <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
     {/if}
@@ -47,7 +49,7 @@
 
 <div class="relative min-h-screen overflow-hidden">
   <div class="relative z-10">
-    <UserNavbar title="My Collection" {actions} />
+    <UserNavbar title="My Collections" {actions} />
 
     <div class="container mx-auto max-w-6xl px-4 py-8">
       <Tabs.Root bind:value={activeTab} class="w-full">
