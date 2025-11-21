@@ -73,7 +73,8 @@
           type: record.type,
           createdBy: record.createdBy,
           mods: record.mods,
-          isPublic: record.isPublic
+          isPublic: record.isPublic,
+          created: record.created
         };
       } else {
         error = 'Space not found';

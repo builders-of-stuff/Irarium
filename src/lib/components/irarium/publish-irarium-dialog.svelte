@@ -85,7 +85,8 @@
         type: item.type,
         createdBy: item.createdBy,
         mods: item.mods,
-        isPublic: item.isPublic
+        isPublic: item.isPublic,
+        created: item.created
       }));
     } catch (err) {
       console.error('Error fetching spaces:', err);

@@ -60,7 +60,8 @@
               type: spaceRecord.type,
               createdBy: spaceRecord.createdBy,
               mods: spaceRecord.mods,
-              isPublic: spaceRecord.isPublic
+              isPublic: spaceRecord.isPublic,
+              created: spaceRecord.created
             };
           } catch (err) {
             console.error('Error fetching space:', err);
@@ -228,7 +229,8 @@
                 type: spaceRecord.type,
                 createdBy: spaceRecord.createdBy,
                 mods: spaceRecord.mods,
-                isPublic: spaceRecord.isPublic
+                isPublic: spaceRecord.isPublic,
+                created: spaceRecord.created
               };
             })
             .catch((err) => {

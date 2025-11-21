@@ -123,4 +123,6 @@ export type Space = {
   createdBy: string;
   mods: string[];
   isPublic: boolean;
+  created: string;
+  username?: string;
 };

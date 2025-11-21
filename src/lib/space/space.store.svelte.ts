@@ -41,7 +41,8 @@ export class SpaceStore {
         type: item.type,
         createdBy: item.createdBy,
         mods: item.mods,
-        isPublic: item.isPublic
+        isPublic: item.isPublic,
+        created: item.created
       }));
       
       this.lastFetchedUserSpaces = new Date().toISOString();

@@ -15,7 +15,8 @@
     try {
       const records = await pb.collection(COLLECTION.SPACES).getList(1, 50, {
         sort: 'name',
-        filter: 'isPublic = true'
+        filter: 'isPublic = true',
+        expand: 'createdBy'
       });
 
       spaces = records.items.map((item: any) => ({
@@ -27,7 +28,9 @@
         type: item.type,
         createdBy: item.createdBy,
         mods: item.mods,
-        isPublic: item.isPublic
+        isPublic: item.isPublic,
+        created: item.created,
+        username: item.expand?.createdBy?.username
       }));
 
       // Fetch counts
@@ -93,6 +96,18 @@
                     >
                     {spaceStore.irariumCounts[space.id] || 0} irariums
                   </span>
+                  <span class="mx-2">•</span>
+                  <span>
+                    {new Date(space.created).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
+                  {#if space.username}
+                    <span class="mx-2">•</span>
+                    <span class="text-foreground">@{space.username}</span>
+                  {/if}
                 </div>
               </a>
             {/each}
