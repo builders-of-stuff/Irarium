@@ -130,9 +130,8 @@
   {/if}
 
   <Tabs.Root value="plans" class="w-full">
-    <Tabs.List class="mb-8 w-auto max-w-md grid-cols-2">
+    <Tabs.List class="mb-8 w-auto max-w-md">
       <Tabs.Trigger value="plans">Upgrades</Tabs.Trigger>
-      <Tabs.Trigger value="account" disabled>Account</Tabs.Trigger>
     </Tabs.List>
 
     <Tabs.Content value="plans" class="space-y-8">
@@ -207,14 +206,6 @@
             </CardFooter>
           </Card>
         </div>
-      </div>
-    </Tabs.Content>
-
-    <Tabs.Content value="account">
-      <div
-        class="flex flex-col items-center justify-center py-12 text-muted-foreground"
-      >
-        <p>Account settings coming soon</p>
       </div>
     </Tabs.Content>
   </Tabs.Root>
