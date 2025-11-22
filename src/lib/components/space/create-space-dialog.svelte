@@ -26,11 +26,11 @@
     isLoading = true;
     try {
       // Check if user already has a space
-      if (
-        spaceStore.userSpaces.length > 0 &&
-        !authStore.userSettings?.isFullyUpgraded
-      ) {
-        toast.error('You can only create one space.');
+      const spaceLimit = authStore.userSettings?.spaceLimit || 1;
+      if (spaceStore.userSpaces.length >= spaceLimit) {
+        toast.error(
+          `You have reached your limit of ${spaceLimit} space${spaceLimit > 1 ? 's' : ''}. Upgrade to create more.`
+        );
         return;
       }
 
@@ -72,7 +72,8 @@
     <Dialog.Header>
       <Dialog.Title>Create Space</Dialog.Title>
       <Dialog.Description>
-        Create your own personal space. You can only create one space.
+        Create your own personal space. You can create up to {authStore.userSettings
+          ?.spaceLimit || 1} spaces.
       </Dialog.Description>
     </Dialog.Header>
     <div class="grid gap-4 py-4">

@@ -35,8 +35,11 @@ export async function handleSuccessfulPayment(pb, event) {
       .collection(COLLECTION.USER_SETTINGS)
       .getFirstListItem(`userId="${userId}"`);
 
+    const quantity = parseInt(session.metadata?.quantity || '1', 10);
+    const currentLimit = userSettings.spaceLimit || 1;
+
     await pb.collection(COLLECTION.USER_SETTINGS).update(userSettings.id, {
-      isFullyUpgraded: true
+      spaceLimit: currentLimit + quantity
     });
   } catch (err) {
     console.error('Error updating userSettings:', err);

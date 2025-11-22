@@ -211,7 +211,8 @@ class AuthStore {
     return {
       id: record.id,
       userId: record.userId,
-      isFullyUpgraded: record.isFullyUpgraded
+      isFullyUpgraded: record.isFullyUpgraded,
+      spaceLimit: record.spaceLimit
     };
   }
 }

@@ -23,6 +23,8 @@
   let showError = false;
   let errorMessage = 'Something went wrong. Please try again later.';
 
+  let quantity = 1;
+
   onMount(() => {
     // Check URL parameters
     const url = new URL(window.location.href);
@@ -32,6 +34,10 @@
     // Clean URL if needed
     if (showSuccess || showCanceled) {
       window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if (showSuccess) {
+      authStore.refreshUser();
     }
   });
 
@@ -58,7 +64,8 @@
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          userId: authStore.userId
+          userId: authStore.userId,
+          quantity
         })
       });
 
@@ -80,7 +87,7 @@
   };
 </script>
 
-<div class="relative container min-h-screen max-w-5xl py-8">
+<div class="relative container mx-auto min-h-screen max-w-5xl px-4 py-8">
   <div class="mb-6 flex items-center justify-between">
     <h1 class="text-3xl font-bold">Settings</h1>
   </div>
@@ -123,57 +130,80 @@
   {/if}
 
   <Tabs.Root value="plans" class="w-full">
-    <Tabs.List class="mb-8 grid w-full max-w-md grid-cols-2">
-      <Tabs.Trigger value="plans">Billing & Plans</Tabs.Trigger>
+    <Tabs.List class="mb-8 w-auto max-w-md grid-cols-2">
+      <Tabs.Trigger value="plans">Upgrades</Tabs.Trigger>
       <Tabs.Trigger value="account" disabled>Account</Tabs.Trigger>
     </Tabs.List>
 
     <Tabs.Content value="plans" class="space-y-8">
+      <!-- Current Status Section -->
+      <div class="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
+        <h2 class="mb-4 text-lg font-semibold">Your Status</h2>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="flex items-center gap-3">
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
+            >
+              <Check class="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p class="text-sm font-medium text-muted-foreground">Space Limit</p>
+              <p class="text-xl font-bold">{authStore.userSettings?.spaceLimit || 1}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
+            >
+              <Check class="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p class="text-sm font-medium text-muted-foreground">Features</p>
+              <p class="text-base font-semibold">Base access included</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="space-y-4">
-        <h2 class="text-xl font-semibold">Available Plans</h2>
-        <div class="grid gap-6 md:grid-cols-2 lg:max-w-4xl">
-          <!-- Free Plan -->
-          <Card class="flex flex-col">
+        <h2 class="text-xl font-semibold">Available Upgrades</h2>
+        <div class="grid gap-6 lg:max-w-4xl">
+          <!-- Additional Spaces -->
+          <Card class="flex flex-col border-primary/50 shadow-sm">
             <CardHeader>
-              <CardTitle>Free</CardTitle>
-              <CardDescription>Basic access to Irarium features</CardDescription>
+              <CardTitle>Additional Spaces</CardTitle>
+              <CardDescription>
+                One-time payment to increase your space limit.
+              </CardDescription>
               <div class="mt-2 text-3xl font-bold">
-                $0<span class="text-sm font-normal text-muted-foreground">/month</span>
+                $3.50<span class="text-sm font-normal text-muted-foreground">/unit</span
+                >
               </div>
             </CardHeader>
             <CardContent class="flex-grow">
+              <div class="mb-4 space-y-2">
+                <div class="flex items-center gap-2">
+                  <label for="quantity" class="text-sm font-medium">Quantity:</label>
+                  <input
+                    type="number"
+                    id="quantity"
+                    min="1"
+                    max="100"
+                    bind:value={quantity}
+                    class="flex h-9 w-20 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+              </div>
               <ul class="space-y-2">
                 <li class="flex items-center gap-2">
                   <Check class="h-4 w-4 text-primary" />
-                  <span>Base access to features</span>
+                  <span>Permanently increase your space limit</span>
                 </li>
               </ul>
             </CardContent>
             <CardFooter>
-              <Button variant="outline" class="w-full" disabled>Current Plan</Button>
-            </CardFooter>
-          </Card>
-
-          <!-- Full Upgrade -->
-          <Card class="flex flex-col border-primary/50 shadow-sm">
-            <CardHeader>
-              <CardTitle>Full Upgrade</CardTitle>
-              <CardDescription>One-time payment for permanent upgrade</CardDescription>
-              <div class="mt-2 text-3xl font-bold">$10</div>
-            </CardHeader>
-            <CardContent class="flex-grow">
-              <ul class="space-y-2">
-                <li class="flex items-center gap-2">
-                  <Check class="h-4 w-4 text-primary" />
-                  <span>
-                    Unlock all current and future features that don't require a
-                    subscription
-                  </span>
-                </li>
-              </ul>
-            </CardContent>
-            <CardFooter>
-              <Button class="w-full" onclick={handleCheckout}>Purchase</Button>
+              <Button class="w-full md:w-auto" onclick={handleCheckout}>Purchase</Button
+              >
             </CardFooter>
           </Card>
         </div>

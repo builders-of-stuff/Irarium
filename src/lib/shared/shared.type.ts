@@ -27,6 +27,7 @@ export type UserSettings = {
   id: string;
   userId: string;
   isFullyUpgraded: boolean;
+  spaceLimit: number;
 };
 
 // write access for superusers only

@@ -1,6 +1,6 @@
 # Getting Started
 
-Everything can be hosted on a single server, DB included. 
+Everything can be hosted on a single server, DB included.
 
 I recommend using hetzner for cost efficiency along with Coolify for convenience.
 
@@ -34,3 +34,14 @@ pnpm run dev
 ```
 
 The app will be available at `http://localhost:5173`
+
+## Testing Stripe webhook
+
+ngrok doesn't work, not sure why, just use stripe cli
+
+`stripe listen --forward-to http://localhost:5173/payments`
+`stripe trigger checkout.session.completed`
+
+Test card
+5555 5555 5555 4444
+4242 4242 4242 4242
