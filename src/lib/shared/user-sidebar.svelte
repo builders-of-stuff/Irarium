@@ -1,18 +1,10 @@
 <script lang="ts">
-  import {
-    GalleryVerticalEnd,
-    Settings,
-    User,
-    Box,
-    LogOut,
-    MoreHorizontal
-  } from '@lucide/svelte';
+  import { GalleryVerticalEnd, Settings, User, Box } from '@lucide/svelte';
   import { goto } from '$app/navigation';
 
   import IrariumLogo from '$lib/components/irarium-logo.svelte';
 
   import * as Sidebar from '$lib/components/ui/sidebar';
-  import * as Popover from '$lib/components/ui/popover';
   import { Button } from '$lib/components/ui/button';
 
   import { authStore } from '$lib/auth/auth.store.svelte';
@@ -24,14 +16,6 @@
     { title: 'Collections', icon: GalleryVerticalEnd, href: '/collections' },
     { title: 'Profile', icon: User, href: `/user/${authStore?.username}` }
   ]);
-
-  // Handle logout function
-  function handleLogout() {
-    authStore.signOut();
-    irariumsStore.clearStore();
-
-    goto(ROUTE.LANDING);
-  }
 </script>
 
 <Sidebar.Root variant="sidebar" class="border-r bg-background/50 backdrop-blur-sm">
@@ -81,30 +65,17 @@
         <Sidebar.GroupContent>
           <Sidebar.Menu>
             <Sidebar.MenuItem>
-              <Popover.Root>
-                <Popover.Trigger class="w-full">
-                  <button
-                    class="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-                  >
-                    <div
-                      class="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground"
-                    >
-                      <Settings class="h-5 w-5" />
-                    </div>
-                    <span class="flex-1 text-left">Settings</span>
-                    <MoreHorizontal class="h-5 w-5 text-muted-foreground" />
-                  </button>
-                </Popover.Trigger>
-                <Popover.Content class="w-56 p-1" align="start" side="right">
-                  <button
-                    class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-destructive transition-colors hover:bg-destructive/10"
-                    onclick={handleLogout}
-                  >
-                    <LogOut class="h-4 w-4" />
-                    <span>Log Out</span>
-                  </button>
-                </Popover.Content>
-              </Popover.Root>
+              <a
+                href="/settings"
+                class="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                <div
+                  class="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground"
+                >
+                  <Settings class="h-5 w-5" />
+                </div>
+                <span class="flex-1 text-left">Settings</span>
+              </a>
             </Sidebar.MenuItem>
           </Sidebar.Menu>
         </Sidebar.GroupContent>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Check, CheckCircle, AlertCircle, XCircle } from '@lucide/svelte';
+  import { Check, CheckCircle, AlertCircle, XCircle, LogOut } from '@lucide/svelte';
+  import { goto } from '$app/navigation';
 
   import { Button } from '$lib/components/ui/button';
   import {
@@ -15,6 +16,7 @@
   import { ROUTE } from '$lib/shared/shared.constant';
   import * as Alert from '$lib/components/ui/alert';
   import { authStore } from '$lib/auth/auth.store.svelte';
+  import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
 
   let showSuccess = false;
   let showCanceled = false;
@@ -32,6 +34,14 @@
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   });
+
+  // Handle logout function
+  function handleLogout() {
+    authStore.signOut();
+    irariumsStore.clearStore();
+
+    goto(ROUTE.LANDING);
+  }
 
   // Function to handle checkout
   const handleCheckout = async () => {
@@ -70,8 +80,10 @@
   };
 </script>
 
-<div class="container max-w-5xl py-8">
-  <h1 class="mb-6 text-3xl font-bold">Billing & Subscription</h1>
+<div class="relative container min-h-screen max-w-5xl py-8">
+  <div class="mb-6 flex items-center justify-between">
+    <h1 class="text-3xl font-bold">Settings</h1>
+  </div>
 
   {#if showSuccess}
     <Alert.Root
@@ -110,61 +122,82 @@
     </Alert.Root>
   {/if}
 
-  <Tabs.Root value="one-time" class="w-full">
-    <Tabs.List class="grid w-full grid-cols-2">
-      <Tabs.Trigger value="one-time">Upgrades</Tabs.Trigger>
-      <Tabs.Trigger value="plans">Subscriptions</Tabs.Trigger>
+  <Tabs.Root value="plans" class="w-full">
+    <Tabs.List class="mb-8 grid w-full max-w-md grid-cols-2">
+      <Tabs.Trigger value="plans">Billing & Plans</Tabs.Trigger>
+      <Tabs.Trigger value="account" disabled>Account</Tabs.Trigger>
     </Tabs.List>
 
-    <Tabs.Content value="plans" class="space-y-4">
-      <div class="flex justify-center">
-        <Card class="flex w-full max-w-md flex-col">
-          <CardHeader>
-            <CardTitle>Free</CardTitle>
-            <CardDescription>Basic access to Irarium features</CardDescription>
-            <div class="text-3xl font-bold">
-              $0<span class="text-sm font-normal text-muted-foreground">/month</span>
-            </div>
-          </CardHeader>
-          <CardContent class="flex-grow">
-            <ul class="space-y-2">
-              <li class="flex items-center gap-2">
-                <Check class="h-4 w-4 text-primary" />
-                <span>Base access to features</span>
-              </li>
-            </ul>
-          </CardContent>
-          <CardFooter>
-            <Button variant="outline" class="w-full" disabled>Current Plan</Button>
-          </CardFooter>
-        </Card>
+    <Tabs.Content value="plans" class="space-y-8">
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold">Available Plans</h2>
+        <div class="grid gap-6 md:grid-cols-2 lg:max-w-4xl">
+          <!-- Free Plan -->
+          <Card class="flex flex-col">
+            <CardHeader>
+              <CardTitle>Free</CardTitle>
+              <CardDescription>Basic access to Irarium features</CardDescription>
+              <div class="mt-2 text-3xl font-bold">
+                $0<span class="text-sm font-normal text-muted-foreground">/month</span>
+              </div>
+            </CardHeader>
+            <CardContent class="flex-grow">
+              <ul class="space-y-2">
+                <li class="flex items-center gap-2">
+                  <Check class="h-4 w-4 text-primary" />
+                  <span>Base access to features</span>
+                </li>
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Button variant="outline" class="w-full" disabled>Current Plan</Button>
+            </CardFooter>
+          </Card>
+
+          <!-- Full Upgrade -->
+          <Card class="flex flex-col border-primary/50 shadow-sm">
+            <CardHeader>
+              <CardTitle>Full Upgrade</CardTitle>
+              <CardDescription>One-time payment for permanent upgrade</CardDescription>
+              <div class="mt-2 text-3xl font-bold">$10</div>
+            </CardHeader>
+            <CardContent class="flex-grow">
+              <ul class="space-y-2">
+                <li class="flex items-center gap-2">
+                  <Check class="h-4 w-4 text-primary" />
+                  <span>
+                    Unlock all current and future features that don't require a
+                    subscription
+                  </span>
+                </li>
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Button class="w-full" onclick={handleCheckout}>Purchase</Button>
+            </CardFooter>
+          </Card>
+        </div>
       </div>
     </Tabs.Content>
 
-    <Tabs.Content value="one-time" class="space-y-4">
-      <div class="flex justify-center">
-        <Card class="flex w-full max-w-md flex-col">
-          <CardHeader>
-            <CardTitle>Full Upgrade</CardTitle>
-            <CardDescription>One-time payment for permanent upgrade</CardDescription>
-            <div class="text-3xl font-bold">$10</div>
-          </CardHeader>
-          <CardContent class="flex-grow">
-            <ul class="space-y-2">
-              <li class="flex items-center gap-2">
-                <Check class="h-4 w-4 text-primary" />
-                <span>
-                  Unlock all current and future features that don't require a
-                  subscription (currently none)
-                </span>
-              </li>
-            </ul>
-          </CardContent>
-          <CardFooter>
-            <Button class="w-full" onclick={handleCheckout}>Purchase</Button>
-          </CardFooter>
-        </Card>
+    <Tabs.Content value="account">
+      <div
+        class="flex flex-col items-center justify-center py-12 text-muted-foreground"
+      >
+        <p>Account settings coming soon</p>
       </div>
     </Tabs.Content>
   </Tabs.Root>
+
+  <div class="fixed right-8 bottom-8">
+    <Button
+      variant="destructive"
+      size="lg"
+      class="gap-2 shadow-lg"
+      onclick={handleLogout}
+    >
+      <LogOut class="h-4 w-4" />
+      Log Out
+    </Button>
+  </div>
 </div>
