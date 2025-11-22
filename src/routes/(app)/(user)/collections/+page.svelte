@@ -12,6 +12,7 @@
   import { spaceStore } from '$lib/space/space.store.svelte';
   import CreateSpaceDialog from '$lib/components/space/create-space-dialog.svelte';
   import { MapPin } from '@lucide/svelte';
+  import DateDisplay from '$lib/components/shared/date-display.svelte';
 
   let isCreateSpaceOpen = $state(false);
   let activeTab = $state('irariums');
@@ -183,16 +184,23 @@
                   <div class="flex justify-between text-xs text-muted-foreground">
                     <div class="flex items-center gap-2">
                       {#if irarium.space}
-                        <a
-                          href={`/spaces/${irarium.space.slug}-${irarium.spaceId}`}
+                        <button
+                          type="button"
                           class="mr-1 flex items-center gap-1 hover:text-foreground hover:underline"
-                          onclick={(e) => e.stopPropagation()}
+                          onclick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.location.href = `/spaces/${irarium.space?.slug}-${irarium.spaceId}`;
+                          }}
                         >
                           <MapPin size={12} />
                           {irarium.space.name}
-                        </a>
+                        </button>
                       {/if}
-                      <span>{formatDate(irarium.updated)}</span>
+                      <DateDisplay
+                        created={irarium.created}
+                        updated={irarium.updated}
+                      />
                     </div>
                     <div class="flex items-center gap-2">
                       {#if irarium.isPublic}

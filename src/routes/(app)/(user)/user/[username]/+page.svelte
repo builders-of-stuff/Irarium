@@ -10,6 +10,7 @@
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import * as Tabs from '$lib/components/ui/tabs';
   import { MapPin } from '@lucide/svelte';
+  import DateDisplay from '$lib/components/shared/date-display.svelte';
 
   // Dialog components
   import * as Dialog from '$lib/components/ui/dialog';
@@ -188,16 +189,23 @@
                     {/if}
                     <div class="flex justify-between text-xs text-muted-foreground">
                       <div class="flex items-center gap-3">
-                        <span>{formatDate(irarium.updated)}</span>
+                        <DateDisplay
+                          created={irarium.created}
+                          updated={irarium.updated}
+                        />
                         {#if irarium.space}
-                          <a
-                            href={`/spaces/${irarium.space.slug}-${irarium.spaceId}`}
+                          <button
+                            type="button"
                             class="flex items-center gap-1 hover:text-foreground hover:underline"
-                            onclick={(e) => e.stopPropagation()}
+                            onclick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              window.location.href = `/spaces/${irarium.space?.slug}-${irarium.spaceId}`;
+                            }}
                           >
                             <MapPin size={12} />
                             {irarium.space.name}
-                          </a>
+                          </button>
                         {/if}
                       </div>
                       <span>{countThoughts(irarium)} thoughts</span>

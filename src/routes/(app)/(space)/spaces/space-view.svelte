@@ -13,6 +13,7 @@
   import { goto } from '$app/navigation';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
+  import DateDisplay from '$lib/components/shared/date-display.svelte';
 
   let { slug } = $props<{ slug: string }>();
 
@@ -159,6 +160,7 @@
           {@const thoughtCount = countThoughts(irarium)}
           <div
             onkeydown={handleCardKeydown}
+            onclick={(e) => e.stopPropagation()}
             class="info-card relative w-[350px] rounded-lg border border-white/20 bg-black/95 p-4 shadow-xl backdrop-blur-sm"
             role="dialog"
             tabindex="-1"
@@ -183,12 +185,14 @@
                 {irarium.description}
               </p>
             {/if}
-            <div class="mb-3 flex items-center gap-2 text-xs text-gray-400">
+            <div class="mb-3 flex flex-col gap-1 text-xs text-gray-400">
               <span>{thoughtCount} thought{thoughtCount !== 1 ? 's' : ''}</span>
-              <span class="mx-1">•</span>
-              <span>{new Date(irarium.created).toLocaleDateString()}</span>
+              <DateDisplay
+                created={irarium.created}
+                updated={irarium.updated}
+                class="flex-col items-start gap-1 text-gray-400"
+              />
               {#if irarium.username}
-                <span class="mx-1">•</span>
                 <a
                   href={`/user/${irarium.username}`}
                   class="hover:text-white hover:underline"

@@ -9,6 +9,7 @@
   import { authStore } from '$lib/auth/auth.store.svelte';
 
   import { spaceStore } from '$lib/space/space.store.svelte';
+  import DateDisplay from '$lib/components/shared/date-display.svelte';
 
   let spaces = $state<Space[]>([]);
   let isLoading = $state(true);
@@ -166,13 +167,7 @@
                     </a>
                   {/if}
                   <span class="mx-2">•</span>
-                  <span>
-                    {new Date(space.created).toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </span>
+                  <DateDisplay created={space.created} />
                 </div>
               </a>
             {/each}

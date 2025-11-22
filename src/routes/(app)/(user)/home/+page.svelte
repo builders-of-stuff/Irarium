@@ -6,20 +6,13 @@
   import { Button } from '$lib/components/ui/button';
   import { MapPin } from '@lucide/svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
+  import DateDisplay from '$lib/components/shared/date-display.svelte';
 
   onMount(() => {
     if (authStore.userId) {
       irariumsStore.fetchPublicIrariums();
     }
   });
-
-  function formatDate(dateString: string) {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
 </script>
 
 <div class="relative min-h-screen overflow-hidden">
@@ -61,27 +54,35 @@
               <div class="flex justify-between text-xs text-muted-foreground">
                 <div class="flex items-center gap-2">
                   {#if irarium.createdBy}
-                    <a
-                      href={`/user/${irarium.createdBy}`}
+                    <button
+                      type="button"
                       class="hover:underline"
-                      onclick={(e) => e.stopPropagation()}
+                      onclick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = `/user/${irarium.createdBy}`;
+                      }}
                     >
                       @{irarium.createdBy}
-                    </a>
+                    </button>
                   {/if}
 
                   {#if irarium.space}
-                    <a
-                      href={`/spaces/${irarium.space.slug}-${irarium.spaceId}`}
+                    <button
+                      type="button"
                       class="flex items-center gap-1 hover:text-foreground hover:underline"
-                      onclick={(e) => e.stopPropagation()}
+                      onclick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = `/spaces/${irarium.space?.slug}-${irarium.spaceId}`;
+                      }}
                     >
                       <MapPin size={12} />
                       {irarium.space.name}
-                    </a>
+                    </button>
                   {/if}
 
-                  <span>{formatDate(irarium.updated)}</span>
+                  <DateDisplay created={irarium.created} updated={irarium.updated} />
                 </div>
                 <span>{countThoughts(irarium)} thoughts</span>
               </div>
