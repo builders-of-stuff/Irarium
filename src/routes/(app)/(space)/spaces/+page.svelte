@@ -106,7 +106,13 @@
                   </span>
                   {#if space.username}
                     <span class="mx-2">•</span>
-                    <span class="text-foreground">@{space.username}</span>
+                    <a
+                      href={`/user/${space.username}`}
+                      class="text-foreground hover:underline"
+                      onclick={(e) => e.stopPropagation()}
+                    >
+                      @{space.username}
+                    </a>
                   {/if}
                 </div>
               </a>
