@@ -50,7 +50,7 @@
       open = false;
 
       // Refresh user spaces
-      await spaceStore.fetchUserSpaces(authStore.userId);
+      await spaceStore.fetchUserSpaces(authStore.userId, true);
 
       // Reset form
       name = '';

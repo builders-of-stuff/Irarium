@@ -14,7 +14,8 @@
   const menuItems = $derived([
     { title: 'Spaces', icon: Box, href: '/spaces' },
     { title: 'Collections', icon: GalleryVerticalEnd, href: '/collections' },
-    { title: 'Profile', icon: User, href: `/user/${authStore?.username}` }
+    { title: 'Profile', icon: User, href: `/user/${authStore?.username}` },
+    { title: 'Settings', icon: Settings, href: '/settings' }
   ]);
 </script>
 
@@ -49,37 +50,15 @@
       </Sidebar.GroupContent>
     </Sidebar.Group>
 
-    <div class="mt-auto flex flex-col gap-4 pb-6">
-      <div class="px-2">
-        <a href="/create" class="block">
-          <Button
-            variant="default"
-            class="w-full rounded-full py-7 text-lg font-semibold shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Create
-          </Button>
-        </a>
-      </div>
-
-      <Sidebar.Group>
-        <Sidebar.GroupContent>
-          <Sidebar.Menu>
-            <Sidebar.MenuItem>
-              <a
-                href="/settings"
-                class="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-base font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
-              >
-                <div
-                  class="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground"
-                >
-                  <Settings class="h-5 w-5" />
-                </div>
-                <span class="flex-1 text-left">Settings</span>
-              </a>
-            </Sidebar.MenuItem>
-          </Sidebar.Menu>
-        </Sidebar.GroupContent>
-      </Sidebar.Group>
+    <div class="mt-auto px-2 pb-6">
+      <a href="/create" class="block">
+        <Button
+          variant="default"
+          class="w-full rounded-full py-7 text-lg font-semibold shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
+        >
+          Create
+        </Button>
+      </a>
     </div>
   </Sidebar.Content>
 </Sidebar.Root>

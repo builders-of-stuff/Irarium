@@ -95,7 +95,7 @@
   {#if activeTab === 'irariums'}
     <Button href="/create">Create Irarium</Button>
   {:else if activeTab === 'spaces'}
-    {#if spaceStore.userSpaces.length < 1 || authStore.userSettings?.isFullyUpgraded}
+    {#if spaceStore.userSpaces.length < (authStore.userSettings?.spaceLimit || 1) || authStore.userSettings?.isFullyUpgraded}
       <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
     {/if}
   {/if}
