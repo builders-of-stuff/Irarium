@@ -1,3 +1,9 @@
+# 2.5.0 (2025-11-22)
+
+- Revamp UI
+- Add support for spaces
+- Add payments for additional spaces
+
 # 1.3.0 (2025-07-27)
 
 - Add stars to irarium, home, collection
