@@ -15,6 +15,11 @@ export const ROUTE_IDS = {
   HOME: '/(app)/(user)/home',
   COLLECTION: '/(app)/(user)/collections',
   CHECKOUT: '/(app)/(user)/billing/checkout',
+  SETTINGS: '/(app)/(user)/settings',
+  CREATE: '/(app)/(user)/create',
+  PROFILE: '/(app)/(user)/user/[username]',
+  SPACES: '/(app)/(space)/spaces',
+  SPACE: '/(app)/(space)/spaces/[slug]',
 
   // Webhook routes
   STRIPE_WEBHOOK: '/(webhooks)/payments'
@@ -27,7 +32,10 @@ export const ROUTE = {
   HOME: '/home',
   CHECKOUT: '/billing/checkout',
   CREATE: '/create',
-  COLLECTION: '/collections'
+  COLLECTION: '/collections',
+  SETTINGS: '/settings',
+  SPACES: '/spaces',
+  PROFILE: '/user'
 };
 
 // event.route.id -> e.g. for `src/routes/blog/[slug]`, it would be `/blog/[slug]`
@@ -42,7 +50,12 @@ export const PUBLIC_ROUTE_IDS = [
 export const PRIVATE_ROUTE_IDS = [
   ROUTE_IDS.HOME,
   ROUTE_IDS.CHECKOUT,
-  ROUTE_IDS.COLLECTION
+  ROUTE_IDS.COLLECTION,
+  ROUTE_IDS.SETTINGS,
+  ROUTE_IDS.CREATE,
+  ROUTE_IDS.PROFILE,
+  ROUTE_IDS.SPACES,
+  ROUTE_IDS.SPACE
 ];
 
 // Public routes that should redirect to home if logged in
