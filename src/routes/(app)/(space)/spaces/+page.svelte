@@ -1,15 +1,20 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, untrack } from 'svelte';
   import { pb } from '$lib/db/client';
   import { COLLECTION, type Space } from '$lib/shared/shared.type';
   import { Button } from '$lib/components/ui/button';
+  import { Input } from '$lib/components/ui/input';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
+  import CreateSpaceDialog from '$lib/components/space/create-space-dialog.svelte';
+  import { authStore } from '$lib/auth/auth.store.svelte';
 
   import { spaceStore } from '$lib/space/space.store.svelte';
 
   let spaces = $state<Space[]>([]);
   let isLoading = $state(true);
   let error = $state<string | null>(null);
+  let isCreateSpaceOpen = $state(false);
+  let searchQuery = $state('');
 
   onMount(async () => {
     try {
@@ -42,14 +47,51 @@
       isLoading = false;
     }
   });
+
+  $effect(() => {
+    if (authStore.userId) {
+      untrack(() => {
+        spaceStore.fetchUserSpaces(authStore.userId);
+      });
+    }
+  });
+
+  let filteredSpaces = $derived.by(() => {
+    if (!searchQuery.trim()) return spaces;
+
+    const query = searchQuery.toLowerCase();
+    return spaces.filter((s) => {
+      const name = s.name?.toLowerCase() || '';
+      const description = s.description?.toLowerCase() || '';
+      const tags = s.tags?.toLowerCase() || '';
+      return (
+        name.includes(query) || description.includes(query) || tags.includes(query)
+      );
+    });
+  });
 </script>
+
+{#snippet actions()}
+  {#if spaceStore.userSpaces.length < 1 || authStore.userSettings?.isFullyUpgraded}
+    <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
+  {/if}
+{/snippet}
 
 <div class="relative min-h-screen overflow-hidden">
   <div class="relative z-10 flex h-screen flex-col">
-    <UserNavbar title="Spaces" />
+    <UserNavbar title="Spaces" {actions} />
 
     <div class="flex-1 overflow-auto p-8">
       <div class="container mx-auto max-w-4xl">
+        <div class="mb-6">
+          <Input
+            type="text"
+            placeholder="Search spaces by title, description, or tags..."
+            bind:value={searchQuery}
+            class="max-w-md"
+          />
+        </div>
+
         {#if isLoading}
           <div class="flex justify-center py-12">
             <div class="animate-pulse text-center">
@@ -60,14 +102,20 @@
           <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
             <p>{error}</p>
           </div>
-        {:else if spaces.length === 0}
+        {:else if filteredSpaces.length === 0}
           <div class="rounded-lg border border-dashed p-8 text-center">
-            <h3 class="mb-3 text-xl font-medium">No spaces found</h3>
-            <p class="text-muted-foreground">There are no spaces available yet.</p>
+            <h3 class="mb-3 text-xl font-medium">
+              {spaces.length === 0 ? 'No spaces found' : 'No matching spaces'}
+            </h3>
+            <p class="text-muted-foreground">
+              {spaces.length === 0
+                ? 'There are no spaces available yet.'
+                : 'Try adjusting your search query.'}
+            </p>
           </div>
         {:else}
           <div class="grid gap-4 md:grid-cols-2">
-            {#each spaces as space}
+            {#each filteredSpaces as space}
               <a
                 href={`/spaces/${space.slug}-${space.id}`}
                 class="block rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"
@@ -76,6 +124,17 @@
                 <p class="text-sm text-muted-foreground">
                   {space.description || 'No description'}
                 </p>
+                {#if space.tags}
+                  <div class="mt-2 flex flex-wrap gap-1">
+                    {#each space.tags.split(',') as tag}
+                      <span
+                        class="rounded-full bg-secondary px-2 py-0.5 text-xs text-secondary-foreground"
+                      >
+                        {tag.trim()}
+                      </span>
+                    {/each}
+                  </div>
+                {/if}
                 <div class="mt-4 flex items-center text-xs text-muted-foreground">
                   <span class="flex items-center">
                     <svg
@@ -123,3 +182,5 @@
     </div>
   </div>
 </div>
+
+<CreateSpaceDialog bind:open={isCreateSpaceOpen} />
