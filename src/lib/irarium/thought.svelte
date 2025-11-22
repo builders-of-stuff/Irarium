@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Editor } from '@tiptap/core';
-  import Plus from 'lucide-svelte/icons/plus';
-  import Trash2 from 'lucide-svelte/icons/trash-2';
+  import { Plus, Trash2 } from '@lucide/svelte';
 
   import { IrariumStore } from '$lib/irarium/irarium.store.svelte';
   import { Button } from '$lib/components/ui/button';

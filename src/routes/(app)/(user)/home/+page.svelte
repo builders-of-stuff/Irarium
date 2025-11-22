@@ -4,6 +4,7 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
+  import { MapPin } from '@lucide/svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
 
   onMount(() => {
@@ -68,6 +69,18 @@
                       @{irarium.createdBy}
                     </a>
                   {/if}
+
+                  {#if irarium.space}
+                    <a
+                      href={`/spaces/${irarium.space.slug}-${irarium.spaceId}`}
+                      class="flex items-center gap-1 hover:text-foreground hover:underline"
+                      onclick={(e) => e.stopPropagation()}
+                    >
+                      <MapPin size={12} />
+                      {irarium.space.name}
+                    </a>
+                  {/if}
+
                   <span>{formatDate(irarium.updated)}</span>
                 </div>
                 <span>{countThoughts(irarium)} thoughts</span>

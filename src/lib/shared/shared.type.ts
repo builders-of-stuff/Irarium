@@ -112,6 +112,10 @@ export type Irarium = {
   position?: [number, number, number];
   username?: string; // Current username (for expand queries)
   createdBy?: string; // Username at time of creation (fluid identity)
+  space?: {
+    name: string;
+    slug: string;
+  };
 };
 
 export type Space = {

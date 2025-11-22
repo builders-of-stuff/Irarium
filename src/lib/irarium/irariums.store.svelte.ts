@@ -53,6 +53,7 @@ export class IrariumsStore {
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
         filter: `userId = "${userId}"`,
         sort: '-created',
+        expand: 'spaceId',
         requestKey: null
       });
 
@@ -75,7 +76,7 @@ export class IrariumsStore {
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
         filter: 'isPublic = true',
         sort: '-created',
-        expand: 'userId'
+        expand: 'userId,spaceId'
       });
 
       this.publicIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
@@ -301,7 +302,11 @@ export class IrariumsStore {
       spaceId: recordItem.spaceId || '', // Use actual spaceId from DB
       position: position,
       username: recordItem.expand?.userId?.username || '',
-      createdBy: recordItem.createdBy || '' // Username at time of creation
+      createdBy: recordItem.createdBy || '', // Username at time of creation
+      space: recordItem.expand?.spaceId ? {
+        name: recordItem.expand.spaceId.name,
+        slug: recordItem.expand.spaceId.slug
+      } : undefined
     };
   }
 
