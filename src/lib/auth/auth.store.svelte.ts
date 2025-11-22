@@ -64,6 +64,29 @@ class AuthStore {
     }
   }
 
+  async loginWithGoogle() {
+    try {
+      const authResponse = await pb.collection(COLLECTION.USERS).authWithOAuth2({
+        provider: 'google'
+      });
+
+      this.user = this.mapAuthRecordToUser(authResponse.record);
+      await this.fetchAndSetUserSettings();
+
+      // Set cookie
+      document.cookie = pb.authStore.exportToCookie({
+        httpOnly: false,
+        secure: true,
+        sameSite: 'lax'
+      });
+
+      return { success: true, data: authResponse };
+    } catch (error) {
+      console.error('Google login error:', error);
+      return { success: false, error };
+    }
+  }
+
   async signUp(email: string, password: string, passwordConfirm: string) {
     try {
       // Create user

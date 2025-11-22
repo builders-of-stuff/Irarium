@@ -1,3 +1,7 @@
+# 2.6.0 (2025-11-22)
+
+- Add support for Google OAuth login/signup
+
 # 2.5.0 (2025-11-22)
 
 - Revamp UI
