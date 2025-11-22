@@ -185,6 +185,18 @@
             {/if}
             <div class="mb-3 flex items-center gap-2 text-xs text-gray-400">
               <span>{thoughtCount} thought{thoughtCount !== 1 ? 's' : ''}</span>
+              <span class="mx-1">•</span>
+              <span>{new Date(irarium.created).toLocaleDateString()}</span>
+              {#if irarium.username}
+                <span class="mx-1">•</span>
+                <a
+                  href={`/user/${irarium.username}`}
+                  class="hover:text-white hover:underline"
+                  onclick={(e) => e.stopPropagation()}
+                >
+                  @{irarium.username}
+                </a>
+              {/if}
             </div>
             <a
               href={`/${irarium.id}`}

@@ -179,9 +179,13 @@
                     href={`/${irarium.id}`}
                     class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
                   >
-                    <div class="mb-2 line-clamp-3">
-                      {@html irarium.content || 'No content'}
-                    </div>
+                    {#if irarium.title && irarium.title !== irarium.id}
+                      <h3 class="mb-2 line-clamp-3 font-semibold">{irarium.title}</h3>
+                    {:else}
+                      <div class="mb-2 line-clamp-3">
+                        {@html irarium.content || 'No content'}
+                      </div>
+                    {/if}
                     <div class="flex justify-between text-xs text-muted-foreground">
                       <div class="flex items-center gap-3">
                         <span>{formatDate(irarium.updated)}</span>

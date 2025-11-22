@@ -155,14 +155,6 @@
                     >
                     {spaceStore.irariumCounts[space.id] || 0} irariums
                   </span>
-                  <span class="mx-2">•</span>
-                  <span>
-                    {new Date(space.created).toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </span>
                   {#if space.username}
                     <span class="mx-2">•</span>
                     <a
@@ -173,6 +165,14 @@
                       @{space.username}
                     </a>
                   {/if}
+                  <span class="mx-2">•</span>
+                  <span>
+                    {new Date(space.created).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
                 </div>
               </a>
             {/each}
