@@ -39,6 +39,10 @@
       if (irarium.selectedThoughtId) {
         irarium.clearSelectedThoughtId();
       }
+    } else {
+      if (editor && editor.isFocused) {
+        editor.commands.blur();
+      }
     }
 
     if (isFocused || isSelected) {
@@ -54,6 +58,8 @@
   });
 
   const handleKeyDown = (e: KeyboardEvent) => {
+    if (!isFocused) return false;
+
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       irarium.addThought('', node);
