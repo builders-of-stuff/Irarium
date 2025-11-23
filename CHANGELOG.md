@@ -5,6 +5,7 @@
 - Fix CSS issues within irarium nodes, and for mobile
 - Simplify exported irarium format
 - Fix hotkey navigation issues
+- Add support for sorting spaces, and sort by most irariums by default
 
 # 2.6.0 (2025-11-22)
 

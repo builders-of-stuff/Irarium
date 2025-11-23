@@ -16,6 +16,9 @@
   let error = $state<string | null>(null);
   let isCreateSpaceOpen = $state(false);
   let searchQuery = $state('');
+  let sortBy = $state<'most-irariums' | 'fewest-irariums' | 'newest' | 'oldest'>(
+    'most-irariums'
+  );
 
   onMount(async () => {
     try {
@@ -58,16 +61,40 @@
   });
 
   let filteredSpaces = $derived.by(() => {
-    if (!searchQuery.trim()) return spaces;
+    // First filter by search query
+    let result = spaces;
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = spaces.filter((s) => {
+        const name = s.name?.toLowerCase() || '';
+        const description = s.description?.toLowerCase() || '';
+        const tags = s.tags?.toLowerCase() || '';
+        return (
+          name.includes(query) || description.includes(query) || tags.includes(query)
+        );
+      });
+    }
 
-    const query = searchQuery.toLowerCase();
-    return spaces.filter((s) => {
-      const name = s.name?.toLowerCase() || '';
-      const description = s.description?.toLowerCase() || '';
-      const tags = s.tags?.toLowerCase() || '';
-      return (
-        name.includes(query) || description.includes(query) || tags.includes(query)
-      );
+    // Then sort
+    return [...result].sort((a, b) => {
+      switch (sortBy) {
+        case 'most-irariums':
+          return (
+            (spaceStore.irariumCounts[b.id] || 0) -
+            (spaceStore.irariumCounts[a.id] || 0)
+          );
+        case 'fewest-irariums':
+          return (
+            (spaceStore.irariumCounts[a.id] || 0) -
+            (spaceStore.irariumCounts[b.id] || 0)
+          );
+        case 'newest':
+          return new Date(b.created).getTime() - new Date(a.created).getTime();
+        case 'oldest':
+          return new Date(a.created).getTime() - new Date(b.created).getTime();
+        default:
+          return 0;
+      }
     });
   });
 </script>
@@ -84,13 +111,22 @@
 
     <div class="flex-1 overflow-auto p-8 pt-32 md:pt-20">
       <div class="container mx-auto max-w-4xl">
-        <div class="mb-6">
+        <div class="mb-6 flex gap-2">
           <Input
             type="text"
             placeholder="Search spaces by title, description, or tags..."
             bind:value={searchQuery}
-            class="max-w-md"
+            class="flex-1 sm:max-w-md"
           />
+          <select
+            bind:value={sortBy}
+            class="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs ring-offset-background transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
+          >
+            <option value="most-irariums">Most Irariums</option>
+            <option value="fewest-irariums">Fewest Irariums</option>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
         </div>
 
         {#if isLoading}
