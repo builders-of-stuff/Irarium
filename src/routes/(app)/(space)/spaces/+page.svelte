@@ -5,7 +5,6 @@
   import { Button } from '$lib/components/ui/button';
   import { Input } from '$lib/components/ui/input';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
-  import CreateSpaceDialog from '$lib/components/space/create-space-dialog.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
 
   import { spaceStore } from '$lib/space/space.store.svelte';
@@ -14,7 +13,6 @@
   let spaces = $state<Space[]>([]);
   let isLoading = $state(true);
   let error = $state<string | null>(null);
-  let isCreateSpaceOpen = $state(false);
   let searchQuery = $state('');
   let sortBy = $state<'most-irariums' | 'fewest-irariums' | 'newest' | 'oldest'>(
     'most-irariums'
@@ -99,15 +97,9 @@
   });
 </script>
 
-{#snippet actions()}
-  {#if spaceStore.userSpaces.length < 1 || authStore.userSettings?.isFullyUpgraded}
-    <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
-  {/if}
-{/snippet}
-
 <div class="relative min-h-screen overflow-hidden">
   <div class="relative z-10 flex h-screen flex-col">
-    <UserNavbar title="Spaces" {actions} />
+    <UserNavbar title="Spaces" />
 
     <div class="flex-1 overflow-auto p-8 pt-32 md:pt-20">
       <div class="container mx-auto max-w-4xl">
@@ -213,5 +205,3 @@
     </div>
   </div>
 </div>
-
-<CreateSpaceDialog bind:open={isCreateSpaceOpen} />
