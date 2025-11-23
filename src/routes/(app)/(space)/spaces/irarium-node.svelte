@@ -3,11 +3,15 @@
   import { Float, HTML } from '@threlte/extras';
 
   import { browser } from '$app/environment';
+  import { DEFAULT_POSITION } from '$lib/shared/space.constants';
   import type { Irarium } from '$lib/shared/shared.type';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { spaceStore } from '$lib/space/space.store.svelte';
 
-  let { irarium } = $props<{ irarium: Irarium }>();
+  let { irarium, isDimmed = false } = $props<{
+    irarium: Irarium;
+    isDimmed?: boolean;
+  }>();
 
   let hovered = $state(false);
   let isActive = $derived(spaceStore.activeIrariumId === irarium.id);
@@ -15,8 +19,16 @@
   let ignoreNextWindowClick = false;
 
   // Position is now centered at 0,0,0 with range -50 to 50
-  const position = irarium.position || [0, 0, 0];
-  const color = $derived(hovered || isActive ? '#ff3e00' : '#ffffff');
+  const position = irarium.position || DEFAULT_POSITION;
+
+  // Color logic:
+  // - Active/Hovered: Orange
+  // - Dimmed: Dark Gray
+  // - Normal: White
+  const color = $derived(
+    hovered || isActive ? '#ff3e00' : isDimmed ? '#333333' : '#ffffff'
+  );
+
   const scale = $derived(hovered || isActive ? 1.5 : 1);
   const thoughtCount = countThoughts(irarium);
 
@@ -69,8 +81,10 @@
       <T.MeshStandardMaterial
         {color}
         emissive={color}
-        emissiveIntensity={hovered ? 2 : 0.5}
+        emissiveIntensity={hovered || isActive ? 2 : isDimmed ? 0.1 : 0.5}
         toneMapped={false}
+        transparent
+        opacity={isDimmed ? 0.3 : 1}
       />
     </T.Mesh>
 

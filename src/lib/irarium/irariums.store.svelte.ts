@@ -2,6 +2,7 @@ import { pb } from '$lib/db/client';
 import { COLLECTION, type Irarium } from '$lib/shared/shared.type';
 import { spaceStore } from '$lib/space/space.store.svelte';
 import { authStore } from '$lib/auth/auth.store.svelte';
+import { DEFAULT_SPACE_SIZE } from '$lib/shared/space.constants';
 
 export class IrariumsStore {
   userIrariums = $state<Irarium[]>([]);
@@ -94,7 +95,9 @@ export class IrariumsStore {
     const irarium = this.findIrariumById(id);
     if (irarium) return irarium;
 
-    const record = await pb.collection(COLLECTION.IRARIUMS).getOne(id);
+    const record = await pb.collection(COLLECTION.IRARIUMS).getOne(id, {
+      expand: 'userId,spaceId'
+    });
 
     if (record) {
       const fetchedIrarium = this.mapRecordToIrarium(record);
@@ -247,7 +250,7 @@ export class IrariumsStore {
       children: children,
       spaceId: spaceId || null, // Ensure empty string becomes null for relation field
       position: null,
-      createdBy: authStore.username || '' // Capture username at creation time
+      createdBy: authStore.username || authStore.user?.name || authStore.userId || '' // Capture username at creation time
     };
   }
 
@@ -301,7 +304,7 @@ export class IrariumsStore {
       updated: recordItem.updated,
       spaceId: recordItem.spaceId || '', // Use actual spaceId from DB
       position: position,
-      username: recordItem.expand?.userId?.username || '',
+      username: recordItem.expand?.userId?.username || recordItem.expand?.userId?.name || recordItem.userId || '',
       createdBy: recordItem.createdBy || '', // Username at time of creation
       space: recordItem.expand?.spaceId ? {
         name: recordItem.expand.spaceId.name,
@@ -340,13 +343,13 @@ export class IrariumsStore {
     return [x, y, z];
   }
 
-  private generateRandomPosition(): [number, number, number] {
-    // Generate random position within sphere of radius 50
+  private generateRandomPosition(radius = DEFAULT_SPACE_SIZE): [number, number, number] {
+    // Generate random position within sphere of radius
     const u = Math.random();
     const v = Math.random();
     const theta = 2 * Math.PI * u;
     const phi = Math.acos(2 * v - 1);
-    const r = 50 * Math.cbrt(Math.random());
+    const r = radius * Math.cbrt(Math.random());
     
     const x = r * Math.sin(phi) * Math.cos(theta);
     const y = r * Math.sin(phi) * Math.sin(theta);

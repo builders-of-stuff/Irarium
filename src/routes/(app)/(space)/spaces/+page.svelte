@@ -2,10 +2,12 @@
   import { onMount, untrack } from 'svelte';
   import { pb } from '$lib/db/client';
   import { COLLECTION, type Space } from '$lib/shared/shared.type';
+  import { DEFAULT_SPACE_SIZE } from '$lib/shared/space.constants';
   import { Button } from '$lib/components/ui/button';
   import { Input } from '$lib/components/ui/input';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
+  import { goto } from '$app/navigation';
 
   import { spaceStore } from '$lib/space/space.store.svelte';
   import DateDisplay from '$lib/components/shared/date-display.svelte';
@@ -37,7 +39,9 @@
         mods: item.mods,
         isPublic: item.isPublic,
         created: item.created,
-        username: item.expand?.createdBy?.username
+        updated: item.updated,
+        username: item.expand?.createdBy?.username,
+        size: item.size
       }));
 
       // Fetch counts
@@ -145,9 +149,13 @@
         {:else}
           <div class="grid gap-4 md:grid-cols-2">
             {#each filteredSpaces as space}
-              <a
-                href={`/spaces/${space.slug}-${space.id}`}
-                class="block rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"
+              <div
+                role="button"
+                tabindex="0"
+                onclick={() => goto(`/spaces/${space.slug}-${space.id}`)}
+                onkeydown={(e) =>
+                  e.key === 'Enter' && goto(`/spaces/${space.slug}-${space.id}`)}
+                class="block cursor-pointer rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"
               >
                 <h3 class="mb-2 text-xl font-semibold">{space.name}</h3>
                 <p class="text-sm text-muted-foreground">
@@ -164,40 +172,65 @@
                     {/each}
                   </div>
                 {/if}
-                <div class="mt-4 flex items-center text-xs text-muted-foreground">
-                  <span class="flex items-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="14"
-                      height="14"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="mr-1"
-                      ><path
-                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-                      ></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"
-                      ></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg
-                    >
-                    {spaceStore.irariumCounts[space.id] || 0} irariums
-                  </span>
-                  {#if space.username}
+                <div class="mt-4 flex flex-col gap-1 text-xs text-muted-foreground">
+                  <div class="flex items-center">
+                    <span class="flex items-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="mr-1"
+                        ><path
+                          d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                        ></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"
+                        ></polyline><line x1="12" y1="22.08" x2="12" y2="12"
+                        ></line></svg
+                      >
+                      {spaceStore.irariumCounts[space.id] || 0} irariums
+                    </span>
                     <span class="mx-2">•</span>
-                    <a
-                      href={`/user/${space.username}`}
-                      class="text-foreground hover:underline"
-                      onclick={(e) => e.stopPropagation()}
-                    >
-                      @{space.username}
-                    </a>
-                  {/if}
-                  <span class="mx-2">•</span>
-                  <DateDisplay created={space.created} />
+                    <span class="flex items-center" title="Space Size">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="mr-1"
+                        ><path d="M3 21l18 0"></path><path d="M3 10l18 0"></path><path
+                          d="M5 6l7 -3l7 3"
+                        ></path><path d="M4 10l0 11"></path><path d="M20 10l0 11"
+                        ></path><path d="M8 14l0 3"></path><path d="M12 14l0 3"
+                        ></path><path d="M16 14l0 3"></path></svg
+                      >
+                      Size: {space.size || DEFAULT_SPACE_SIZE}
+                    </span>
+                    {#if space.username}
+                      <span class="mx-2">•</span>
+                      <a
+                        href={`/user/${space.username}`}
+                        class="text-foreground hover:underline"
+                        onclick={(e) => e.stopPropagation()}
+                      >
+                        @{space.username}
+                      </a>
+                    {/if}
+                  </div>
+                  <div class="flex items-center">
+                    <DateDisplay created={space.created} />
+                  </div>
                 </div>
-              </a>
+              </div>
             {/each}
           </div>
         {/if}

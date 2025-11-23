@@ -28,6 +28,7 @@ export type UserSettings = {
   userId: string;
   isFullyUpgraded: boolean;
   spaceLimit: number;
+  spaceExpanders: number;
 };
 
 // write access for superusers only
@@ -130,5 +131,7 @@ export type Space = {
   mods: string[];
   isPublic: boolean;
   created: string;
+  updated?: string;
   username?: string;
+  size: number;
 };

@@ -10,6 +10,7 @@
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { spaceStore } from '$lib/space/space.store.svelte';
   import { toast } from 'svelte-sonner';
+  import { DEFAULT_SPACE_SIZE } from '$lib/shared/space.constants';
 
   let { open = $bindable(false) } = $props();
 
@@ -42,7 +43,8 @@
         isPublic,
         createdBy: authStore.userId,
         type: 'personal', // Default type
-        mods: [authStore.userId]
+        mods: [authStore.userId],
+        size: DEFAULT_SPACE_SIZE
       };
 
       await pb.collection(COLLECTION.SPACES).create(data);

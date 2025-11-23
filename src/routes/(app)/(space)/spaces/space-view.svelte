@@ -9,6 +9,7 @@
   import { spaceStore } from '$lib/space/space.store.svelte';
   import { pb } from '$lib/db/client';
   import { COLLECTION, type Space } from '$lib/shared/shared.type';
+  import { DEFAULT_SPACE_SIZE } from '$lib/shared/space.constants';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
@@ -24,6 +25,8 @@
   let isLoading = $state(true);
   let error = $state<string | null>(null);
 
+  let searchQuery = $state('');
+
   // Filter irariums by this space's ID
   let spaceIrariums = $derived.by(() => {
     const spaceId = space?.id;
@@ -33,6 +36,28 @@
     );
     return filtered;
   });
+
+  // Filter by search query
+  let filteredIrariums = $derived.by(() => {
+    if (!searchQuery.trim()) return spaceIrariums;
+
+    const query = searchQuery.toLowerCase();
+    return spaceIrariums.filter((irarium) => {
+      const title = (irarium.title || '').toLowerCase();
+      const description = (irarium.description || '').toLowerCase();
+      const username = (irarium.username || '').toLowerCase();
+      const content = (irarium.content || '').toLowerCase();
+
+      return (
+        title.includes(query) ||
+        description.includes(query) ||
+        username.includes(query) ||
+        content.includes(query)
+      );
+    });
+  });
+
+  let filteredIds = $derived(new Set(filteredIrariums.map((i) => i.id)));
 
   let activeIrariums = $derived.by(() => {
     if (!spaceStore.activeIrariumId) return [];
@@ -78,7 +103,8 @@
           createdBy: record.createdBy,
           mods: record.mods,
           isPublic: record.isPublic,
-          created: record.created
+          created: record.created,
+          size: record.size
         };
       } else {
         error = 'Space not found';
@@ -125,6 +151,89 @@
 
 <Starfield />
 
+{#snippet search()}
+  <div class="relative w-full max-w-md">
+    <div class="relative">
+      <input
+        type="text"
+        bind:value={searchQuery}
+        placeholder="Search irariums..."
+        class="w-full rounded-full border border-white/10 bg-white/5 px-4 py-1.5 pl-9 text-sm text-white transition-all placeholder:text-muted-foreground focus:border-orange-500/50 focus:bg-white/10 focus:ring-1 focus:ring-orange-500/50 focus:outline-none"
+      />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+      >
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+    </div>
+    {#if searchQuery}
+      <div
+        class="absolute top-full left-0 mt-1 w-full text-center text-xs text-muted-foreground"
+      >
+        {filteredIrariums.length} irariums found
+      </div>
+    {/if}
+  </div>
+{/snippet}
+
+{#snippet customBadge()}
+  <div class="flex items-center gap-2">
+    <div
+      class="flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 px-3 py-1.5 text-sm font-medium text-blue-300 transition-all duration-200 hover:border-blue-500/50 hover:from-blue-500/30 hover:to-cyan-500/30"
+      title="Space Size"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 21l18 0"></path><path d="M3 10l18 0"></path><path d="M5 6l7 -3l7 3"
+        ></path><path d="M4 10l0 11"></path><path d="M20 10l0 11"></path><path
+          d="M8 14l0 3"
+        ></path><path d="M12 14l0 3"></path><path d="M16 14l0 3"></path>
+      </svg>
+      <span>Size: {space?.size || DEFAULT_SPACE_SIZE}</span>
+    </div>
+
+    <div
+      class="flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-gradient-to-r from-purple-500/20 to-pink-500/20 px-3 py-1.5 text-sm font-medium text-purple-300 transition-all duration-200 hover:border-purple-500/50 hover:from-purple-500/30 hover:to-pink-500/30"
+      title="Irarium Count"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10"></circle>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      <span>{spaceIrariums.length}</span>
+    </div>
+  </div>
+{/snippet}
+
 {#if isLoading}
   <div class="flex h-full w-full items-center justify-center">
     <div class="animate-pulse text-center text-white">
@@ -139,7 +248,7 @@
   </div>
 {:else if space}
   <div class="relative h-full w-full">
-    <UserNavbar title={space.name} {actions} />
+    <UserNavbar title={space.name} {actions} {customBadge} {search} />
 
     <Canvas>
       <T.PerspectiveCamera makeDefault position={[150, 150, 150]} fov={50}>
@@ -155,7 +264,7 @@
       <T.PointLight position={[-10, -10, -10]} intensity={0.5} color="blue" />
 
       <!-- Render single space -->
-      <SpaceBox id={space.slug} irariums={spaceIrariums} />
+      <SpaceBox id={space.slug} irariums={spaceIrariums} {space} {filteredIds} />
     </Canvas>
 
     <!-- Info Cards (Fixed Position) -->

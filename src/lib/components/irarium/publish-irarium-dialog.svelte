@@ -5,6 +5,7 @@
   import { Label } from '$lib/components/ui/label';
   import { pb } from '$lib/db/client';
   import { COLLECTION, type Irarium, type Space } from '$lib/shared/shared.type';
+  import { DEFAULT_SPACE_SIZE } from '$lib/shared/space.constants';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { toast } from 'svelte-sonner';
 
@@ -27,6 +28,10 @@
   let isCheckingPosition = $state(false);
   let positionError = $state<string>('');
 
+  // Get selected space name for display
+  const selectedSpace = $derived(spaces.find((s) => s.id === selectedSpaceId));
+  const spaceSize = $derived(selectedSpace?.size || DEFAULT_SPACE_SIZE);
+
   const distance = $derived(
     Math.sqrt(
       Math.pow(parseFloat(x) || 0, 2) +
@@ -35,7 +40,7 @@
     )
   );
 
-  const isPositionValid = $derived(distance <= 50);
+  const isPositionValid = $derived(distance <= spaceSize);
 
   // Fetch public spaces when dialog opens
   // Fetch public spaces when dialog opens
@@ -55,7 +60,7 @@
         const v = Math.random();
         const theta = 2 * Math.PI * u;
         const phi = Math.acos(2 * v - 1);
-        const r = 50 * Math.cbrt(Math.random());
+        const r = spaceSize * Math.cbrt(Math.random());
 
         const xVal = r * Math.sin(phi) * Math.cos(theta);
         const yVal = r * Math.sin(phi) * Math.sin(theta);
@@ -86,7 +91,8 @@
         createdBy: item.createdBy,
         mods: item.mods,
         isPublic: item.isPublic,
-        created: item.created
+        created: item.created,
+        size: item.size
       }));
     } catch (err) {
       console.error('Error fetching spaces:', err);
@@ -109,15 +115,22 @@
       return false;
     }
 
-    // Check if position is within bounds (-50 to 50)
-    if (xNum < -50 || xNum > 50 || yNum < -50 || yNum > 50 || zNum < -50 || zNum > 50) {
-      positionError = 'Coordinates must be between -50 and 50';
+    // Check if position is within bounds (-size to size)
+    if (
+      xNum < -spaceSize ||
+      xNum > spaceSize ||
+      yNum < -spaceSize ||
+      yNum > spaceSize ||
+      zNum < -spaceSize ||
+      zNum > spaceSize
+    ) {
+      positionError = `Coordinates must be between -${spaceSize} and ${spaceSize}`;
       return false;
     }
 
-    // Check if position is within sphere radius 50
-    if (distance > 50) {
-      positionError = `Position is outside the sphere (Distance: ${distance.toFixed(1)} > 50)`;
+    // Check if position is within sphere radius
+    if (distance > spaceSize) {
+      positionError = `Position is outside the sphere (Distance: ${distance.toFixed(1)} > ${spaceSize})`;
       return false;
     }
 
@@ -158,9 +171,6 @@
       isLoading = false;
     }
   }
-
-  // Get selected space name for display
-  const selectedSpace = $derived(spaces.find((s) => s.id === selectedSpaceId));
 </script>
 
 <Dialog.Root bind:open>
@@ -201,8 +211,8 @@
               bind:value={x}
               placeholder="0"
               step="0.1"
-              min="-50"
-              max="50"
+              min={-spaceSize}
+              max={spaceSize}
               oninput={() => (positionError = '')}
             />
           </div>
@@ -214,8 +224,8 @@
               bind:value={y}
               placeholder="0"
               step="0.1"
-              min="-50"
-              max="50"
+              min={-spaceSize}
+              max={spaceSize}
               oninput={() => (positionError = '')}
             />
           </div>
@@ -227,8 +237,8 @@
               bind:value={z}
               placeholder="0"
               step="0.1"
-              min="-50"
-              max="50"
+              min={-spaceSize}
+              max={spaceSize}
               oninput={() => (positionError = '')}
             />
           </div>
@@ -252,7 +262,7 @@
             ? 'text-muted-foreground'
             : 'font-medium text-destructive'}
         >
-          Distance from center: {distance.toFixed(1)} / 50
+          Distance from center: {distance.toFixed(1)} / {spaceSize}
         </p>
       </div>
     </div>

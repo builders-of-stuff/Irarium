@@ -17,6 +17,11 @@
   import * as Alert from '$lib/components/ui/alert';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import {
+    PAYMENT_TYPE,
+    SPACE_EXPANDER_COST,
+    SPACE_EXPANSION_UNIT
+  } from '$lib/shared/space.constants';
 
   let showSuccess = false;
   let showCanceled = false;
@@ -24,6 +29,7 @@
   let errorMessage = 'Something went wrong. Please try again later.';
 
   let quantity = 1;
+  let expanderQuantity = 1;
 
   onMount(() => {
     // Check URL parameters
@@ -50,7 +56,7 @@
   }
 
   // Function to handle checkout
-  const handleCheckout = async () => {
+  const handleCheckout = async (type: string, qty = quantity) => {
     try {
       // Reset alert states
       showSuccess = false;
@@ -65,7 +71,8 @@
         },
         body: JSON.stringify({
           userId: authStore.userId,
-          quantity
+          quantity: qty,
+          type
         })
       });
 
@@ -138,7 +145,7 @@
       <!-- Current Status Section -->
       <div class="rounded-lg border bg-card p-6 text-card-foreground shadow-sm">
         <h2 class="mb-4 text-lg font-semibold">Your Status</h2>
-        <div class="grid gap-4 sm:grid-cols-2">
+        <div class="grid gap-4 sm:grid-cols-3">
           <div class="flex items-center gap-3">
             <div
               class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
@@ -157,6 +164,19 @@
               <Check class="h-5 w-5 text-primary" />
             </div>
             <div>
+              <p class="text-sm font-medium text-muted-foreground">Space Expanders</p>
+              <p class="text-xl font-bold">
+                {authStore.userSettings?.spaceExpanders || 0}
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
+            >
+              <Check class="h-5 w-5 text-primary" />
+            </div>
+            <div>
               <p class="text-sm font-medium text-muted-foreground">Features</p>
               <p class="text-base font-semibold">Base access included</p>
             </div>
@@ -166,7 +186,7 @@
 
       <div class="space-y-4">
         <h2 class="text-xl font-semibold">Available Upgrades</h2>
-        <div class="grid gap-6 lg:max-w-4xl">
+        <div class="grid gap-6 lg:max-w-5xl lg:grid-cols-2">
           <!-- Additional Spaces -->
           <Card class="flex flex-col border-primary/50 shadow-sm">
             <CardHeader>
@@ -201,7 +221,60 @@
               </ul>
             </CardContent>
             <CardFooter>
-              <Button class="w-full md:w-auto" onclick={handleCheckout}>Purchase</Button
+              <Button
+                class="w-full"
+                onclick={() => handleCheckout(PAYMENT_TYPE.SPACE_LIMIT)}
+                >Purchase Spaces</Button
+              >
+            </CardFooter>
+          </Card>
+
+          <!-- Space Expanders -->
+          <Card class="flex flex-col border-primary/50 shadow-sm">
+            <CardHeader>
+              <CardTitle>Space Expanders</CardTitle>
+              <CardDescription>
+                Expand the size of your existing spaces.
+              </CardDescription>
+              <div class="mt-2 text-3xl font-bold">
+                ${SPACE_EXPANDER_COST}<span
+                  class="text-sm font-normal text-muted-foreground">/unit</span
+                >
+              </div>
+            </CardHeader>
+            <CardContent class="flex-grow">
+              <div class="mb-4 space-y-2">
+                <div class="flex items-center gap-2">
+                  <label for="expanderQuantity" class="text-sm font-medium"
+                    >Quantity:</label
+                  >
+                  <input
+                    type="number"
+                    id="expanderQuantity"
+                    min="1"
+                    max="100"
+                    bind:value={expanderQuantity}
+                    class="flex h-9 w-20 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+              </div>
+              <ul class="space-y-2">
+                <li class="flex items-center gap-2">
+                  <Check class="h-4 w-4 text-primary" />
+                  <span>Add {SPACE_EXPANSION_UNIT} units of radius per expander</span>
+                </li>
+                <li class="flex items-center gap-2">
+                  <Check class="h-4 w-4 text-primary" />
+                  <span>Apply to any space you own</span>
+                </li>
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Button
+                class="w-full"
+                onclick={() =>
+                  handleCheckout(PAYMENT_TYPE.SPACE_EXPANDER, expanderQuantity)}
+                >Purchase Expanders</Button
               >
             </CardFooter>
           </Card>

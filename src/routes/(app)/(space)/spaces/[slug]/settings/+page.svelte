@@ -12,6 +12,10 @@
   import { toast } from 'svelte-sonner';
   import { goto } from '$app/navigation';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
+  import {
+    DEFAULT_SPACE_SIZE,
+    SPACE_EXPANSION_UNIT
+  } from '$lib/shared/space.constants';
 
   let slug = $derived(page.params.slug ?? '');
   let spaceId = $derived(slug.split('-').pop());
@@ -19,6 +23,7 @@
   let space = $state<Space | null>(null);
   let isLoading = $state(true);
   let isSaving = $state(false);
+  let isExpanding = $state(false);
   let error = $state<string | null>(null);
 
   let name = $state('');
@@ -52,7 +57,8 @@
         createdBy: record.createdBy,
         mods: record.mods,
         isPublic: record.isPublic,
-        created: record.created
+        created: record.created,
+        size: record.size
       };
 
       name = space.name;
@@ -89,6 +95,37 @@
       toast.error(err.message || 'Failed to update space');
     } finally {
       isSaving = false;
+    }
+  }
+
+  async function handleExpand() {
+    if (!spaceId || !space) return;
+
+    isExpanding = true;
+    try {
+      const response = await fetch(`/spaces/${slug}/settings`, {
+        method: 'POST'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to expand space');
+      }
+
+      const { newSize } = await response.json();
+
+      // Update local state
+      space.size = newSize;
+
+      // Refresh user settings to update expander count
+      await authStore.refreshUser();
+
+      toast.success(`Space expanded to size ${newSize}`);
+    } catch (err: any) {
+      console.error('Error expanding space:', err);
+      toast.error(err.message || 'Failed to expand space');
+    } finally {
+      isExpanding = false;
     }
   }
 </script>
@@ -137,6 +174,42 @@
             <div class="flex items-center space-x-2">
               <Switch id="public" bind:checked={isPublic} />
               <Label for="public">Make Public</Label>
+            </div>
+          </div>
+
+          <div class="space-y-4 border-t pt-4">
+            <div class="space-y-2">
+              <h3 class="text-lg font-medium">Space Size</h3>
+              <p class="text-sm text-muted-foreground">
+                Current Size: <span class="font-bold"
+                  >{space.size || DEFAULT_SPACE_SIZE}</span
+                >
+              </p>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <Button
+                variant="secondary"
+                onclick={handleExpand}
+                disabled={isExpanding ||
+                  (authStore.userSettings?.spaceExpanders || 0) < 1}
+              >
+                {isExpanding
+                  ? 'Expanding...'
+                  : `Expand Space (+${SPACE_EXPANSION_UNIT})`}
+              </Button>
+              {#if (authStore.userSettings?.spaceExpanders || 0) < 1}
+                <p class="text-xs text-muted-foreground">
+                  No expanders available. <a
+                    href="/settings"
+                    class="underline hover:text-primary">Purchase more</a
+                  >
+                </p>
+              {:else}
+                <p class="text-xs text-muted-foreground">
+                  {authStore.userSettings?.spaceExpanders} expander(s) available
+                </p>
+              {/if}
             </div>
           </div>
 

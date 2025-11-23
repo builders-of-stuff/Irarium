@@ -1,4 +1,9 @@
-# 2.7.0 (2025-11-24)
+# 2.8.0 (2025-11-23)
+
+- Add support for space expanders
+- Fix some UI issues
+
+# 2.7.0 (2025-11-23)
 
 - Fix editing permissions bug
 - Fix some page header UI layout issues

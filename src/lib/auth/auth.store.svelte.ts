@@ -71,6 +71,20 @@ class AuthStore {
       });
 
       this.user = this.mapAuthRecordToUser(authResponse.record);
+      
+      // Ensure username is set (Google OAuth might not set it)
+      if (!this.user.username && this.user.id) {
+        try {
+          await pb.collection(COLLECTION.USERS).update(this.user.id, {
+            username: this.user.id
+          });
+          // Refresh user to get the updated username
+          await this.refreshUser();
+        } catch (err) {
+          console.error('Failed to auto-set username:', err);
+        }
+      }
+
       await this.fetchAndSetUserSettings();
 
       // Set cookie
@@ -207,8 +221,22 @@ class AuthStore {
       if (result) {
         this.userSettings = this.mapRecordToUserSettings(result);
       }
-    } catch (error) {
-      console.error('Error fetching user settings:', error);
+    } catch (error: any) {
+      if (error.status === 404) {
+        try {
+          const newSettings = await pb.collection(COLLECTION.USER_SETTINGS).create({
+            userId: this.userId,
+            isFullyUpgraded: false,
+            spaceLimit: 1,
+            spaceExpanders: 0
+          });
+          this.userSettings = this.mapRecordToUserSettings(newSettings);
+        } catch (createError) {
+          console.error('Error creating user settings:', createError);
+        }
+      } else {
+        console.error('Error fetching user settings:', error);
+      }
     }
   }
 
@@ -235,7 +263,8 @@ class AuthStore {
       id: record.id,
       userId: record.userId,
       isFullyUpgraded: record.isFullyUpgraded,
-      spaceLimit: record.spaceLimit
+      spaceLimit: record.spaceLimit,
+      spaceExpanders: record.spaceExpanders || 0
     };
   }
 }

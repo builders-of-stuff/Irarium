@@ -13,7 +13,9 @@
     spaceName,
     spaceSlug,
     spaceId,
-    username
+    username,
+    customBadge,
+    search
   } = $props<{
     title?: string;
     actions?: () => unknown;
@@ -23,6 +25,8 @@
     spaceSlug?: string;
     spaceId?: string;
     username?: string;
+    customBadge?: import('svelte').Snippet;
+    search?: import('svelte').Snippet;
   }>();
 
   const sidebar = useSidebar();
@@ -31,7 +35,7 @@
   let editableTitle = $state(title);
   let titleInput = $state<HTMLInputElement>();
 
-  const hasSpace = $derived(spaceName && spaceSlug && spaceId);
+  const hasSpace = $derived(spaceName && spaceId);
 
   /**
    * Edit title
@@ -108,7 +112,7 @@
 
         {#if hasSpace}
           <a
-            href={`/spaces/${spaceSlug}-${spaceId}`}
+            href={`/spaces/${spaceSlug || 'space'}-${spaceId}`}
             class="flex items-center gap-1.5 rounded-full border border-orange-500/30 bg-gradient-to-r from-orange-500/20 to-pink-500/20 px-3 py-1.5 text-sm font-medium text-orange-300 transition-all duration-200 hover:scale-105 hover:border-orange-500/50 hover:from-orange-500/30 hover:to-pink-500/30"
           >
             <MapPin size={14} />
@@ -124,12 +128,20 @@
             <span>@{username}</span>
           </a>
         {/if}
+
+        {#if customBadge}
+          {@render customBadge()}
+        {/if}
       </div>
 
       <!-- Actions section -->
       <div
         class="flex w-full shrink-0 items-center justify-end gap-2 md:w-auto md:justify-start md:pl-2"
       >
+        {#if search}
+          {@render search()}
+        {/if}
+
         {#if actions}
           {@render actions()}
         {/if}
