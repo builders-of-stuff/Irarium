@@ -9,12 +9,14 @@
     node,
     irarium,
     depth,
-    isRoot = false
+    isRoot = false,
+    enableUpdates = false
   }: {
     node: Thought;
     irarium: IrariumStore;
     depth: number;
     isRoot?: boolean;
+    enableUpdates?: boolean;
   } = $props();
 
   let editor: Editor | undefined = $state();
@@ -62,15 +64,17 @@
 
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      irarium.addThought('', node);
+      if (enableUpdates) irarium.addThought('', node);
       return true;
     } else if (e.key === 'Tab') {
       e.preventDefault();
-      // If root, Tab adds a child (since it has no siblings in this view usually, or we treat it special)
-      if (depth === 0) {
-        irarium.addThought('', node);
-      } else {
-        irarium.addSibling('', node, 'right');
+      if (enableUpdates) {
+        // If root, Tab adds a child (since it has no siblings in this view usually, or we treat it special)
+        if (depth === 0) {
+          irarium.addThought('', node);
+        } else {
+          irarium.addSibling('', node, 'right');
+        }
       }
       return true;
     } else if (
@@ -80,7 +84,7 @@
       depth > 0
     ) {
       e.preventDefault();
-      irarium.deleteThought(node.id);
+      if (enableUpdates) irarium.deleteThought(node.id);
       return true;
     }
     return false;
@@ -91,11 +95,22 @@
     irarium.toggleExpand(node.id);
   };
 
-  const handleAddChild = () => irarium.addThought('', node);
-  const handleDelete = () => irarium.deleteThought(node.id);
+  const handleAddChild = () => {
+    if (enableUpdates) irarium.addThought('', node);
+  };
+  const handleDelete = () => {
+    if (enableUpdates) irarium.deleteThought(node.id);
+  };
   const handleFocus = () => {
+    // Always allow focusing to view content, even without edit permissions
     irarium.setActiveThoughtId(node.id);
     irarium.clearSelectedThoughtId();
+  };
+  const handleClick = (e: MouseEvent) => {
+    // Allow clicking to focus/view the node
+    if (!isFocused) {
+      handleFocus();
+    }
   };
 </script>
 
@@ -119,7 +134,11 @@
         : isSelected
           ? 'bg-space-950/90 border-nebula-accent/70 ring-nebula-accent/30 z-20 w-[240px] scale-[1.01] shadow-[0_0_15px_rgba(99,102,241,0.1)] ring-1 md:w-[280px]'
           : 'bg-space-950/80 hover:bg-space-900/90 w-[240px] border-white/10 hover:border-white/20 hover:shadow-lg md:w-[280px]'}
+        {!enableUpdates && !isFocused ? 'cursor-pointer' : ''}
       "
+      onclick={!enableUpdates && !isFocused ? handleClick : undefined}
+      role={!enableUpdates ? 'button' : undefined}
+      tabindex={!enableUpdates && !isFocused ? 0 : undefined}
     >
       <div class="flex items-start gap-2 p-3">
         <!-- Content Input -->
@@ -127,7 +146,7 @@
           <TextEditor
             bind:editor
             bind:content={node.content}
-            editable={true}
+            editable={enableUpdates}
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
             minHeight="20px"
@@ -141,22 +160,24 @@
             {isHovered || isFocused ? 'max-h-8 opacity-100' : 'max-h-0 opacity-0'}
           "
           >
-            <button
-              onclick={handleAddChild}
-              class="rounded-md p-1 text-slate-400 transition-colors hover:bg-emerald-500/20 hover:text-emerald-400"
-              title="Add Child"
-            >
-              <CornerDownRight size={12} />
-            </button>
-
-            {#if !isRoot}
+            {#if enableUpdates}
               <button
-                onclick={handleDelete}
-                class="rounded-md p-1 text-slate-400 transition-colors hover:bg-rose-500/20 hover:text-rose-400"
-                title="Delete"
+                onclick={handleAddChild}
+                class="rounded-md p-1 text-slate-400 transition-colors hover:bg-emerald-500/20 hover:text-emerald-400"
+                title="Add Child"
               >
-                <Trash2 size={12} />
+                <CornerDownRight size={12} />
               </button>
+
+              {#if !isRoot}
+                <button
+                  onclick={handleDelete}
+                  class="rounded-md p-1 text-slate-400 transition-colors hover:bg-rose-500/20 hover:text-rose-400"
+                  title="Delete"
+                >
+                  <Trash2 size={12} />
+                </button>
+              {/if}
             {/if}
 
             {#if hasChildren}
@@ -228,7 +249,7 @@
             <div class="mb-2 h-4 w-[2px] bg-white/10"></div>
 
             <!-- Recursive render -->
-            <svelte:self node={child} {irarium} depth={depth + 1} />
+            <svelte:self node={child} {irarium} depth={depth + 1} {enableUpdates} />
           </div>
         {/each}
       </div>

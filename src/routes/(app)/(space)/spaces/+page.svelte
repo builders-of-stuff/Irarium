@@ -82,7 +82,7 @@
   <div class="relative z-10 flex h-screen flex-col">
     <UserNavbar title="Spaces" {actions} />
 
-    <div class="flex-1 overflow-auto p-8">
+    <div class="flex-1 overflow-auto p-8 pt-32 md:pt-20">
       <div class="container mx-auto max-w-4xl">
         <div class="mb-6">
           <Input

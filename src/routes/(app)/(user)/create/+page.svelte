@@ -37,7 +37,7 @@
   <div class="relative z-10 flex h-screen flex-col">
     <UserNavbar title="Create" {actions} />
 
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 overflow-hidden pt-32 md:pt-20">
       {#if irarium}
         <IrariumComposer bind:irarium enableUpdates />
       {/if}

@@ -87,7 +87,7 @@
   };
 </script>
 
-<div class="relative container mx-auto min-h-screen max-w-5xl px-4 py-8">
+<div class="relative container mx-auto min-h-screen max-w-5xl px-4 py-8 pt-32 md:pt-20">
   <div class="mb-6 flex items-center justify-between">
     <h1 class="text-3xl font-bold">Settings</h1>
   </div>

@@ -98,7 +98,7 @@
   <div class="relative z-10">
     <UserNavbar title="Profile" />
 
-    <div class="container mx-auto max-w-3xl px-4 py-6">
+    <div class="container mx-auto max-w-3xl px-4 py-6 pt-32 md:pt-20">
       <!-- Profile header -->
       <div class="mb-8 rounded-xl bg-muted/30 p-6">
         <div class="flex flex-col md:flex-row md:items-start md:gap-6">

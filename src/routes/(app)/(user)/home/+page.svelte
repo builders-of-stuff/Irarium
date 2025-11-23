@@ -19,7 +19,7 @@
   <div class="relative z-10">
     <UserNavbar title="Home" />
 
-    <div class="container mx-auto max-w-6xl px-4 py-8">
+    <div class="container mx-auto max-w-6xl px-4 py-8 pt-32 md:pt-20">
       {#if irariumsStore.isLoading}
         <div class="flex justify-center py-12">
           <div class="animate-pulse text-center">

@@ -44,6 +44,7 @@
     // UNLESS we want to trap Escape to exit edit mode
     if (irarium.activeThoughtId) {
       if (e.key === 'Escape') {
+        // Allow Escape to close focused node even without edit permissions
         irarium.clearActiveThoughtId();
         // Optionally select the thought we just exited
         if (irarium.lastActiveThoughtId) {
@@ -88,9 +89,7 @@
   class="selection:bg-nebula-accent/30 relative flex h-full w-full flex-col overflow-hidden font-sans text-slate-200 selection:text-white"
 >
   <!-- Main Canvas Area - Infinite Horizontal & Vertical Scroll -->
-  <main
-    class="relative flex-1 cursor-grab overflow-auto scroll-smooth active:cursor-grabbing"
-  >
+  <main class="relative flex-1 overflow-auto scroll-smooth" role="presentation">
     <div class="flex min-h-full min-w-max flex-col items-center p-8">
       <!-- Root Render -->
       <div class="animate-slide-up pb-40">
@@ -109,6 +108,7 @@
           {irarium}
           depth={0}
           isRoot={true}
+          {enableUpdates}
         />
       </div>
     </div>
