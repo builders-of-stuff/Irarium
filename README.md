@@ -6,4 +6,4 @@ A space for thoughts
 
 ## Getting Started
 
-See [SELF_HOSTING.md](./SELF_HOSTING.md) for setup and self-hosting instructions.
+See [docs/SELF_HOSTING.md](docs/SELF_HOSTING.md) for instructions on how to run the project locally.

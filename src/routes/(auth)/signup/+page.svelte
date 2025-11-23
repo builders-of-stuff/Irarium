@@ -107,7 +107,7 @@
         </div>
       </div>
 
-      <div class="px-6 pt-6">
+      <div class="px-6 pt-2">
         <Button
           variant="outline"
           class="w-full"
