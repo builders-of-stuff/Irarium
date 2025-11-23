@@ -97,7 +97,7 @@
   <div class="relative z-10">
     <UserNavbar title="Space Settings" />
 
-    <div class="container mx-auto max-w-2xl px-4 py-8">
+    <div class="container mx-auto max-w-2xl px-4 py-8 pt-32 md:pt-20">
       {#if isLoading}
         <div class="flex justify-center py-12">
           <div class="animate-pulse text-center">
