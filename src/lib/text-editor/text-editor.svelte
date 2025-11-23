@@ -54,9 +54,9 @@
     });
     isEditorMounted = true;
 
-    if (editable) {
+    if (editable && editor) {
       tick().then(() => {
-        editor.commands.focus('end');
+        editor?.commands.focus('end');
       });
     }
   }
@@ -68,10 +68,10 @@
   // Handle editable state changes
   $effect(() => {
     if (editor && isEditorMounted) {
-      editor.setEditable(editable);
+      editor.setEditable(!!editable);
       if (editable) {
         tick().then(() => {
-          editor.commands.focus('end');
+          editor?.commands.focus('end');
         });
       }
     } else if (isEditorMounted && !editor && editable) {
@@ -130,5 +130,16 @@
   :global(.ProseMirror *) {
     white-space: pre-wrap;
     word-wrap: break-word;
+  }
+
+  :global(.tiptap-editor .ProseMirror ::selection) {
+    background-color: rgba(99, 102, 241, 0.3);
+    color: inherit;
+  }
+
+  :global(.tiptap-editor .ProseMirror a) {
+    color: #818cf8;
+    text-decoration: underline;
+    cursor: pointer;
   }
 </style>

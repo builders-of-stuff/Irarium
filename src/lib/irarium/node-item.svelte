@@ -30,7 +30,10 @@
   $effect(() => {
     if (isFocused) {
       if (editor && !editor.isFocused) {
-        editor.commands.focus('end');
+        // Use setTimeout to ensure the key event that activated this node doesn't trigger the editor's key handler
+        setTimeout(() => {
+          editor?.commands.focus('end');
+        }, 0);
       }
       // Clear selection when focused
       if (irarium.selectedThoughtId) {
