@@ -1,3 +1,11 @@
+# 2.7.0 (2025-11-24)
+
+- Fix editing permissions bug
+- Fix some page header UI layout issues
+- Fix CSS issues within irarium nodes, and for mobile
+- Simplify exported irarium format
+- Fix hotkey navigation issues
+
 # 2.6.0 (2025-11-22)
 
 - Add support for Google OAuth login/signup
