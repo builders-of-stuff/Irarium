@@ -15,6 +15,9 @@
   import { authStore } from '$lib/auth/auth.store.svelte';
   import DateDisplay from '$lib/components/shared/date-display.svelte';
 
+  import UserNavbar from '$lib/shared/user-navbar.svelte';
+  import { Button } from '$lib/components/ui/button';
+
   let { slug } = $props<{ slug: string }>();
 
   let space = $state<Space | null>(null);
@@ -92,6 +95,34 @@
   });
 </script>
 
+{#snippet actions()}
+  {#if space}
+    {#if space.createdBy === authStore.userId}
+      <a
+        href={`/spaces/${space.slug}-${space.id}/settings`}
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+        title="Settings"
+      >
+        <Settings size={16} />
+      </a>
+    {/if}
+
+    <Button
+      variant="outline"
+      size="icon"
+      onclick={() =>
+        spaceStore.setActiveIrarium(spaceStore.isAutoRotateEnabled ? 'paused' : null)}
+      title={spaceStore.isAutoRotateEnabled ? 'Pause Rotation' : 'Play Rotation'}
+    >
+      {#if spaceStore.isAutoRotateEnabled}
+        <Pause size={16} />
+      {:else}
+        <Play size={16} />
+      {/if}
+    </Button>
+  {/if}
+{/snippet}
+
 <Starfield />
 
 {#if isLoading}
@@ -108,31 +139,7 @@
   </div>
 {:else if space}
   <div class="relative h-full w-full">
-    <!-- Play/Pause Button -->
-    <!-- Controls -->
-    <div class="absolute top-4 right-4 z-10 flex gap-2">
-      {#if space.createdBy === authStore.userId}
-        <a
-          href={`/spaces/${space.slug}-${space.id}/settings`}
-          class="rounded-full bg-black/50 p-3 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
-          title="Settings"
-        >
-          <Settings size={20} />
-        </a>
-      {/if}
-
-      <button
-        onclick={() =>
-          spaceStore.setActiveIrarium(spaceStore.isAutoRotateEnabled ? 'paused' : null)}
-        class="rounded-full bg-black/50 p-3 text-white backdrop-blur-sm transition-colors hover:bg-black/70"
-      >
-        {#if spaceStore.isAutoRotateEnabled}
-          <Pause size={20} />
-        {:else}
-          <Play size={20} />
-        {/if}
-      </button>
-    </div>
+    <UserNavbar title={space.name} {actions} />
 
     <Canvas>
       <T.PerspectiveCamera makeDefault position={[150, 150, 150]} fov={50}>
