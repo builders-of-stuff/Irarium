@@ -138,7 +138,7 @@
     if (!irarium) return;
 
     try {
-      irarium.exportAsJson();
+      irarium.exportAsMarkdown();
       toast.success('Irarium exported successfully!');
     } catch (error) {
       console.error('Error exporting irarium:', error);
