@@ -72,27 +72,32 @@
 </script>
 
 <NavigationMenu.Root>
-  <div class="border-b border-white/10 bg-black/30 backdrop-blur-xl">
+  <div
+    class="fixed top-0 right-0 left-0 z-40 border-b border-white/10 bg-black/30 backdrop-blur-xl"
+  >
     <div
-      class="flex items-center justify-between py-3 pr-8 transition-all duration-300 {!sidebar.isMobile &&
-      sidebar.state === 'collapsed'
-        ? 'pl-14'
-        : 'pl-8'}"
+      class="flex w-full max-w-[100vw] flex-col gap-3 py-3 pr-4 transition-all duration-300 md:flex-row md:items-center md:justify-between md:gap-0 md:pr-8 {!sidebar.isMobile
+        ? sidebar.state === 'collapsed'
+          ? 'pl-[4rem]'
+          : 'pl-[17rem]'
+        : 'pl-4'}"
     >
-      <div class="flex items-center gap-4">
+      <div
+        class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:w-auto md:gap-4"
+      >
         {#if isEditing}
           <input
             bind:this={titleInput}
             bind:value={editableTitle}
             onkeydown={handleKeyDown}
             onblur={finishEditing}
-            class="border-b border-orange-500/50 bg-transparent px-2 py-1 text-2xl font-bold text-white transition-colors focus:border-orange-500 focus:outline-none"
+            class="w-full border-b border-orange-500/50 bg-transparent px-2 py-1 text-xl font-bold text-white transition-colors focus:border-orange-500 focus:outline-none md:text-2xl"
             type="text"
           />
         {:else}
           <button onclick={handleTitleClick} class="group">
             <h1
-              class="text-2xl font-bold text-white transition-colors {isTitleEditable
+              class="truncate text-xl font-bold text-white transition-colors md:text-2xl {isTitleEditable
                 ? 'cursor-pointer group-hover:text-orange-400'
                 : ''}"
             >
@@ -122,7 +127,9 @@
       </div>
 
       <!-- Actions section -->
-      <div class="flex items-center gap-2">
+      <div
+        class="flex w-full shrink-0 items-center justify-end gap-2 md:w-auto md:justify-start md:pl-2"
+      >
         {#if actions}
           {@render actions()}
         {/if}

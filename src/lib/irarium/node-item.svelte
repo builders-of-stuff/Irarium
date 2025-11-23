@@ -115,7 +115,7 @@
       class="relative flex shrink-0 flex-col rounded-xl
         border backdrop-blur-md transition-all duration-300 ease-in-out
         {isFocused
-        ? 'bg-space-900 border-nebula-accent ring-nebula-accent/50 z-30 w-[800px] scale-[1.02] shadow-[0_0_30px_rgba(99,102,241,0.2)] ring-1'
+        ? 'bg-space-900 border-nebula-accent ring-nebula-accent/50 z-30 w-[90vw] scale-[1.02] shadow-[0_0_30px_rgba(99,102,241,0.2)] ring-1 md:w-[800px]'
         : isSelected
           ? 'bg-space-950/90 border-nebula-accent/70 ring-nebula-accent/30 z-20 w-[240px] scale-[1.01] shadow-[0_0_15px_rgba(99,102,241,0.1)] ring-1 md:w-[280px]'
           : 'bg-space-950/80 hover:bg-space-900/90 w-[240px] border-white/10 hover:border-white/20 hover:shadow-lg md:w-[280px]'}
