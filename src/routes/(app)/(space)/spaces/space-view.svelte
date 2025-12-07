@@ -113,7 +113,8 @@
       }
 
       // Fetch public irariums
-      await irariumsStore.fetchPublicIrariums(record.id);
+      // Fetch all public irariums for this space
+      await irariumsStore.fetchAllIrariumsForSpace(record.id);
     } catch (err) {
       console.error('Error fetching space:', err);
       error = 'Failed to load space';

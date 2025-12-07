@@ -75,6 +75,7 @@
         {:else}
           <div class="grid gap-4 md:grid-cols-2">
             {#each spaceStore.filteredPublicSpaces as space}
+              {@const count = spaceStore.irariumCounts[space.id] || 0}
               <div
                 role="button"
                 tabindex="0"
@@ -118,7 +119,7 @@
                         ></polyline><line x1="12" y1="22.08" x2="12" y2="12"
                         ></line></svg
                       >
-                      {spaceStore.irariumCounts[space.id] || 0} irariums
+                      {count > 50 ? '50+' : count} irariums
                     </span>
                     <span class="mx-2">•</span>
                     <span class="flex items-center" title="Space Size">
@@ -159,6 +160,18 @@
               </div>
             {/each}
           </div>
+
+          {#if spaceStore.hasMorePublicSpaces && spaceStore.filteredPublicSpaces.length > 0}
+            <div class="mt-8 flex justify-center">
+              <Button
+                variant="outline"
+                disabled={spaceStore.isLoadingMore}
+                onclick={() => spaceStore.loadMorePublicSpaces()}
+              >
+                {spaceStore.isLoadingMore ? 'Loading...' : 'Load More'}
+              </Button>
+            </div>
+          {/if}
         {/if}
       </div>
     </div>

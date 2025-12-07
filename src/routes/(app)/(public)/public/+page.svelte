@@ -54,4 +54,16 @@
       {/each}
     </div>
   {/if}
+
+  {#if irariumsStore.hasMorePublicIrariums && irariumsStore.publicIrariums.length > 0}
+    <div class="mt-8 flex justify-center">
+      <Button
+        variant="outline"
+        disabled={irariumsStore.isLoadingMore}
+        onclick={() => irariumsStore.loadMorePublicIrariums()}
+      >
+        {irariumsStore.isLoadingMore ? 'Loading...' : 'Load More'}
+      </Button>
+    </div>
+  {/if}
 </div>

@@ -13,6 +13,14 @@ export class IrariumsStore {
   isLoading = $state(true);
   error = $state<string | null>(null);
 
+  // Pagination State
+  userPage = $state(1);
+  publicPage = $state(1);
+  perPage = 50;
+  hasMoreUserIrariums = $state(true);
+  hasMorePublicIrariums = $state(true);
+  isLoadingMore = $state(false);
+
   // user + public - duplicates
   allIrariums = $derived([
     ...new Map(
@@ -62,9 +70,11 @@ export class IrariumsStore {
 
     this.isLoading = true;
     this.error = null;
+    this.userPage = 1;
+    this.hasMoreUserIrariums = true;
 
     try {
-      const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
+      const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, this.perPage, {
         filter: `userId = "${userId}"`,
         sort: '-created',
         expand: 'spaceId',
@@ -73,6 +83,7 @@ export class IrariumsStore {
 
       this.userIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
       this.lastFetchedUserIrariums = new Date().toISOString();
+      this.hasMoreUserIrariums = records.items.length === this.perPage;
       this.error = null;
     } catch (err) {
       console.error('Error fetching irariums:', err);
@@ -82,44 +93,44 @@ export class IrariumsStore {
     }
   }
 
-  async fetchPublicIrariums(targetSpaceId?: string) {
-    this.isLoading = true;
-    this.error = null;
+  async loadMoreUserIrariums(userId: string) {
+    if (!this.hasMoreUserIrariums || this.isLoadingMore) return;
+
+    this.isLoadingMore = true;
+    const nextPage = this.userPage + 1;
 
     try {
-      // Build filter for spaces
-      let filter = 'isPublic = true';
-      
-      // If user is logged in, restrict to owned and subscribed spaces
-      if (authStore.userId) {
-        // Get owned spaces
-        const ownedSpaceIds = spaceStore.userSpaces.map(s => s.id);
-        
-        // Get subscribed spaces
-        const subscribedSpaceIds = authStore.userSettings?.subscribedSpaces || [];
-        
-        // Combine unique IDs
-        const allowedSpaceIds = new Set([...ownedSpaceIds, ...subscribedSpaceIds]);
-        
-        // If a target space is provided (e.g. visiting a space directly), allow it
-        if (targetSpaceId) {
-          allowedSpaceIds.add(targetSpaceId);
-        }
-        
-        if (allowedSpaceIds.size > 0) {
-          // Construct OR filter for space IDs
-          const spaceFilter = Array.from(allowedSpaceIds).map(id => `spaceId = "${id}"`).join(' || ');
-          filter = `(${filter}) && (${spaceFilter})`;
-        } else {
-          // If no spaces owned or subscribed, show nothing (or maybe just public ones from system? 
-          // Requirement says "Only fetch published irariums from spaces you own")
-          // So if no spaces, we should probably return empty or handle gracefully.
-          // However, to prevent showing ALL public irariums when having no spaces, we can force a non-match
-          filter = `(${filter}) && (spaceId = "non_existent_id")`; 
-        }
-      }
+      const records = await pb.collection(COLLECTION.IRARIUMS).getList(nextPage, this.perPage, {
+        filter: `userId = "${userId}"`,
+        sort: '-created',
+        expand: 'spaceId',
+        requestKey: null
+      });
 
-      const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
+      const newIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
+      this.userIrariums = [...this.userIrariums, ...newIrariums];
+      this.userPage = nextPage;
+      this.hasMoreUserIrariums = records.items.length === this.perPage;
+    } catch (err) {
+      console.error('Error loading more user irariums:', err);
+      // Don't set global error to avoid disrupting the UI too much
+    } finally {
+      this.isLoadingMore = false;
+    }
+  }
+
+  async fetchPublicIrariums(targetSpaceId?: string, force = false) {
+    if (this.hasFetchedPublicIrariums && !force && !targetSpaceId) return;
+
+    this.isLoading = true;
+    this.error = null;
+    this.publicPage = 1;
+    this.hasMorePublicIrariums = true;
+
+    try {
+      const filter = this.buildPublicFilter(targetSpaceId);
+
+      const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, this.perPage, {
         filter: filter,
         sort: '-created',
         expand: 'userId,spaceId'
@@ -127,10 +138,122 @@ export class IrariumsStore {
 
       this.publicIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
       this.lastFetchedPublicIrariums = new Date().toISOString();
+      this.hasMorePublicIrariums = records.items.length === this.perPage;
       this.error = null;
     } catch (err) {
       console.error('Error fetching irariums:', err);
       this.error = 'Failed to load irariums. Please try again later.';
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async loadMorePublicIrariums(targetSpaceId?: string) {
+    if (!this.hasMorePublicIrariums || this.isLoadingMore) return;
+
+    this.isLoadingMore = true;
+    const nextPage = this.publicPage + 1;
+
+    try {
+      const filter = this.buildPublicFilter(targetSpaceId);
+
+      const records = await pb.collection(COLLECTION.IRARIUMS).getList(nextPage, this.perPage, {
+        filter: filter,
+        sort: '-created',
+        expand: 'userId,spaceId'
+      });
+
+      const newIrariums = records.items.map((item) => this.mapRecordToIrarium(item));
+      this.publicIrariums = [...this.publicIrariums, ...newIrariums];
+      this.publicPage = nextPage;
+      this.hasMorePublicIrariums = records.items.length === this.perPage;
+    } catch (err) {
+      console.error('Error loading more public irariums:', err);
+    } finally {
+      this.isLoadingMore = false;
+    }
+  }
+
+  private buildPublicFilter(targetSpaceId?: string): string {
+    // Build filter for spaces
+    let filter = 'isPublic = true';
+    
+    // If user is logged in, restrict to owned and subscribed spaces
+    if (authStore.userId) {
+      // Get owned spaces
+      const ownedSpaceIds = spaceStore.userSpaces.map(s => s.id);
+      
+      // Get subscribed spaces
+      const subscribedSpaceIds = authStore.userSettings?.subscribedSpaces || [];
+      
+      // Combine unique IDs
+      const allowedSpaceIds = new Set([...ownedSpaceIds, ...subscribedSpaceIds]);
+      
+      // If a target space is provided (e.g. visiting a space directly), allow it
+      if (targetSpaceId) {
+        allowedSpaceIds.add(targetSpaceId);
+      }
+      
+      if (allowedSpaceIds.size > 0) {
+        // Construct OR filter for space IDs
+        const spaceFilter = Array.from(allowedSpaceIds).map(id => `spaceId = "${id}"`).join(' || ');
+        filter = `(${filter}) && (${spaceFilter})`;
+      } else {
+        // If no spaces owned or subscribed, show nothing (or maybe just public ones from system? 
+        // Requirement says "Only fetch published irariums from spaces you own")
+        // So if no spaces, we should probably return empty or handle gracefully.
+        // However, to prevent showing ALL public irariums when having no spaces, we can force a non-match
+        filter = `(${filter}) && (spaceId = "non_existent_id")`; 
+      }
+    }
+    return filter;
+  }
+
+  async fetchAllIrariumsForSpace(spaceId: string) {
+    this.isLoading = true;
+    this.error = null;
+    
+    try {
+      // Initial fetch to get total pages
+      const firstPage = await pb.collection(COLLECTION.IRARIUMS).getList(1, this.perPage, {
+        filter: `spaceId = "${spaceId}" && isPublic = true`,
+        sort: '-created',
+        expand: 'userId,spaceId'
+      });
+
+      let allItems = firstPage.items;
+      
+      // If there are more pages, fetch them all
+      if (firstPage.totalPages > 1) {
+        const promises: Promise<any>[] = [];
+        for (let p = 2; p <= firstPage.totalPages; p++) {
+          promises.push(
+            pb.collection(COLLECTION.IRARIUMS).getList(p, this.perPage, {
+              filter: `spaceId = "${spaceId}" && isPublic = true`,
+              sort: '-created',
+              expand: 'userId,spaceId'
+            })
+          );
+        }
+        
+        const results = await Promise.all(promises);
+        results.forEach(res => {
+          allItems = [...allItems, ...res.items];
+        });
+      }
+
+      const mappedIrariums = allItems.map(item => this.mapRecordToIrarium(item));
+      
+      // Merge with existing public irariums to avoid duplicates but ensure we have all for this space
+      // We'll filter out existing ones for this space first, then add the new full set
+      const otherIrariums = this.publicIrariums.filter(i => i.spaceId !== spaceId);
+      this.publicIrariums = [...otherIrariums, ...mappedIrariums];
+      
+      this.lastFetchedPublicIrariums = new Date().toISOString();
+      this.error = null;
+    } catch (err) {
+      console.error('Error fetching all irariums for space:', err);
+      this.error = 'Failed to load space irariums.';
     } finally {
       this.isLoading = false;
     }
@@ -279,6 +402,10 @@ export class IrariumsStore {
     this.lastFetchedPublicIrariums = '';
     this.isLoading = false;
     this.error = null;
+    this.userPage = 1;
+    this.publicPage = 1;
+    this.hasMoreUserIrariums = true;
+    this.hasMorePublicIrariums = true;
   }
 
 

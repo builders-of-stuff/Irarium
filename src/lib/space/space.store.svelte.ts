@@ -17,6 +17,12 @@ export class SpaceStore {
   lastFetchedUserSpaces = $state('');
   lastFetchedPublicSpaces = $state('');
   
+  // Pagination State
+  publicPage = $state(1);
+  perPage = 50;
+  hasMorePublicSpaces = $state(true);
+  isLoadingMore = $state(false);
+  
   hasFetchedUserSpaces = $derived(!!this.lastFetchedUserSpaces);
   hasFetchedPublicSpaces = $derived(!!this.lastFetchedPublicSpaces);
 
@@ -99,8 +105,11 @@ export class SpaceStore {
 
     this.isLoading = true;
     this.error = null;
+    this.publicPage = 1;
+    this.hasMorePublicSpaces = true;
+
     try {
-      const records = await pb.collection(COLLECTION.SPACES).getList(1, 50, {
+      const records = await pb.collection(COLLECTION.SPACES).getList(1, this.perPage, {
         sort: 'name',
         filter: 'isPublic = true',
         expand: 'createdBy'
@@ -109,6 +118,7 @@ export class SpaceStore {
       this.publicSpaces = records.items.map((item: any) => this.mapRecordToSpace(item));
       
       this.lastFetchedPublicSpaces = new Date().toISOString();
+      this.hasMorePublicSpaces = records.items.length === this.perPage;
       
       // Fetch counts for these spaces
       this.publicSpaces.forEach(space => this.fetchIrariumCount(space.id));
@@ -117,6 +127,34 @@ export class SpaceStore {
       this.error = 'Failed to load spaces';
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  async loadMorePublicSpaces() {
+    if (!this.hasMorePublicSpaces || this.isLoadingMore) return;
+
+    this.isLoadingMore = true;
+    const nextPage = this.publicPage + 1;
+
+    try {
+      const records = await pb.collection(COLLECTION.SPACES).getList(nextPage, this.perPage, {
+        sort: 'name',
+        filter: 'isPublic = true',
+        expand: 'createdBy'
+      });
+
+      const newSpaces = records.items.map((item: any) => this.mapRecordToSpace(item));
+      this.publicSpaces = [...this.publicSpaces, ...newSpaces];
+      
+      this.publicPage = nextPage;
+      this.hasMorePublicSpaces = records.items.length === this.perPage;
+      
+      // Fetch counts for these new spaces
+      newSpaces.forEach(space => this.fetchIrariumCount(space.id));
+    } catch (err: any) {
+      console.error('Error loading more public spaces:', err);
+    } finally {
+      this.isLoadingMore = false;
     }
   }
 
