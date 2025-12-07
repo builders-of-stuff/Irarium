@@ -11,6 +11,7 @@
   import { spaceStore } from '$lib/space/space.store.svelte';
   import { toast } from 'svelte-sonner';
   import { DEFAULT_SPACE_SIZE } from '$lib/shared/space.constants';
+  import { refreshState } from '$lib/utils/state.utils';
 
   let { open = $bindable(false) } = $props();
 
@@ -52,7 +53,7 @@
       open = false;
 
       // Refresh user spaces
-      await spaceStore.fetchUserSpaces(authStore.userId, true);
+      await refreshState();
 
       // Reset form
       name = '';

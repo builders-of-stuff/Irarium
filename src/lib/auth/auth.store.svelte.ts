@@ -1,6 +1,7 @@
 import { pb } from '$lib/db/client';
 import { COLLECTION } from '$lib/shared/shared.type';
 import type { User, UserSettings } from '$lib/shared/shared.type';
+import { refreshState } from '$lib/utils/state.utils';
 
 class AuthStore {
   /**
@@ -195,7 +196,7 @@ class AuthStore {
       });
 
       // Refresh user data
-      await this.refreshUser();
+      await refreshState();
 
       return { success: true };
     } catch (error) {
@@ -230,6 +231,8 @@ class AuthStore {
 
       // Update local state
       this.userSettings.subscribedSpaces = newSubscriptions;
+      
+      await refreshState();
       return { success: true, isSubscribed: !isSubscribed };
     } catch (error) {
       console.error('Error toggling subscription:', error);

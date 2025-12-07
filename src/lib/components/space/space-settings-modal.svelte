@@ -15,6 +15,7 @@
     SPACE_EXPANSION_UNIT
   } from '$lib/shared/space.constants';
   import { goto, invalidateAll } from '$app/navigation';
+  import { refreshState } from '$lib/utils/state.utils';
 
   let { open = $bindable(false), space = $bindable() } = $props<{
     open: boolean;
@@ -66,6 +67,7 @@
       open = false;
 
       // Refresh data to ensure everything is in sync
+      await refreshState();
       await invalidateAll();
     } catch (err: any) {
       console.error('Error updating space:', err);
@@ -105,7 +107,7 @@
       space.size = newSize;
 
       // Refresh user settings to update expander count
-      await authStore.refreshUser();
+      await refreshState();
 
       toast.success(`Space expanded to size ${newSize}`);
       await invalidateAll();
@@ -132,6 +134,7 @@
     try {
       await pb.collection(COLLECTION.SPACES).delete(space.id);
       spaceStore.removeSpace(space.id);
+      await refreshState();
       toast.success('Space deleted successfully');
       goto('/spaces');
     } catch (err: any) {

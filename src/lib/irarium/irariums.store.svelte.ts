@@ -3,6 +3,7 @@ import { COLLECTION, type Irarium } from '$lib/shared/shared.type';
 import { spaceStore } from '$lib/space/space.store.svelte';
 import { authStore } from '$lib/auth/auth.store.svelte';
 import { DEFAULT_SPACE_SIZE } from '$lib/shared/space.constants';
+import { refreshState } from '$lib/utils/state.utils';
 
 export class IrariumsStore {
   userIrariums = $state<Irarium[]>([]);
@@ -55,8 +56,7 @@ export class IrariumsStore {
     try {
       await pb.collection(COLLECTION.IRARIUMS).delete(id);
 
-      this.userIrariums = this.userIrariums.filter((irarium) => irarium.id !== id);
-      this.publicIrariums = this.publicIrariums.filter((irarium) => irarium.id !== id);
+      await refreshState();
     } catch (err) {
       console.error('Error deleting irarium:', err);
       this.error = 'Failed to delete irarium. Please try again later.';
@@ -288,7 +288,7 @@ export class IrariumsStore {
         .collection(COLLECTION.IRARIUMS)
         .create(this.mapIrariumToCreate(irarium, spaceId));
 
-      this.userIrariums = [...this.userIrariums, this.mapRecordToIrarium(record)];
+      await refreshState();
     } catch (err: any) {
       console.error('Error creating irarium:', err);
       if (err.data) console.error('Validation errors:', err.data);
@@ -305,9 +305,7 @@ export class IrariumsStore {
         .collection(COLLECTION.IRARIUMS)
         .update(updatedIrarium.id, this.mapIrariumToUpdate(updatedIrarium));
 
-      this.userIrariums = this.userIrariums.map((irarium) =>
-        updatedIrarium.id === irarium.id ? updatedIrarium : irarium
-      );
+      await refreshState();
     } catch (err) {
       console.error('Error updating irarium:', err);
     }
@@ -349,18 +347,7 @@ export class IrariumsStore {
           position: positionText
         });
 
-      // Update in both user and public collections
-      this.userIrariums = this.userIrariums.map((item) =>
-        item.id === irarium.id ? updatedIrarium : item
-      );
-
-      if (updatedIrarium.isPublic) {
-        this.publicIrariums = [...this.publicIrariums, updatedIrarium];
-      } else {
-        this.publicIrariums = this.publicIrariums.filter(
-          (item) => item.id !== irarium.id
-        );
-      }
+      await refreshState();
 
       // Refresh the space's irarium count to update the UI
       if (targetSpaceId) {
@@ -374,20 +361,7 @@ export class IrariumsStore {
     }
   }
 
-  async refreshAllData(userId: string) {
-    this.isLoading = true;
-    try {
-      await Promise.all([
-        authStore.refreshUser(),
-        this.fetchUserIrariums(userId, true),
-        spaceStore.fetchUserSpaces(userId, true)
-      ]);
-    } catch (error) {
-      console.error('Error refreshing all data:', error);
-    } finally {
-      this.isLoading = false;
-    }
-  }
+
 
 
 
