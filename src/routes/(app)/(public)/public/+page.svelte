@@ -5,18 +5,11 @@
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
+  import DateDisplay from '$lib/components/shared/date-display.svelte';
 
   onMount(() => {
     irariumsStore.fetchPublicIrariums();
   });
-
-  function formatDate(dateString: string) {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
 </script>
 
 <UserNavbar title="Home" />
@@ -54,7 +47,7 @@
             {@html irarium.content || 'No content'}
           </div>
           <div class="flex justify-between text-xs text-muted-foreground">
-            <span>{formatDate(irarium.updated)}</span>
+            <DateDisplay created={irarium.created} updated={irarium.updated} />
             <span>{countThoughts(irarium)} thoughts</span>
           </div>
         </a>

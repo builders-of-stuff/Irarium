@@ -10,16 +10,12 @@
 
   import * as Tabs from '$lib/components/ui/tabs';
   import { spaceStore } from '$lib/space/space.store.svelte';
+  import { collectionsStore } from '$lib/collections/collections.store.svelte';
   import CreateSpaceDialog from '$lib/components/space/create-space-dialog.svelte';
   import { MapPin } from '@lucide/svelte';
   import DateDisplay from '$lib/components/shared/date-display.svelte';
 
   let isCreateSpaceOpen = $state(false);
-  let activeTab = $state('irariums');
-
-  // Filter states
-  let searchQuery = $state('');
-  let visibilityFilter = $state<'all' | 'public' | 'private'>('all');
 
   $effect(() => {
     if (authStore.userId) {
@@ -34,67 +30,12 @@
       });
     }
   });
-
-  // Filtered irariums based on search and visibility
-  let filteredIrariums = $derived.by(() => {
-    let items = irariumsStore.userIrariums;
-
-    // Apply visibility filter
-    if (visibilityFilter === 'public') {
-      items = items.filter((i) => i.isPublic);
-    } else if (visibilityFilter === 'private') {
-      items = items.filter((i) => !i.isPublic);
-    }
-
-    // Apply search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      items = items.filter((i) => {
-        const content = i.content?.toLowerCase() || '';
-        return content.includes(query);
-      });
-    }
-
-    return items;
-  });
-
-  // Filtered spaces based on search and visibility
-  let filteredSpaces = $derived.by(() => {
-    let items = spaceStore.userSpaces;
-
-    // Apply visibility filter
-    if (visibilityFilter === 'public') {
-      items = items.filter((s) => s.isPublic);
-    } else if (visibilityFilter === 'private') {
-      items = items.filter((s) => !s.isPublic);
-    }
-
-    // Apply search filter
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      items = items.filter((s) => {
-        const name = s.name?.toLowerCase() || '';
-        const description = s.description?.toLowerCase() || '';
-        return name.includes(query) || description.includes(query);
-      });
-    }
-
-    return items;
-  });
-
-  function formatDate(dateString: string) {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  }
 </script>
 
 {#snippet actions()}
-  {#if activeTab === 'irariums'}
+  {#if collectionsStore.activeTab === 'irariums'}
     <Button href="/create">Create Irarium</Button>
-  {:else if activeTab === 'spaces'}
+  {:else if collectionsStore.activeTab === 'spaces'}
     {#if spaceStore.userSpaces.length < (authStore.userSettings?.spaceLimit || 1) || authStore.userSettings?.isFullyUpgraded}
       <Button onclick={() => (isCreateSpaceOpen = true)}>Create Space</Button>
     {/if}
@@ -106,7 +47,7 @@
     <UserNavbar title="My Collections" {actions} />
 
     <div class="container mx-auto max-w-6xl px-4 py-8 pt-32 md:pt-20">
-      <Tabs.Root bind:value={activeTab} class="w-full">
+      <Tabs.Root bind:value={collectionsStore.activeTab} class="w-full">
         <div
           class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >
@@ -118,14 +59,14 @@
           <div class="flex flex-1 gap-2 sm:max-w-md">
             <Input
               type="text"
-              placeholder={activeTab === 'irariums'
+              placeholder={collectionsStore.activeTab === 'irariums'
                 ? 'Search irariums...'
                 : 'Search spaces...'}
-              bind:value={searchQuery}
+              bind:value={collectionsStore.searchQuery}
               class="flex-1"
             />
             <select
-              bind:value={visibilityFilter}
+              bind:value={collectionsStore.visibilityFilter}
               class="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs ring-offset-background transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
             >
               <option value="all">All</option>
@@ -152,7 +93,7 @@
                 >Try Again</Button
               >
             </div>
-          {:else if filteredIrariums.length === 0}
+          {:else if collectionsStore.filteredIrariums.length === 0}
             <div class="rounded-lg border border-dashed p-8 text-center">
               <h3 class="mb-3 text-xl font-medium">
                 {irariumsStore.userIrariums.length === 0
@@ -169,7 +110,7 @@
             </div>
           {:else}
             <div class="mt-4 space-y-4">
-              {#each filteredIrariums as irarium}
+              {#each collectionsStore.filteredIrariums as irarium}
                 <a
                   href={`/${irarium.id}`}
                   class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
@@ -241,7 +182,7 @@
                   >Try Again</Button
                 >
               </div>
-            {:else if filteredSpaces.length === 0}
+            {:else if collectionsStore.filteredSpaces.length === 0}
               <div class="rounded-lg border border-dashed p-8 text-center">
                 <h3 class="mb-3 text-xl font-medium">
                   {spaceStore.userSpaces.length === 0
@@ -263,7 +204,7 @@
               </div>
             {:else}
               <div class="grid gap-4 md:grid-cols-2">
-                {#each filteredSpaces as space}
+                {#each collectionsStore.filteredSpaces as space}
                   <a
                     href={`/spaces/${space.slug}-${space.id}`}
                     class="block rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"

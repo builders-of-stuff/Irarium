@@ -25,6 +25,19 @@ export class IrariumsStore {
   hasFetchedUserIrariums = $derived(!!this.lastFetchedUserIrariums);
   hasFetchedPublicIrariums = $derived(!!this.lastFetchedPublicIrariums);
 
+  // Group public irariums by spaceId
+  publicIrariumsBySpace = $derived.by(() => {
+    const groups: Record<string, Irarium[]> = {};
+    for (const irarium of this.publicIrariums) {
+      const spaceId = irarium.spaceId || 'default-space';
+      if (!groups[spaceId]) {
+        groups[spaceId] = [];
+      }
+      groups[spaceId].push(irarium);
+    }
+    return groups;
+  });
+
   constructor() {}
 
   async deleteIrarium(id: string) {

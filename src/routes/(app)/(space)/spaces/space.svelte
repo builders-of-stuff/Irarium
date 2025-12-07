@@ -6,19 +6,6 @@
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
   import { onMount } from 'svelte';
 
-  // Group irariums by spaceId
-  let groupedIrariums = $derived.by(() => {
-    const groups: Record<string, typeof irariumsStore.publicIrariums> = {};
-    for (const irarium of irariumsStore.publicIrariums) {
-      const spaceId = irarium.spaceId || 'default-space';
-      if (!groups[spaceId]) {
-        groups[spaceId] = [];
-      }
-      groups[spaceId].push(irarium);
-    }
-    return groups;
-  });
-
   onMount(() => {
     console.log('Space component mounted');
     irariumsStore.fetchPublicIrariums();
@@ -36,7 +23,7 @@
     <T.PointLight position={[-10, -10, -10]} intensity={0.5} color="blue" />
 
     <!-- Render Spaces -->
-    {#each Object.entries(groupedIrariums) as [spaceId, irariums], i}
+    {#each Object.entries(irariumsStore.publicIrariumsBySpace) as [spaceId, irariums], i}
       <!-- Position spaces in a line for now -->
       <T.Group position={[i * 150, 0, 0]}>
         <SpaceBox id={spaceId} {irariums} />
