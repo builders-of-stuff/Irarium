@@ -189,6 +189,7 @@ export class SpaceStore {
       createdBy: item.createdBy,
       mods: item.mods,
       isPublic: item.isPublic,
+      isShared: item.isShared || false,
       created: item.created,
       updated: item.updated,
       username: item.expand?.createdBy?.username,

@@ -6,6 +6,7 @@
   import { type Irarium } from '$lib/shared/shared.type';
   import { spaceStore } from '$lib/space/space.store.svelte';
   import { publishIrariumStore } from '$lib/irarium/publish-irarium.store.svelte';
+  import { authStore } from '$lib/auth/auth.store.svelte';
   import { toast } from 'svelte-sonner';
 
   let {
@@ -22,8 +23,24 @@
   $effect(() => {
     if (open) {
       spaceStore.fetchPublicSpaces();
+      if (authStore.userId) {
+        spaceStore.fetchUserSpaces(authStore.userId);
+      }
       publishIrariumStore.reset(irarium);
     }
+  });
+
+  // Filter spaces where user has permission to publish
+  let availableSpaces = $derived.by(() => {
+    const owned = spaceStore.userSpaces;
+    const shared = spaceStore.publicSpaces.filter((s) => s.isShared);
+
+    // Combine and deduplicate
+    const map = new Map();
+    owned.forEach((s) => map.set(s.id, s));
+    shared.forEach((s) => map.set(s.id, s));
+
+    return Array.from(map.values()).sort((a, b) => a.name.localeCompare(b.name));
   });
 
   async function handlePublish() {
@@ -65,7 +82,7 @@
           class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="">Select a space</option>
-          {#each spaceStore.publicSpaces as space (space.id)}
+          {#each availableSpaces as space (space.id)}
             <option value={space.id}>{space.name}</option>
           {/each}
         </select>

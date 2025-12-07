@@ -132,6 +132,7 @@ export type Space = {
   createdBy: string;
   mods: string[];
   isPublic: boolean;
+  isShared: boolean;
   created: string;
   updated?: string;
   username?: string;

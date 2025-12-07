@@ -29,6 +29,7 @@
   let description = $state(space.description);
   let tags = $state(space.tags);
   let isPublic = $state(space.isPublic);
+  let isShared = $state(space.isShared || false);
 
   // Update local state when space prop changes (e.g. if updated externally)
   $effect(() => {
@@ -37,6 +38,7 @@
       description = space.description;
       tags = space.tags;
       isPublic = space.isPublic;
+      isShared = space.isShared || false;
     }
   });
 
@@ -49,7 +51,8 @@
         name,
         description,
         tags,
-        isPublic
+        isPublic,
+        isShared
       };
 
       const updatedSpace = await pb
@@ -167,6 +170,11 @@
         <div class="flex items-center space-x-2">
           <Switch id="public" bind:checked={isPublic} />
           <Label for="public">Make Public</Label>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <Switch id="shared" bind:checked={isShared} />
+          <Label for="shared">Allow others to publish</Label>
         </div>
       </div>
 

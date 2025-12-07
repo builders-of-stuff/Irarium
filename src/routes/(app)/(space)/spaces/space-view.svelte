@@ -15,6 +15,7 @@
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import DateDisplay from '$lib/components/shared/date-display.svelte';
+  import { toast } from 'svelte-sonner';
 
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
@@ -105,6 +106,7 @@
           createdBy: record.createdBy,
           mods: record.mods,
           isPublic: record.isPublic,
+          isShared: record.isShared,
           created: record.created,
           size: record.size
         };
@@ -145,7 +147,16 @@
         variant={isSubscribed ? 'secondary' : 'outline'}
         size="sm"
         onclick={async () => {
-          await authStore.toggleSpaceSubscription(space.id);
+          const result = await authStore.toggleSpaceSubscription(space.id);
+          if (result?.success) {
+            if (result.isSubscribed) {
+              toast.success('Subscribed to space');
+            } else {
+              toast.success('Unsubscribed from space');
+            }
+          } else {
+            toast.error('Failed to update subscription');
+          }
         }}
         title={isSubscribed ? 'Unsubscribe from Space' : 'Subscribe to Space'}
       >
@@ -251,6 +262,31 @@
       </svg>
       <span>{spaceIrariums.length}</span>
     </div>
+
+    {#if space?.isShared}
+      <div
+        class="flex items-center gap-1.5 rounded-full border border-green-500/30 bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-3 py-1.5 text-sm font-medium text-green-300 transition-all duration-200 hover:border-green-500/50 hover:from-green-500/30 hover:to-emerald-500/30"
+        title="Shared Space - Anyone can publish here"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span>Shared</span>
+      </div>
+    {/if}
   </div>
 {/snippet}
 

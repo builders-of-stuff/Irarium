@@ -170,17 +170,7 @@
               </p>
             </div>
           </div>
-          <div class="flex items-center gap-3">
-            <div
-              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
-            >
-              <Check class="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <p class="text-sm font-medium text-muted-foreground">Features</p>
-              <p class="text-base font-semibold">Base access included</p>
-            </div>
-          </div>
+
           <div class="flex items-center gap-3">
             <div
               class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
