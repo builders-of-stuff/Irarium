@@ -16,6 +16,7 @@
     DEFAULT_SPACE_SIZE,
     SPACE_EXPANSION_UNIT
   } from '$lib/shared/space.constants';
+  import { spaceStore } from '$lib/space/space.store.svelte';
 
   let slug = $derived(page.params.slug ?? '');
   let spaceId = $derived(slug.split('-').pop());
@@ -101,6 +102,14 @@
   async function handleExpand() {
     if (!spaceId || !space) return;
 
+    if (
+      !confirm(
+        `Are you sure you want to expand this space? This will use 1 space expander.`
+      )
+    ) {
+      return;
+    }
+
     isExpanding = true;
     try {
       const response = await fetch(`/spaces/${slug}/settings`, {
@@ -126,6 +135,30 @@
       toast.error(err.message || 'Failed to expand space');
     } finally {
       isExpanding = false;
+    }
+  }
+
+  async function handleDelete() {
+    if (!spaceId || !space) return;
+
+    if (
+      !confirm(
+        'Are you sure you want to delete this space? This action cannot be undone.'
+      )
+    ) {
+      return;
+    }
+
+    isSaving = true;
+    try {
+      await pb.collection(COLLECTION.SPACES).delete(spaceId);
+      spaceStore.removeSpace(spaceId);
+      toast.success('Space deleted successfully');
+      goto('/spaces');
+    } catch (err: any) {
+      console.error('Error deleting space:', err);
+      toast.error(err.message || 'Failed to delete space');
+      isSaving = false;
     }
   }
 </script>
@@ -213,13 +246,24 @@
             </div>
           </div>
 
-          <div class="flex justify-end gap-4 pt-4">
-            <Button variant="outline" href={`/spaces/${space.slug}-${space.id}`}
-              >Cancel</Button
+          <div class="flex items-center justify-between pt-4">
+            <Button
+              variant="destructive"
+              onclick={handleDelete}
+              disabled={isSaving}
+              size="sm"
             >
-            <Button onclick={handleSave} disabled={isSaving}>
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              Delete Space
             </Button>
+
+            <div class="flex gap-4">
+              <Button variant="outline" href={`/spaces/${space.slug}-${space.id}`}>
+                Cancel
+              </Button>
+              <Button onclick={handleSave} disabled={isSaving}>
+                {isSaving ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
           </div>
         </div>
       {/if}

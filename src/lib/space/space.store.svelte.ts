@@ -157,6 +157,11 @@ export class SpaceStore {
       size: item.size
     };
   }
+
+  removeSpace(spaceId: string) {
+    this.userSpaces = this.userSpaces.filter((s) => s.id !== spaceId);
+    this.publicSpaces = this.publicSpaces.filter((s) => s.id !== spaceId);
+  }
 }
 
 export const spaceStore = new SpaceStore();
