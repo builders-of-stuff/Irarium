@@ -18,12 +18,14 @@
 
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import { Button } from '$lib/components/ui/button';
+  import SpaceSettingsModal from '$lib/components/space/space-settings-modal.svelte';
 
   let { slug } = $props<{ slug: string }>();
 
   let space = $state<Space | null>(null);
   let isLoading = $state(true);
   let error = $state<string | null>(null);
+  let isSettingsOpen = $state(false);
 
   let searchQuery = $state('');
 
@@ -124,13 +126,14 @@
 {#snippet actions()}
   {#if space}
     {#if space.createdBy === authStore.userId}
-      <a
-        href={`/spaces/${space.slug}-${space.id}/settings`}
-        class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+      <Button
+        variant="outline"
+        size="icon"
+        onclick={() => (isSettingsOpen = true)}
         title="Settings"
       >
         <Settings size={16} />
-      </a>
+      </Button>
     {/if}
 
     {#if authStore.userSettings?.hasAnsible && space?.createdBy !== authStore.userId}
@@ -348,5 +351,7 @@
         {/each}
       </div>
     {/if}
+
+    <SpaceSettingsModal bind:open={isSettingsOpen} bind:space />
   </div>
 {/if}
