@@ -8,14 +8,17 @@
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
-  import * as Tabs from '$lib/components/ui/tabs';
-  import { MapPin } from '@lucide/svelte';
+  import * as Collapsible from '$lib/components/ui/collapsible';
+  import { MapPin, ChevronDown } from '@lucide/svelte';
   import DateDisplay from '$lib/components/shared/date-display.svelte';
+  import SpaceCard from '$lib/components/shared/space-card.svelte';
 
   // Dialog components
   import * as Dialog from '$lib/components/ui/dialog';
 
   let showDialog = $state(false);
+  let spacesOpen = $state(true);
+  let irariumsOpen = $state(true);
 
   // Form inputs
   let bioInput = $state('');
@@ -152,161 +155,132 @@
       </div>
 
       <!-- Public Content section -->
-      <div>
-        <Tabs.Root value="irariums" class="w-full">
-          <Tabs.List class="grid w-full grid-cols-2">
-            <Tabs.Trigger value="irariums">Irariums</Tabs.Trigger>
-            <Tabs.Trigger value="spaces">Spaces</Tabs.Trigger>
-          </Tabs.List>
+      <div class="space-y-8">
+        <!-- Spaces Section -->
+        <div>
+          <Collapsible.Root bind:open={spacesOpen}>
+            <Collapsible.Trigger
+              class="mb-4 flex w-full items-center justify-between text-left font-semibold transition-opacity hover:opacity-70"
+            >
+              <h2 class="text-lg">Spaces</h2>
+              <ChevronDown
+                size={18}
+                class="text-muted-foreground transition-transform duration-200 {spacesOpen
+                  ? 'rotate-180'
+                  : ''}"
+              />
+            </Collapsible.Trigger>
 
-          <Tabs.Content value="irariums" class="mt-4">
-            {#if irariumsStore.isLoading}
-              <div class="flex justify-center py-8">
-                <div class="animate-pulse text-center">
-                  <p>Loading irariums...</p>
+            <Collapsible.Content>
+              {#if spaceStore.isLoading}
+                <div class="flex justify-center py-8">
+                  <div class="animate-pulse text-center">
+                    <p>Loading spaces...</p>
+                  </div>
                 </div>
-              </div>
-            {:else if userPublicIrariums.length === 0}
-              <div class="rounded-lg border border-dashed p-8 text-center">
-                <h3 class="mb-2 text-xl font-medium">No public irariums</h3>
-                <p class="mb-4 text-muted-foreground">
-                  This user hasn't made any irariums public yet.
-                </p>
-              </div>
-            {:else}
-              <div class="space-y-4">
-                {#each userPublicIrariums as irarium}
-                  <a
-                    href={`/${irarium.id}`}
-                    class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
-                  >
-                    {#if irarium.title && irarium.title !== irarium.id}
-                      <h3 class="mb-2 line-clamp-3 font-semibold">{irarium.title}</h3>
-                    {:else}
-                      <div class="mb-2 line-clamp-3">
-                        {@html irarium.content || 'No content'}
-                      </div>
-                    {/if}
-                    <div class="flex justify-between text-xs text-muted-foreground">
-                      <div class="flex items-center gap-3">
-                        <DateDisplay
-                          created={irarium.created}
-                          updated={irarium.updated}
-                        />
-                        {#if irarium.space}
-                          <button
-                            type="button"
-                            class="flex items-center gap-1 hover:text-foreground hover:underline"
-                            onclick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              window.location.href = `/spaces/${irarium.space?.slug}-${irarium.spaceId}`;
-                            }}
-                          >
-                            <MapPin size={12} />
-                            {irarium.space.name}
-                          </button>
-                        {/if}
-                      </div>
-                      <span>{countThoughts(irarium)} thoughts</span>
-                    </div>
-                  </a>
-                {/each}
-              </div>
-
-              {#if irariumsStore.hasMoreUserIrariums && userPublicIrariums.length > 0}
-                <div class="mt-8 flex justify-center">
-                  <Button
-                    variant="outline"
-                    disabled={irariumsStore.isLoadingMore}
-                    onclick={() => irariumsStore.loadMoreUserIrariums(authStore.userId)}
-                  >
-                    {irariumsStore.isLoadingMore ? 'Loading...' : 'Load More'}
-                  </Button>
+              {:else if spaceStore.userSpaces.filter((s) => s.isPublic).length === 0}
+                <div class="py-8 text-center text-muted-foreground">
+                  <p>No public spaces yet.</p>
+                </div>
+              {:else}
+                <div class="space-y-4">
+                  {#each spaceStore.userSpaces.filter((s) => s.isPublic) as space}
+                    <SpaceCard
+                      {space}
+                      irariumCount={spaceStore.irariumCounts[space.id] || 0}
+                    />
+                  {/each}
                 </div>
               {/if}
-            {/if}
-          </Tabs.Content>
+            </Collapsible.Content>
+          </Collapsible.Root>
+        </div>
 
-          <Tabs.Content value="spaces" class="mt-4">
-            {#if spaceStore.isLoading}
-              <div class="flex justify-center py-8">
-                <div class="animate-pulse text-center">
-                  <p>Loading spaces...</p>
+        <!-- Irariums Section -->
+        <div>
+          <Collapsible.Root bind:open={irariumsOpen}>
+            <Collapsible.Trigger
+              class="mb-4 flex w-full items-center justify-between text-left font-semibold transition-opacity hover:opacity-70"
+            >
+              <h2 class="text-lg">Irariums</h2>
+              <ChevronDown
+                size={18}
+                class="text-muted-foreground transition-transform duration-200 {irariumsOpen
+                  ? 'rotate-180'
+                  : ''}"
+              />
+            </Collapsible.Trigger>
+
+            <Collapsible.Content>
+              {#if irariumsStore.isLoading}
+                <div class="flex justify-center py-8">
+                  <div class="animate-pulse text-center">
+                    <p>Loading irariums...</p>
+                  </div>
                 </div>
-              </div>
-            {:else if spaceStore.userSpaces.filter((s) => s.isPublic).length === 0}
-              <div class="rounded-lg border border-dashed p-8 text-center">
-                <h3 class="mb-2 text-xl font-medium">No public spaces</h3>
-                <p class="mb-4 text-muted-foreground">
-                  This user hasn't made any spaces public yet.
-                </p>
-              </div>
-            {:else}
-              <div class="grid gap-4 md:grid-cols-2">
-                {#each spaceStore.userSpaces.filter((s) => s.isPublic) as space}
-                  <a
-                    href={`/spaces/${space.slug}-${space.id}`}
-                    class="relative block rounded-lg border border-muted p-6 transition-colors hover:bg-muted/30"
-                  >
-                    {#if space.isShared}
-                      <div class="absolute top-4 right-4">
-                        <span
-                          class="flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-1 text-xs font-medium text-green-500"
-                          title="Shared Space"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="12"
-                            height="12"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          >
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                          </svg>
-                          Shared
-                        </span>
+              {:else if userPublicIrariums.length === 0}
+                <div class="py-8 text-center text-muted-foreground">
+                  <p>No public irariums yet.</p>
+                </div>
+              {:else}
+                <div class="space-y-4">
+                  {#each userPublicIrariums as irarium}
+                    <a
+                      href={`/${irarium.id}`}
+                      class="block rounded-lg border border-muted p-4 transition-colors hover:bg-muted/30"
+                    >
+                      {#if irarium.title && irarium.title !== irarium.id}
+                        <h3 class="mb-2 line-clamp-3 font-semibold">
+                          {irarium.title}
+                        </h3>
+                      {:else}
+                        <div class="mb-2 line-clamp-3">
+                          {@html irarium.content || 'No content'}
+                        </div>
+                      {/if}
+                      <div class="flex justify-between text-xs text-muted-foreground">
+                        <div class="flex items-center gap-3">
+                          <DateDisplay
+                            created={irarium.created}
+                            updated={irarium.updated}
+                          />
+                          {#if irarium.space}
+                            <button
+                              type="button"
+                              class="flex items-center gap-1 hover:text-foreground hover:underline"
+                              onclick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.location.href = `/spaces/${irarium.space?.slug}-${irarium.spaceId}`;
+                              }}
+                            >
+                              <MapPin size={12} />
+                              {irarium.space.name}
+                            </button>
+                          {/if}
+                        </div>
+                        <span>{countThoughts(irarium)} thoughts</span>
                       </div>
-                    {/if}
-                    <h3 class="mb-2 pr-20 text-xl font-semibold">{space.name}</h3>
-                    <p class="text-sm text-muted-foreground">
-                      {space.description || 'No description'}
-                    </p>
-                    <div class="mt-4 flex items-center text-xs text-muted-foreground">
-                      <span class="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          stroke-width="2"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          class="mr-1"
-                          ><path
-                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-                          ></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"
-                          ></polyline><line x1="12" y1="22.08" x2="12" y2="12"
-                          ></line></svg
-                        >
-                        {spaceStore.irariumCounts[space.id] || 0} irariums
-                      </span>
-                    </div>
-                  </a>
-                {/each}
-              </div>
-            {/if}
-          </Tabs.Content>
-        </Tabs.Root>
+                    </a>
+                  {/each}
+                </div>
+
+                {#if irariumsStore.hasMoreUserIrariums && userPublicIrariums.length > 0}
+                  <div class="mt-8 flex justify-center">
+                    <Button
+                      variant="outline"
+                      disabled={irariumsStore.isLoadingMore}
+                      onclick={() =>
+                        irariumsStore.loadMoreUserIrariums(authStore.userId)}
+                    >
+                      {irariumsStore.isLoadingMore ? 'Loading...' : 'Load More'}
+                    </Button>
+                  </div>
+                {/if}
+              {/if}
+            </Collapsible.Content>
+          </Collapsible.Root>
+        </div>
       </div>
     </div>
   </div>

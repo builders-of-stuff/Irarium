@@ -201,10 +201,7 @@
               <CardDescription>
                 One-time payment to increase your space limit.
               </CardDescription>
-              <div class="mt-2 text-3xl font-bold">
-                $3.50<span class="text-sm font-normal text-muted-foreground">/unit</span
-                >
-              </div>
+              <div class="mt-2 text-3xl font-bold">$3.50</div>
             </CardHeader>
             <CardContent class="flex-grow">
               <div class="mb-4 space-y-2">
@@ -244,9 +241,7 @@
                 Expand the size of your existing spaces.
               </CardDescription>
               <div class="mt-2 text-3xl font-bold">
-                ${SPACE_EXPANDER_COST}<span
-                  class="text-sm font-normal text-muted-foreground">/unit</span
-                >
+                ${SPACE_EXPANDER_COST}
               </div>
             </CardHeader>
             <CardContent class="flex-grow">
@@ -292,13 +287,10 @@
               <CardHeader>
                 <CardTitle>Ansible</CardTitle>
                 <CardDescription>
-                  Unlock the ability to subscribe to other spaces and expand your feed.
+                  Unlock the ability to subscribe to other spaces and expand your home
+                  feed.
                 </CardDescription>
-                <div class="mt-2 text-3xl font-bold">
-                  $10.00<span class="text-sm font-normal text-muted-foreground"
-                    >/one-time</span
-                  >
-                </div>
+                <div class="mt-2 text-3xl font-bold">$10</div>
               </CardHeader>
               <CardContent class="flex-grow">
                 <ul class="space-y-2">
