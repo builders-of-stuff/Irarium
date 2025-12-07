@@ -1,7 +1,7 @@
 <script lang="ts">
   import { NavigationMenu } from 'bits-ui';
   import { tick } from 'svelte';
-  import { MapPin } from '@lucide/svelte';
+  import { MapPin, PanelLeft as PanelLeftIcon } from '@lucide/svelte';
 
   import { useSidebar } from '$lib/components/ui/sidebar/context.svelte';
 
@@ -99,6 +99,11 @@
             type="text"
           />
         {:else}
+          {#if sidebar.isMobile}
+            <button onclick={sidebar.toggle} class="mr-2 text-muted-foreground">
+              <PanelLeftIcon size={20} />
+            </button>
+          {/if}
           <button onclick={handleTitleClick} class="group">
             <h1
               class="truncate text-xl font-bold text-white transition-colors md:text-2xl {isTitleEditable
