@@ -82,7 +82,7 @@ export class IrariumsStore {
     }
   }
 
-  async fetchPublicIrariums() {
+  async fetchPublicIrariums(targetSpaceId?: string) {
     this.isLoading = true;
     this.error = null;
 
@@ -99,11 +99,16 @@ export class IrariumsStore {
         const subscribedSpaceIds = authStore.userSettings?.subscribedSpaces || [];
         
         // Combine unique IDs
-        const allowedSpaceIds = [...new Set([...ownedSpaceIds, ...subscribedSpaceIds])];
+        const allowedSpaceIds = new Set([...ownedSpaceIds, ...subscribedSpaceIds]);
         
-        if (allowedSpaceIds.length > 0) {
+        // If a target space is provided (e.g. visiting a space directly), allow it
+        if (targetSpaceId) {
+          allowedSpaceIds.add(targetSpaceId);
+        }
+        
+        if (allowedSpaceIds.size > 0) {
           // Construct OR filter for space IDs
-          const spaceFilter = allowedSpaceIds.map(id => `spaceId = "${id}"`).join(' || ');
+          const spaceFilter = Array.from(allowedSpaceIds).map(id => `spaceId = "${id}"`).join(' || ');
           filter = `(${filter}) && (${spaceFilter})`;
         } else {
           // If no spaces owned or subscribed, show nothing (or maybe just public ones from system? 
