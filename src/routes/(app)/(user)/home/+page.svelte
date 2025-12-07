@@ -2,16 +2,20 @@
   import { onMount } from 'svelte';
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import { spaceStore } from '$lib/space/space.store.svelte';
   import { countThoughts } from '$lib/irarium/irarium.tools.svelte';
   import { Button } from '$lib/components/ui/button';
   import { MapPin } from '@lucide/svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import DateDisplay from '$lib/components/shared/date-display.svelte';
 
-  onMount(() => {
-    if (authStore.userId) {
-      irariumsStore.fetchPublicIrariums();
-    }
+  import { untrack } from 'svelte';
+
+  $effect(() => {
+    // If logged in, wait for spaces to be loaded so we can filter correctly
+    if (authStore.userId && !spaceStore.hasFetchedUserSpaces) return;
+
+    untrack(() => irariumsStore.fetchPublicIrariums());
   });
 </script>
 
