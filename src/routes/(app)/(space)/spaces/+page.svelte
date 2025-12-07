@@ -12,46 +12,8 @@
   import { spaceStore } from '$lib/space/space.store.svelte';
   import DateDisplay from '$lib/components/shared/date-display.svelte';
 
-  let spaces = $state<Space[]>([]);
-  let isLoading = $state(true);
-  let error = $state<string | null>(null);
-  let searchQuery = $state('');
-  let sortBy = $state<'most-irariums' | 'fewest-irariums' | 'newest' | 'oldest'>(
-    'most-irariums'
-  );
-
   onMount(async () => {
-    try {
-      const records = await pb.collection(COLLECTION.SPACES).getList(1, 50, {
-        sort: 'name',
-        filter: 'isPublic = true',
-        expand: 'createdBy'
-      });
-
-      spaces = records.items.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        slug: item.slug,
-        tags: item.tags,
-        type: item.type,
-        createdBy: item.createdBy,
-        mods: item.mods,
-        isPublic: item.isPublic,
-        created: item.created,
-        updated: item.updated,
-        username: item.expand?.createdBy?.username,
-        size: item.size
-      }));
-
-      // Fetch counts
-      spaces.forEach((space) => spaceStore.fetchIrariumCount(space.id));
-    } catch (err) {
-      console.error('Error fetching spaces:', err);
-      error = 'Failed to load spaces';
-    } finally {
-      isLoading = false;
-    }
+    spaceStore.fetchPublicSpaces();
   });
 
   $effect(() => {
@@ -60,44 +22,6 @@
         spaceStore.fetchUserSpaces(authStore.userId);
       });
     }
-  });
-
-  let filteredSpaces = $derived.by(() => {
-    // First filter by search query
-    let result = spaces;
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      result = spaces.filter((s) => {
-        const name = s.name?.toLowerCase() || '';
-        const description = s.description?.toLowerCase() || '';
-        const tags = s.tags?.toLowerCase() || '';
-        return (
-          name.includes(query) || description.includes(query) || tags.includes(query)
-        );
-      });
-    }
-
-    // Then sort
-    return [...result].sort((a, b) => {
-      switch (sortBy) {
-        case 'most-irariums':
-          return (
-            (spaceStore.irariumCounts[b.id] || 0) -
-            (spaceStore.irariumCounts[a.id] || 0)
-          );
-        case 'fewest-irariums':
-          return (
-            (spaceStore.irariumCounts[a.id] || 0) -
-            (spaceStore.irariumCounts[b.id] || 0)
-          );
-        case 'newest':
-          return new Date(b.created).getTime() - new Date(a.created).getTime();
-        case 'oldest':
-          return new Date(a.created).getTime() - new Date(b.created).getTime();
-        default:
-          return 0;
-      }
-    });
   });
 </script>
 
@@ -111,11 +35,11 @@
           <Input
             type="text"
             placeholder="Search spaces by title, description, or tags..."
-            bind:value={searchQuery}
+            bind:value={spaceStore.searchQuery}
             class="flex-1 sm:max-w-md"
           />
           <select
-            bind:value={sortBy}
+            bind:value={spaceStore.sortBy}
             class="h-9 rounded-md border border-input bg-background px-3 text-sm shadow-xs ring-offset-background transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:bg-input/30"
           >
             <option value="most-irariums">Most Irariums</option>
@@ -125,30 +49,32 @@
           </select>
         </div>
 
-        {#if isLoading}
+        {#if spaceStore.isLoading}
           <div class="flex justify-center py-12">
             <div class="animate-pulse text-center">
               <p>Loading spaces...</p>
             </div>
           </div>
-        {:else if error}
+        {:else if spaceStore.error}
           <div class="rounded-lg bg-destructive/10 p-4 text-destructive">
-            <p>{error}</p>
+            <p>{spaceStore.error}</p>
           </div>
-        {:else if filteredSpaces.length === 0}
+        {:else if spaceStore.filteredPublicSpaces.length === 0}
           <div class="rounded-lg border border-dashed p-8 text-center">
             <h3 class="mb-3 text-xl font-medium">
-              {spaces.length === 0 ? 'No spaces found' : 'No matching spaces'}
+              {spaceStore.publicSpaces.length === 0
+                ? 'No spaces found'
+                : 'No matching spaces'}
             </h3>
             <p class="text-muted-foreground">
-              {spaces.length === 0
+              {spaceStore.publicSpaces.length === 0
                 ? 'There are no spaces available yet.'
                 : 'Try adjusting your search query.'}
             </p>
           </div>
         {:else}
           <div class="grid gap-4 md:grid-cols-2">
-            {#each filteredSpaces as space}
+            {#each spaceStore.filteredPublicSpaces as space}
               <div
                 role="button"
                 tabindex="0"

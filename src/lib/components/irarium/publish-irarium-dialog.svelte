@@ -3,10 +3,9 @@
   import { Button } from '$lib/components/ui/button';
   import { Input } from '$lib/components/ui/input';
   import { Label } from '$lib/components/ui/label';
-  import { pb } from '$lib/db/client';
-  import { COLLECTION, type Irarium, type Space } from '$lib/shared/shared.type';
-  import { DEFAULT_SPACE_SIZE } from '$lib/shared/space.constants';
-  import { irariumsStore } from '$lib/irarium/irariums.store.svelte';
+  import { type Irarium } from '$lib/shared/shared.type';
+  import { spaceStore } from '$lib/space/space.store.svelte';
+  import { publishIrariumStore } from '$lib/irarium/publish-irarium.store.svelte';
   import { toast } from 'svelte-sonner';
 
   let {
@@ -19,156 +18,29 @@
     onPublishSuccess?: (updatedIrarium: Irarium) => void;
   }>();
 
-  let spaces = $state<Space[]>([]);
-  let selectedSpaceId = $state<string>('');
-  let x = $state<string>('0');
-  let y = $state<string>('0');
-  let z = $state<string>('0');
-  let isLoading = $state(false);
-  let isCheckingPosition = $state(false);
-  let positionError = $state<string>('');
-
-  // Get selected space name for display
-  const selectedSpace = $derived(spaces.find((s) => s.id === selectedSpaceId));
-  const spaceSize = $derived(selectedSpace?.size || DEFAULT_SPACE_SIZE);
-
-  const distance = $derived(
-    Math.sqrt(
-      Math.pow(parseFloat(x) || 0, 2) +
-        Math.pow(parseFloat(y) || 0, 2) +
-        Math.pow(parseFloat(z) || 0, 2)
-    )
-  );
-
-  const isPositionValid = $derived(distance <= spaceSize);
-
-  // Fetch public spaces when dialog opens
   // Fetch public spaces when dialog opens
   $effect(() => {
     if (open) {
-      fetchSpaces();
-      // Reset form
-      selectedSpaceId = irarium.spaceId || '';
-      if (irarium.position) {
-        const coords = irarium.position;
-        x = coords[0].toString();
-        y = coords[1].toString();
-        z = coords[2].toString();
-      } else {
-        // Generate random coordinates within sphere of radius 50
-        const u = Math.random();
-        const v = Math.random();
-        const theta = 2 * Math.PI * u;
-        const phi = Math.acos(2 * v - 1);
-        const r = spaceSize * Math.cbrt(Math.random());
-
-        const xVal = r * Math.sin(phi) * Math.cos(theta);
-        const yVal = r * Math.sin(phi) * Math.sin(theta);
-        const zVal = r * Math.cos(phi);
-
-        x = xVal.toFixed(1);
-        y = yVal.toFixed(1);
-        z = zVal.toFixed(1);
-      }
-      positionError = '';
+      spaceStore.fetchPublicSpaces();
+      publishIrariumStore.reset(irarium);
     }
   });
 
-  async function fetchSpaces() {
-    try {
-      const records = await pb.collection(COLLECTION.SPACES).getList(1, 50, {
-        filter: 'isPublic = true',
-        sort: 'name'
-      });
-
-      spaces = records.items.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        slug: item.slug,
-        tags: item.tags,
-        type: item.type,
-        createdBy: item.createdBy,
-        mods: item.mods,
-        isPublic: item.isPublic,
-        created: item.created,
-        size: item.size
-      }));
-    } catch (err) {
-      console.error('Error fetching spaces:', err);
-      toast.error('Failed to load spaces');
-    }
-  }
-
-  async function validatePosition() {
-    if (!selectedSpaceId) {
-      positionError = 'Please select a space';
-      return false;
-    }
-
-    const xNum = parseFloat(x);
-    const yNum = parseFloat(y);
-    const zNum = parseFloat(z);
-
-    if (isNaN(xNum) || isNaN(yNum) || isNaN(zNum)) {
-      positionError = 'Coordinates must be valid numbers';
-      return false;
-    }
-
-    // Check if position is within bounds (-size to size)
-    if (
-      xNum < -spaceSize ||
-      xNum > spaceSize ||
-      yNum < -spaceSize ||
-      yNum > spaceSize ||
-      zNum < -spaceSize ||
-      zNum > spaceSize
-    ) {
-      positionError = `Coordinates must be between -${spaceSize} and ${spaceSize}`;
-      return false;
-    }
-
-    // Check if position is within sphere radius
-    if (distance > spaceSize) {
-      positionError = `Position is outside the sphere (Distance: ${distance.toFixed(1)} > ${spaceSize})`;
-      return false;
-    }
-
-    positionError = '';
-    return true;
-  }
-
   async function handlePublish() {
-    if (!(await validatePosition())) {
-      return;
-    }
-
-    isLoading = true;
     try {
-      const xNum = parseFloat(x);
-      const yNum = parseFloat(y);
-      const zNum = parseFloat(z);
-      const position: [number, number, number] = [xNum, yNum, zNum];
-
-      const updatedIrarium = await irariumsStore.togglePublicState(
-        irarium,
-        selectedSpaceId,
-        position
-      );
+      const updatedIrarium = await publishIrariumStore.publish(irarium);
 
       toast.success('Irarium published successfully!');
 
       // Call the callback to update parent state
-      if (onPublishSuccess) {
+      if (onPublishSuccess && updatedIrarium) {
         onPublishSuccess(updatedIrarium);
       }
 
       open = false;
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error publishing irarium:', err);
-      toast.error('Failed to publish irarium');
-    } finally {
-      isLoading = false;
+      toast.error(err.message || 'Failed to publish irarium');
     }
   }
 </script>
@@ -188,12 +60,12 @@
         <Label for="space">Space</Label>
         <select
           id="space"
-          bind:value={selectedSpaceId}
-          onchange={() => (positionError = '')}
+          bind:value={publishIrariumStore.selectedSpaceId}
+          onchange={() => (publishIrariumStore.positionError = '')}
           class="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-colors focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="">Select a space</option>
-          {#each spaces as space (space.id)}
+          {#each spaceStore.publicSpaces as space (space.id)}
             <option value={space.id}>{space.name}</option>
           {/each}
         </select>
@@ -208,12 +80,12 @@
             <Input
               id="x"
               type="number"
-              bind:value={x}
+              bind:value={publishIrariumStore.x}
               placeholder="0"
               step="0.1"
-              min={-spaceSize}
-              max={spaceSize}
-              oninput={() => (positionError = '')}
+              min={-publishIrariumStore.spaceSize}
+              max={publishIrariumStore.spaceSize}
+              oninput={() => (publishIrariumStore.positionError = '')}
             />
           </div>
           <div>
@@ -221,12 +93,12 @@
             <Input
               id="y"
               type="number"
-              bind:value={y}
+              bind:value={publishIrariumStore.y}
               placeholder="0"
               step="0.1"
-              min={-spaceSize}
-              max={spaceSize}
-              oninput={() => (positionError = '')}
+              min={-publishIrariumStore.spaceSize}
+              max={publishIrariumStore.spaceSize}
+              oninput={() => (publishIrariumStore.positionError = '')}
             />
           </div>
           <div>
@@ -234,17 +106,17 @@
             <Input
               id="z"
               type="number"
-              bind:value={z}
+              bind:value={publishIrariumStore.z}
               placeholder="0"
               step="0.1"
-              min={-spaceSize}
-              max={spaceSize}
-              oninput={() => (positionError = '')}
+              min={-publishIrariumStore.spaceSize}
+              max={publishIrariumStore.spaceSize}
+              oninput={() => (publishIrariumStore.positionError = '')}
             />
           </div>
         </div>
-        {#if positionError}
-          <p class="text-sm text-destructive">{positionError}</p>
+        {#if publishIrariumStore.positionError}
+          <p class="text-sm text-destructive">{publishIrariumStore.positionError}</p>
         {/if}
       </div>
 
@@ -252,33 +124,41 @@
       <div class="rounded-md bg-muted p-3 text-sm">
         <p class="font-medium">Preview:</p>
         <p class="text-muted-foreground">
-          Space: {selectedSpace?.name || 'Not selected'}
+          Space: {publishIrariumStore.selectedSpace?.name || 'Not selected'}
         </p>
         <p class="text-muted-foreground">
-          Position: ({x}, {y}, {z})
+          Position: ({publishIrariumStore.x}, {publishIrariumStore.y}, {publishIrariumStore.z})
         </p>
         <p
-          class={isPositionValid
+          class={publishIrariumStore.isPositionValid
             ? 'text-muted-foreground'
             : 'font-medium text-destructive'}
         >
-          Distance from center: {distance.toFixed(1)} / {spaceSize}
+          Distance from center: {publishIrariumStore.distance.toFixed(1)} / {publishIrariumStore.spaceSize}
         </p>
       </div>
     </div>
 
     <Dialog.Footer>
-      <Button variant="outline" onclick={() => (open = false)} disabled={isLoading}>
+      <Button
+        variant="outline"
+        onclick={() => (open = false)}
+        disabled={publishIrariumStore.isLoading}
+      >
         Cancel
       </Button>
       <Button
         onclick={handlePublish}
-        disabled={isLoading ||
-          isCheckingPosition ||
-          !selectedSpaceId ||
-          !isPositionValid}
+        disabled={publishIrariumStore.isLoading ||
+          publishIrariumStore.isCheckingPosition ||
+          !publishIrariumStore.selectedSpaceId ||
+          !publishIrariumStore.isPositionValid}
       >
-        {isLoading ? 'Publishing...' : isCheckingPosition ? 'Checking...' : 'Publish'}
+        {publishIrariumStore.isLoading
+          ? 'Publishing...'
+          : publishIrariumStore.isCheckingPosition
+            ? 'Checking...'
+            : 'Publish'}
       </Button>
     </Dialog.Footer>
   </Dialog.Content>
