@@ -21,7 +21,23 @@
 
 <div class="relative min-h-screen overflow-hidden">
   <div class="relative z-10">
-    <UserNavbar title="Home" />
+    <UserNavbar title="Home">
+      {#snippet customBadge()}
+        {#if authStore.userId}
+          {@const ownSpacesCount = spaceStore.userSpaces.length}
+          {@const subscribedSpacesCount =
+            authStore.userSettings.subscribedSpaces?.length || 0}
+          {@const totalSpaces = ownSpacesCount + subscribedSpacesCount}
+          {#if totalSpaces > 0}
+            <div
+              class="flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-3 py-1.5 text-sm font-medium text-blue-300"
+            >
+              <span>{totalSpaces} {totalSpaces === 1 ? 'space' : 'spaces'}</span>
+            </div>
+          {/if}
+        {/if}
+      {/snippet}
+    </UserNavbar>
 
     <div class="container mx-auto max-w-6xl px-4 py-8 pt-32 md:pt-20">
       {#if irariumsStore.isLoading}
@@ -43,7 +59,7 @@
         <div class="rounded-lg border border-dashed p-8 text-center">
           <h3 class="mb-3 text-xl font-medium">No irariums found</h3>
 
-          <Button href="/create">Create irarium</Button>
+          <Button href="/spaces">View spaces</Button>
         </div>
       {:else}
         <div class="space-y-4">

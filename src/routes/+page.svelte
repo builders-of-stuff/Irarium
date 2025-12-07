@@ -13,7 +13,7 @@
   } from '$lib/shared/shared.constant';
   import DiscordIcon from '$lib/components/icons/discord-icon.svelte';
   import XIcon from '$lib/components/icons/x.svelte';
-  import { Circle } from '@lucide/svelte';
+  import { Circle, HelpCircle } from '@lucide/svelte';
 
   let mounted = false;
 
@@ -96,6 +96,10 @@
 
   <!-- Social links in bottom right corner -->
   <div class="absolute right-6 bottom-6 z-20 flex space-x-4">
+    <a href="/faq" class="text-zinc-400 transition-colors hover:text-white">
+      <HelpCircle class="h-5 w-5" />
+      <span class="sr-only">FAQ</span>
+    </a>
     <a
       href={IRARIUM_LINK}
       target="_blank"

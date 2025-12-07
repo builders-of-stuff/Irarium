@@ -22,6 +22,7 @@
     SPACE_EXPANDER_COST,
     SPACE_EXPANSION_UNIT
   } from '$lib/shared/space.constants';
+  import Faq from '$lib/components/faq.svelte';
 
   let showSuccess = false;
   let showCanceled = false;
@@ -139,6 +140,7 @@
   <Tabs.Root value="plans" class="w-full">
     <Tabs.List class="mb-8 w-auto max-w-md">
       <Tabs.Trigger value="plans">Upgrades</Tabs.Trigger>
+      <Tabs.Trigger value="faq">FAQ</Tabs.Trigger>
     </Tabs.List>
 
     <Tabs.Content value="plans" class="space-y-8">
@@ -316,6 +318,10 @@
           {/if}
         </div>
       </div>
+    </Tabs.Content>
+
+    <Tabs.Content value="faq" class="space-y-8">
+      <Faq />
     </Tabs.Content>
   </Tabs.Root>
 
