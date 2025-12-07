@@ -181,6 +181,23 @@
               <p class="text-base font-semibold">Base access included</p>
             </div>
           </div>
+          <div class="flex items-center gap-3">
+            <div
+              class="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10"
+            >
+              <Check class="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p class="text-sm font-medium text-muted-foreground">Ansible</p>
+              <p class="text-base font-bold">
+                {#if authStore.userSettings?.hasAnsible}
+                  Active
+                {:else}
+                  Inactive
+                {/if}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -278,6 +295,43 @@
               >
             </CardFooter>
           </Card>
+
+          <!-- Ansible Upgrade -->
+          {#if !authStore.userSettings?.hasAnsible}
+            <Card class="flex flex-col border-primary/50 shadow-sm">
+              <CardHeader>
+                <CardTitle>Ansible</CardTitle>
+                <CardDescription>
+                  Unlock the ability to subscribe to other spaces and expand your feed.
+                </CardDescription>
+                <div class="mt-2 text-3xl font-bold">
+                  $10.00<span class="text-sm font-normal text-muted-foreground"
+                    >/one-time</span
+                  >
+                </div>
+              </CardHeader>
+              <CardContent class="flex-grow">
+                <ul class="space-y-2">
+                  <li class="flex items-center gap-2">
+                    <Check class="h-4 w-4 text-primary" />
+                    <span>Subscribe to other users' spaces</span>
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <Check class="h-4 w-4 text-primary" />
+                    <span>See subscribed content in your home feed</span>
+                  </li>
+                </ul>
+              </CardContent>
+              <CardFooter>
+                <Button
+                  class="w-full"
+                  onclick={() => handleCheckout(PAYMENT_TYPE.ANSIBLE, 1)}
+                >
+                  Purchase Ansible
+                </Button>
+              </CardFooter>
+            </Card>
+          {/if}
         </div>
       </div>
     </Tabs.Content>

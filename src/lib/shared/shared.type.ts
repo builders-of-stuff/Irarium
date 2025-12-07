@@ -29,6 +29,8 @@ export type UserSettings = {
   isFullyUpgraded: boolean;
   spaceLimit: number;
   spaceExpanders: number;
+  hasAnsible: boolean;
+  subscribedSpaces: string[];
 };
 
 // write access for superusers only

@@ -20,6 +20,8 @@ export async function POST({ request, locals }) {
     
     if (type === PAYMENT_TYPE.SPACE_EXPANDER) {
       priceId = env.SPACE_EXPANDER_PRICE_ID;
+    } else if (type === PAYMENT_TYPE.ANSIBLE) {
+      priceId = env.ANSIBLE_PRICE_ID;
     }
 
     const lineItems = [

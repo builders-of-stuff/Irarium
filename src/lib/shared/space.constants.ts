@@ -5,5 +5,6 @@ export const SPACE_EXPANDER_COST = 1.00;
 
 export const PAYMENT_TYPE = {
   SPACE_LIMIT: 'space_limit',
-  SPACE_EXPANDER: 'space_expander'
+  SPACE_EXPANDER: 'space_expander',
+  ANSIBLE: 'ansible'
 } as const;

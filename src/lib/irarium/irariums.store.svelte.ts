@@ -87,8 +87,35 @@ export class IrariumsStore {
     this.error = null;
 
     try {
+      // Build filter for spaces
+      let filter = 'isPublic = true';
+      
+      // If user is logged in, restrict to owned and subscribed spaces
+      if (authStore.userId) {
+        // Get owned spaces
+        const ownedSpaceIds = spaceStore.userSpaces.map(s => s.id);
+        
+        // Get subscribed spaces
+        const subscribedSpaceIds = authStore.userSettings?.subscribedSpaces || [];
+        
+        // Combine unique IDs
+        const allowedSpaceIds = [...new Set([...ownedSpaceIds, ...subscribedSpaceIds])];
+        
+        if (allowedSpaceIds.length > 0) {
+          // Construct OR filter for space IDs
+          const spaceFilter = allowedSpaceIds.map(id => `spaceId = "${id}"`).join(' || ');
+          filter = `(${filter}) && (${spaceFilter})`;
+        } else {
+          // If no spaces owned or subscribed, show nothing (or maybe just public ones from system? 
+          // Requirement says "Only fetch published irariums from spaces you own")
+          // So if no spaces, we should probably return empty or handle gracefully.
+          // However, to prevent showing ALL public irariums when having no spaces, we can force a non-match
+          filter = `(${filter}) && (spaceId = "non_existent_id")`; 
+        }
+      }
+
       const records = await pb.collection(COLLECTION.IRARIUMS).getList(1, 50, {
-        filter: 'isPublic = true',
+        filter: filter,
         sort: '-created',
         expand: 'userId,spaceId'
       });

@@ -208,6 +208,36 @@ class AuthStore {
   }
 
   /**
+   * Space Subscription
+   */
+  async toggleSpaceSubscription(spaceId: string) {
+    if (!this.userId || !this.userSettings?.hasAnsible) return;
+
+    const currentSubscriptions = this.userSettings.subscribedSpaces || [];
+    const isSubscribed = currentSubscriptions.includes(spaceId);
+
+    let newSubscriptions: string[];
+    if (isSubscribed) {
+      newSubscriptions = currentSubscriptions.filter((id) => id !== spaceId);
+    } else {
+      newSubscriptions = [...currentSubscriptions, spaceId];
+    }
+
+    try {
+      await pb.collection(COLLECTION.USER_SETTINGS).update(this.userSettings.id, {
+        subscribedSpaces: newSubscriptions
+      });
+
+      // Update local state
+      this.userSettings.subscribedSpaces = newSubscriptions;
+      return { success: true, isSubscribed: !isSubscribed };
+    } catch (error) {
+      console.error('Error toggling subscription:', error);
+      return { success: false, error };
+    }
+  }
+
+  /**
    * Fetch user settings from the database
    */
   private async fetchAndSetUserSettings() {
@@ -264,7 +294,9 @@ class AuthStore {
       userId: record.userId,
       isFullyUpgraded: record.isFullyUpgraded,
       spaceLimit: record.spaceLimit,
-      spaceExpanders: record.spaceExpanders || 0
+      spaceExpanders: record.spaceExpanders || 0,
+      hasAnsible: record.hasAnsible || false,
+      subscribedSpaces: record.subscribedSpaces || []
     };
   }
 }

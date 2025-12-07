@@ -133,6 +133,22 @@
       </a>
     {/if}
 
+    {#if authStore.userSettings?.hasAnsible && space?.createdBy !== authStore.userId}
+      {@const isSubscribed = authStore.userSettings?.subscribedSpaces?.includes(
+        space?.id || ''
+      )}
+      <Button
+        variant={isSubscribed ? 'secondary' : 'outline'}
+        size="sm"
+        onclick={async () => {
+          await authStore.toggleSpaceSubscription(space.id);
+        }}
+        title={isSubscribed ? 'Unsubscribe from Space' : 'Subscribe to Space'}
+      >
+        {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
+      </Button>
+    {/if}
+
     <Button
       variant="outline"
       size="icon"

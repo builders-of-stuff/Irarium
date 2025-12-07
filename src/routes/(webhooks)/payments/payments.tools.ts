@@ -58,6 +58,10 @@ export async function handleSuccessfulPayment(pb, event) {
       await pb.collection(COLLECTION.USER_SETTINGS).update(userSettings.id, {
         spaceExpanders: currentExpanders + quantity
       });
+    } else if (type === PAYMENT_TYPE.ANSIBLE) {
+      await pb.collection(COLLECTION.USER_SETTINGS).update(userSettings.id, {
+        hasAnsible: true
+      });
     } else {
       // Default to space limit
       const currentLimit = userSettings.spaceLimit || 1;
