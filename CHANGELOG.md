@@ -1,3 +1,15 @@
+# 2.9.0 (2025-12-07)
+
+- Add support for ansible
+- Add support for shareable space setting
+- Fix more stale data issues
+- Subscribe/unsubscribe feature + Ansible product
+  - Privatize space feeds, should see only from your own spaces + ones subscribed to
+- Pagination support
+- Space settings page to modal
+- Add support for ability to remove space
+- Mobile UI fixes
+
 # 2.8.0 (2025-11-23)
 
 - Add support for space expanders
