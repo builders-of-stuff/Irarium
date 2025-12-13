@@ -178,6 +178,30 @@ export class SpaceStore {
     }
   }
 
+  async fetchSpacesByIds(spaceIds: string[]): Promise<Space[]> {
+    if (!spaceIds || spaceIds.length === 0) return [];
+
+    try {
+      // Build filter for multiple IDs: id = "id1" || id = "id2" || ...
+      const filter = spaceIds.map(id => `id = "${id}"`).join(' || ');
+      
+      const records = await pb.collection(COLLECTION.SPACES).getList(1, 50, {
+        filter,
+        expand: 'createdBy'
+      });
+
+      const spaces = records.items.map((item: any) => this.mapRecordToSpace(item));
+      
+      // Fetch counts for these spaces
+      spaces.forEach(space => this.fetchIrariumCount(space.id));
+      
+      return spaces;
+    } catch (err: any) {
+      console.error('Error fetching spaces by IDs:', err);
+      return [];
+    }
+  }
+
   private mapRecordToSpace(item: any): Space {
     return {
       id: item.id,

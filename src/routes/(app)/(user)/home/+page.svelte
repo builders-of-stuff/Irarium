@@ -8,8 +8,11 @@
   import { MapPin } from '@lucide/svelte';
   import UserNavbar from '$lib/shared/user-navbar.svelte';
   import DateDisplay from '$lib/components/shared/date-display.svelte';
+  import SubscribedSpacesDialog from '$lib/components/space/subscribed-spaces-dialog.svelte';
 
   import { untrack } from 'svelte';
+
+  let showSpacesDialog = $state(false);
 
   $effect(() => {
     // If logged in, wait for spaces to be loaded so we can filter correctly
@@ -29,11 +32,13 @@
             authStore.userSettings.subscribedSpaces?.length || 0}
           {@const totalSpaces = ownSpacesCount + subscribedSpacesCount}
           {#if totalSpaces > 0}
-            <div
-              class="flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-3 py-1.5 text-sm font-medium text-blue-300"
+            <button
+              type="button"
+              onclick={() => (showSpacesDialog = true)}
+              class="flex items-center gap-1.5 rounded-full border border-blue-500/30 bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-3 py-1.5 text-sm font-medium text-blue-300 transition-all hover:border-blue-500/50 hover:from-blue-500/30 hover:to-purple-500/30"
             >
               <span>{totalSpaces} {totalSpaces === 1 ? 'space' : 'spaces'}</span>
-            </div>
+            </button>
           {/if}
         {/if}
       {/snippet}
@@ -117,3 +122,5 @@
     </div>
   </div>
 </div>
+
+<SubscribedSpacesDialog bind:open={showSpacesDialog} />
