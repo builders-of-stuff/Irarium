@@ -4,6 +4,7 @@
   import { MapPin, PanelLeft as PanelLeftIcon } from '@lucide/svelte';
 
   import { useSidebar } from '$lib/components/ui/sidebar/context.svelte';
+  import { cn } from '$lib/utils';
 
   let {
     title = 'Irarium',
@@ -15,9 +16,11 @@
     spaceId,
     username,
     customBadge,
-    search
+    search,
+    variant = 'default'
   } = $props<{
     title?: string;
+    variant?: 'default' | 'overlay';
     actions?: () => unknown;
     isTitleEditable?: boolean;
     handleTitleChange?: (newTitle: string) => void;
@@ -77,14 +80,24 @@
 
 <NavigationMenu.Root>
   <div
-    class="fixed top-0 right-0 left-0 z-40 border-b border-white/10 bg-black/30 backdrop-blur-xl"
+    class={cn(
+      'transition-all duration-300',
+      variant === 'overlay'
+        ? 'fixed top-0 right-0 left-0 z-40 border-b border-white/10 bg-black/30 backdrop-blur-xl'
+        : 'relative w-full'
+    )}
   >
     <div
-      class="flex w-full max-w-[100vw] flex-col gap-3 py-3 pr-4 transition-all duration-300 md:flex-row md:items-center md:justify-between md:gap-0 md:pr-8 {!sidebar.isMobile
-        ? sidebar.state === 'collapsed'
-          ? 'pl-[4rem]'
-          : 'pl-[17rem]'
-        : 'pl-4'}"
+      class={cn(
+        'flex w-full flex-col gap-3 py-3 transition-all duration-300 md:flex-row md:items-center md:gap-0',
+        variant === 'overlay' &&
+          (!sidebar.isMobile
+            ? sidebar.state === 'collapsed'
+              ? 'pr-4 pl-[4rem] md:pr-8'
+              : 'pr-4 pl-[17rem] md:pr-8'
+            : 'px-4'),
+        variant === 'default' && 'container mx-auto px-4'
+      )}
     >
       <div
         class="flex w-full min-w-0 flex-1 flex-wrap items-center gap-2 md:w-auto md:gap-4"
@@ -95,7 +108,12 @@
             bind:value={editableTitle}
             onkeydown={handleKeyDown}
             onblur={finishEditing}
-            class="w-full border-b border-orange-500/50 bg-transparent px-2 py-1 text-xl font-bold text-white transition-colors focus:border-orange-500 focus:outline-none md:text-2xl"
+            class={cn(
+              'w-full bg-transparent py-1 font-bold transition-colors focus:border-orange-500 focus:ring-0 focus:outline-none',
+              variant === 'default'
+                ? 'text-3xl text-foreground'
+                : 'border-b border-orange-500/50 text-xl text-white md:text-2xl'
+            )}
             type="text"
           />
         {:else}
@@ -104,11 +122,19 @@
               <PanelLeftIcon size={20} />
             </button>
           {/if}
-          <button onclick={handleTitleClick} class="group">
+          <button
+            onclick={handleTitleClick}
+            class="group text-left"
+            disabled={!isTitleEditable}
+          >
             <h1
-              class="truncate text-xl font-bold text-white transition-colors md:text-2xl {isTitleEditable
-                ? 'cursor-pointer group-hover:text-orange-400'
-                : ''}"
+              class={cn(
+                'truncate font-bold transition-colors',
+                variant === 'default'
+                  ? 'text-3xl text-foreground'
+                  : 'text-xl text-white md:text-2xl',
+                isTitleEditable && 'cursor-pointer group-hover:text-orange-400'
+              )}
             >
               {title}
             </h1>

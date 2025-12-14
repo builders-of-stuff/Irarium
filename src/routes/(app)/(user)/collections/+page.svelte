@@ -46,7 +46,7 @@
   <div class="relative z-10">
     <UserNavbar title="My Collections" {actions} />
 
-    <div class="container mx-auto max-w-6xl px-4 py-8 pt-32 md:pt-20">
+    <div class="container mx-auto max-w-6xl px-4 py-8">
       <Tabs.Root bind:value={collectionsStore.activeTab} class="w-full">
         <div
           class="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"

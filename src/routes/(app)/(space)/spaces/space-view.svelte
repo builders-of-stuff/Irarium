@@ -304,7 +304,7 @@
   </div>
 {:else if space}
   <div class="relative h-full w-full">
-    <UserNavbar title={space.name} {actions} {customBadge} {search} />
+    <UserNavbar title={space.name} {actions} {customBadge} {search} variant="overlay" />
 
     <Canvas>
       <T.PerspectiveCamera makeDefault position={[150, 150, 150]} fov={50}>

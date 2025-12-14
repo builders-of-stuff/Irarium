@@ -192,7 +192,7 @@
       username={irarium?.createdBy || irarium?.username}
     />
 
-    <div class="flex-1 overflow-hidden pt-32 md:pt-20">
+    <div class="flex-1 overflow-hidden">
       {#if irarium}
         <IrariumComposer bind:irarium enableUpdates={isOwner} />
       {:else}
