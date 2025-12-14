@@ -225,6 +225,20 @@ export class SpaceStore {
     this.userSpaces = this.userSpaces.filter((s) => s.id !== spaceId);
     this.publicSpaces = this.publicSpaces.filter((s) => s.id !== spaceId);
   }
+
+  updateSpace(updatedSpace: Partial<Space> & { id: string }) {
+    // Update in userSpaces
+    this.userSpaces = this.userSpaces.map((s) => 
+      s.id === updatedSpace.id ? { ...s, ...updatedSpace } : s
+    );
+
+    // Update in publicSpaces
+    this.publicSpaces = this.publicSpaces.map((s) => 
+      s.id === updatedSpace.id ? { ...s, ...updatedSpace } : s
+    );
+
+    // If size changed, update stats logic if necessary (reactive derived state will handle it)
+  }
 }
 
 export const spaceStore = new SpaceStore();

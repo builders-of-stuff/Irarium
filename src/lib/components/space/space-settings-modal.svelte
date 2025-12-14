@@ -63,6 +63,9 @@
       // Update local space object
       space = { ...space, ...updatedSpace };
 
+      // Update global store
+      spaceStore.updateSpace(space);
+
       toast.success('Space updated successfully');
       open = false;
 
@@ -105,6 +108,9 @@
 
       // Update local state
       space.size = newSize;
+
+      // Update global store
+      spaceStore.updateSpace({ id: space.id, size: newSize });
 
       // Refresh user settings to update expander count
       await refreshState();

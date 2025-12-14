@@ -4,7 +4,7 @@
   import { authStore } from '$lib/auth/auth.store.svelte';
   import { spaceStore } from '$lib/space/space.store.svelte';
   import type { Space } from '$lib/shared/shared.type';
-  import { MapPin } from 'lucide-svelte';
+  import { MapPin } from '@lucide/svelte';
 
   let { open = $bindable(false) } = $props<{
     open: boolean;
@@ -118,7 +118,9 @@
                         </p>
                       {/if}
                       {#if space.username}
-                        <p class="text-xs text-muted-foreground">by @{space.username}</p>
+                        <p class="text-xs text-muted-foreground">
+                          by @{space.username}
+                        </p>
                       {/if}
                     </div>
                     <div class="flex flex-col items-end gap-1">

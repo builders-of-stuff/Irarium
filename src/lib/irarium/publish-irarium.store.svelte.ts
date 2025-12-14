@@ -16,8 +16,8 @@ export class PublishIrariumStore {
   // Derived state
   // Check both public and user spaces to ensure we find it
   selectedSpace = $derived(
-    spaceStore.publicSpaces.find((s) => s.id === this.selectedSpaceId) ||
-    spaceStore.userSpaces.find((s) => s.id === this.selectedSpaceId)
+    spaceStore.userSpaces.find((s) => s.id === this.selectedSpaceId) ||
+    spaceStore.publicSpaces.find((s) => s.id === this.selectedSpaceId)
   );
   spaceSize = $derived(this.selectedSpace?.size || DEFAULT_SPACE_SIZE);
 

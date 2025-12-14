@@ -18,12 +18,13 @@
 
     try {
       await irariumsStore.createIrarium(irarium);
-      await irariumsStore.refreshAllData(authStore.userId);
+      await irariumsStore.fetchUserIrariums(authStore.userId, true);
       await goto(ROUTE.COLLECTION);
       toast.success('Irarium saved successfully!');
     } catch (error) {
       console.error('Error saving irarium:', error);
-      toast.error('Failed to create irarium. Please try again.');
+      const message = error?.message || 'Failed to create irarium. Please try again.';
+      toast.error(message);
     }
   }
 </script>
