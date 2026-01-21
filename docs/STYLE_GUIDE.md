@@ -118,6 +118,34 @@ export const featureStore = new FeatureStore();
 
 ---
 
+## Data Fetching
+
+**Avoid SvelteKit load functions** (`+page.server.ts`, `+layout.server.ts`, etc.)
+
+Load functions feel rigid and break the natural flow of data fetching. Instead, prefer:
+
+- **Remote functions** (`.remote.ts` files) - Call server functions directly from components
+- **API routes** (`+server.ts`) - For REST-style endpoints when needed
+
+```typescript
+// ✗ Avoid: +page.server.ts with load function
+export const load = async ({ params }) => {
+  const data = await fetchData(params.id);
+  return { data };
+};
+
+// ✓ Prefer: remote function called from component
+// user.remote.ts
+export async function getUser(id: string) {
+  return await pb.collection('users').getOne(id);
+}
+
+// component.svelte
+const user = await getUser(userId);
+```
+
+---
+
 ## Key Principles
 
 1. **File naming**: kebab-case everywhere
@@ -125,6 +153,7 @@ export const featureStore = new FeatureStore();
 3. **Component location**: Shared components in lib, feature-specific co-located
 4. **Stores**: Export singleton instances, use classes and svelte 5 runes to organize state and state-related logic/functions
 5. **Naming**: camelCase (variables/functions), SCREAMING_SNAKE_CASE (constants), PascalCase (types)
+6. **Data fetching**: Avoid load functions, use remote functions or API routes
 
 ---
 
