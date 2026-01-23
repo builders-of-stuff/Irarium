@@ -103,7 +103,7 @@
     try {
       if (!irariumId) return;
       await irariumsStore.deleteIrarium(irariumId);
-      await irariumsStore.refreshAllData(authStore.userId);
+      await irariumsStore.fetchUserIrariums(authStore.userId, true);
 
       toast.success('Irarium deleted successfully!');
       goto('/collections');
@@ -153,7 +153,7 @@
       <Button
         variant="secondary"
         onclick={saveIrarium}
-        class="border-0 bg-orange-600 text-white hover:bg-orange-500"
+        class="border-0 text-white bg-orange-600 hover:bg-orange-500"
       >
         Save
       </Button>
@@ -238,7 +238,7 @@
             });
         }
 
-        irariumsStore.refreshAllData(authStore.userId);
+        irariumsStore.fetchUserIrariums(authStore.userId, true);
       }
     }}
   />

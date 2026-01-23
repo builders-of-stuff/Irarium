@@ -1,3 +1,8 @@
+# 2.11.0 (2026-01-21)
+
+- Fix some refresh error bug
+- Update hotkeys
+
 # 2.9.0 (2025-12-07)
 
 - Add support for ansible

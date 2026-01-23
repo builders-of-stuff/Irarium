@@ -10,7 +10,8 @@
     minHeight = $bindable(),
     className = '',
     onKeyDown,
-    onFocus
+    onFocus,
+    onUpdate
   }: {
     editor?: Editor;
     content?: string;
@@ -19,6 +20,7 @@
     className?: string;
     onKeyDown?: (event: KeyboardEvent) => boolean;
     onFocus?: () => void;
+    onUpdate?: () => void;
   } = $props();
   let editorElement: HTMLElement = $state() as any;
   let isEditorMounted = $state(false);
@@ -47,6 +49,7 @@
       autofocus: 'end',
       onUpdate: ({ editor }) => {
         content = editor.getHTML();
+        if (onUpdate) onUpdate();
       },
       onFocus: () => {
         if (onFocus) onFocus();

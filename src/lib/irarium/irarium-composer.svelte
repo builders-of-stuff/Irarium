@@ -118,7 +118,7 @@
   <div
     class="bg-space-950/50 pointer-events-none fixed bottom-6 left-6 z-40 rounded-lg border border-white/5 px-3 py-2 font-mono text-xs text-slate-600 backdrop-blur select-none"
   >
-    TAB: sibling • ENTER: child • DEL: remove
+    TAB: sibling • ⇧TAB: child • DEL: remove
   </div>
 
   <!-- AI Processing Indicator (Global) -->

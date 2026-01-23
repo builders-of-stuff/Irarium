@@ -62,7 +62,7 @@
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!isFocused) return false;
 
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Tab' && e.shiftKey) {
       e.preventDefault();
       if (enableUpdates) irarium.addThought('', node);
       return true;
