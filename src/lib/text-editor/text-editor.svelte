@@ -46,7 +46,7 @@
       },
       content,
       editable,
-      autofocus: 'end',
+
       onUpdate: ({ editor }) => {
         content = editor.getHTML();
         if (onUpdate) onUpdate();
@@ -133,6 +133,19 @@
   :global(.ProseMirror *) {
     white-space: pre-wrap;
     word-wrap: break-word;
+  }
+
+  /* Preview mode: single line with ellipsis for inactive nodes */
+  :global(.preview-mode .ProseMirror) {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :global(.preview-mode .ProseMirror p) {
+    display: inline;
+    margin: 0;
   }
 
   :global(.tiptap-editor .ProseMirror ::selection) {

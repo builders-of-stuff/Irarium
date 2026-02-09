@@ -181,13 +181,25 @@ export class IrariumStore {
     };
 
     // If parent is root
-    if (!referenceThought.parentId || referenceThought.parentId === this.id) {
+    if (
+      !referenceThought.parentId ||
+      referenceThought.parentId === this.id ||
+      this.children.some((t) => t.id === referenceThought.id)
+    ) {
       const index = this.children.findIndex((t) => t.id === referenceThought.id);
       if (index !== -1) {
         const insertIndex = position === 'left' ? index : index + 1;
         const newChildren = [...this.children];
         newChildren.splice(insertIndex, 0, thought);
         this.children = newChildren;
+      } else {
+        // Fallback: if index not found for some reason, append to end if position is right, or start if left
+        // This shouldn't typically happen if referenceThought is valid
+        if (position === 'left') {
+           this.children = [thought, ...this.children];
+        } else {
+           this.children = [...this.children, thought];
+        }
       }
     } else {
       // If parent is another thought

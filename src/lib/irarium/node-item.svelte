@@ -45,6 +45,11 @@
       if (editor && editor.isFocused) {
         editor.commands.blur();
       }
+      // Reset scroll position to show beginning of content in preview
+      const editorElement = cardRef?.querySelector('.ProseMirror');
+      if (editorElement) {
+        editorElement.scrollTop = 0;
+      }
     }
 
     if (isFocused || isSelected) {
@@ -70,7 +75,7 @@
       e.preventDefault();
       if (enableUpdates) {
         // If root, Tab adds a child (since it has no siblings in this view usually, or we treat it special)
-        if (depth === 0) {
+        if (isRoot) {
           irarium.addThought('', node);
         } else {
           irarium.addSibling('', node, 'right');
@@ -150,7 +155,7 @@
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
             minHeight="20px"
-            className={!isFocused ? 'line-clamp-3 overflow-hidden text-ellipsis' : ''}
+            className={!isFocused ? 'preview-mode' : ''}
           />
 
           <!-- Action Bar - Only visible on hover/focus -->

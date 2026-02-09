@@ -135,10 +135,20 @@
             />
           </div>
         </div>
-        {#if publishIrariumStore.positionError}
-          <p class="text-sm text-destructive">{publishIrariumStore.positionError}</p>
-        {/if}
       </div>
+      <div class="flex justify-end">
+        <Button
+          variant="secondary"
+          size="sm"
+          class="text-xs"
+          onclick={() => publishIrariumStore.generateRandomPosition()}
+        >
+          Re-randomize
+        </Button>
+      </div>
+      {#if publishIrariumStore.positionError}
+        <p class="text-sm text-destructive">{publishIrariumStore.positionError}</p>
+      {/if}
 
       <!-- Preview -->
       <div class="rounded-md bg-muted p-3 text-sm">
