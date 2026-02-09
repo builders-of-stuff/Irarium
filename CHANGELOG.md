@@ -1,3 +1,9 @@
+# 2.12.0 (2026-02-08)
+
+- Fix node preview CSS
+- Fix sibling hotkey bug for 1st root child
+- Add re-randomize option for publish
+
 # 2.11.0 (2026-01-21)
 
 - Fix some refresh error bug
